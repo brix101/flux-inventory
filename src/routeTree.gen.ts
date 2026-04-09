@@ -9,32 +9,66 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as ProtectedRouteImport } from './routes/_protected'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as DemoIndexRouteImport } from './routes/demo/index'
+import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
+import { Route as DemoAboutRouteImport } from './routes/demo/about'
+import { Route as ProtectedAboutRouteImport } from './routes/_protected/about'
+import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DemoRoute,
+} as any)
+const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProtectedRoute,
 } as any)
 const DemoDrizzleRoute = DemoDrizzleRouteImport.update({
-  id: '/demo/drizzle',
-  path: '/demo/drizzle',
-  getParentRoute: () => rootRouteImport,
+  id: '/drizzle',
+  path: '/drizzle',
+  getParentRoute: () => DemoRoute,
 } as any)
 const DemoBetterAuthRoute = DemoBetterAuthRouteImport.update({
-  id: '/demo/better-auth',
-  path: '/demo/better-auth',
-  getParentRoute: () => rootRouteImport,
+  id: '/better-auth',
+  path: '/better-auth',
+  getParentRoute: () => DemoRoute,
+} as any)
+const DemoAboutRoute = DemoAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => DemoRoute,
+} as any)
+const ProtectedAboutRoute = ProtectedAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   id: '/api/trpc/$',
@@ -48,27 +82,40 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/': typeof ProtectedIndexRoute
+  '/demo': typeof DemoRouteWithChildren
+  '/login': typeof AuthLoginRoute
+  '/about': typeof ProtectedAboutRoute
+  '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
+  '/demo/': typeof DemoIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/': typeof ProtectedIndexRoute
+  '/login': typeof AuthLoginRoute
+  '/about': typeof ProtectedAboutRoute
+  '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
+  '/demo': typeof DemoIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/_protected': typeof ProtectedRouteWithChildren
+  '/demo': typeof DemoRouteWithChildren
+  '/_auth/login': typeof AuthLoginRoute
+  '/_protected/about': typeof ProtectedAboutRoute
+  '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
+  '/_protected/': typeof ProtectedIndexRoute
+  '/demo/': typeof DemoIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
 }
@@ -76,67 +123,121 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/demo'
+    | '/login'
     | '/about'
+    | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
+    | '/demo/'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
     | '/about'
+    | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
+    | '/demo'
     | '/api/auth/$'
     | '/api/trpc/$'
   id:
     | '__root__'
-    | '/'
-    | '/about'
+    | '/_auth'
+    | '/_protected'
+    | '/demo'
+    | '/_auth/login'
+    | '/_protected/about'
+    | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
+    | '/_protected/'
+    | '/demo/'
     | '/api/auth/$'
     | '/api/trpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  DemoBetterAuthRoute: typeof DemoBetterAuthRoute
-  DemoDrizzleRoute: typeof DemoDrizzleRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  ProtectedRoute: typeof ProtectedRouteWithChildren
+  DemoRoute: typeof DemoRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/': {
+      id: '/demo/'
+      path: '/'
+      fullPath: '/demo/'
+      preLoaderRoute: typeof DemoIndexRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/_protected/': {
+      id: '/_protected/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
     '/demo/drizzle': {
       id: '/demo/drizzle'
-      path: '/demo/drizzle'
+      path: '/drizzle'
       fullPath: '/demo/drizzle'
       preLoaderRoute: typeof DemoDrizzleRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DemoRoute
     }
     '/demo/better-auth': {
       id: '/demo/better-auth'
-      path: '/demo/better-auth'
+      path: '/better-auth'
       fullPath: '/demo/better-auth'
       preLoaderRoute: typeof DemoBetterAuthRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/demo/about': {
+      id: '/demo/about'
+      path: '/about'
+      fullPath: '/demo/about'
+      preLoaderRoute: typeof DemoAboutRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/_protected/about': {
+      id: '/_protected/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof ProtectedAboutRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/api/trpc/$': {
       id: '/api/trpc/$'
@@ -155,11 +256,50 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+interface AuthRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface ProtectedRouteChildren {
+  ProtectedAboutRoute: typeof ProtectedAboutRoute
+  ProtectedIndexRoute: typeof ProtectedIndexRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAboutRoute: ProtectedAboutRoute,
+  ProtectedIndexRoute: ProtectedIndexRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
+interface DemoRouteChildren {
+  DemoAboutRoute: typeof DemoAboutRoute
+  DemoBetterAuthRoute: typeof DemoBetterAuthRoute
+  DemoDrizzleRoute: typeof DemoDrizzleRoute
+  DemoIndexRoute: typeof DemoIndexRoute
+}
+
+const DemoRouteChildren: DemoRouteChildren = {
+  DemoAboutRoute: DemoAboutRoute,
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
+  DemoIndexRoute: DemoIndexRoute,
+}
+
+const DemoRouteWithChildren = DemoRoute._addFileChildren(DemoRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthRoute: AuthRouteWithChildren,
+  ProtectedRoute: ProtectedRouteWithChildren,
+  DemoRoute: DemoRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }

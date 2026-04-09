@@ -10,10 +10,9 @@ const getCategories = createServerFn({
   method: 'GET',
 }).handler(async () => {
   try {
-    const categoryItems = await db.query.categories.findMany({
+    return await db.query.categories.findMany({
       orderBy: (c) => desc(c.createdAt),
     })
-    return categoryItems
   } catch (e) {
     console.error('Failed to fetch categories:', e)
     return []
