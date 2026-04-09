@@ -54,7 +54,7 @@ export function LoginForm({
               onSubmit: {
                 fields: {
                   email: [res.error],
-                  password: [],
+                  password: [{ message: '' }],
                 },
               },
             })
@@ -84,16 +84,21 @@ export function LoginForm({
               <form.Field
                 name="email"
                 children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
                   return (
-                    <Field>
+                    <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Email</FieldLabel>
                       <Input
                         id={field.name}
                         placeholder="m@example.com"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
                       />
-                      <FieldError errors={field.state.meta.errors} />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
                     </Field>
                   )
                 }}
@@ -101,8 +106,10 @@ export function LoginForm({
               <form.Field
                 name="password"
                 children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
                   return (
-                    <Field>
+                    <Field data-invalid={isInvalid}>
                       <div className="flex items-center">
                         <FieldLabel htmlFor="password">Password</FieldLabel>
                         <a
@@ -118,8 +125,11 @@ export function LoginForm({
                         placeholder="********"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
                       />
-                      <FieldError errors={field.state.meta.errors} />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
                     </Field>
                   )
                 }}
