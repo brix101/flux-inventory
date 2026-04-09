@@ -7,5 +7,5 @@ export const Route = createFileRoute('/_auth/login')({
 
 function RouteComponent() {
   const { redirect } = Route.useSearch()
-  return <LoginForm callbackURL={redirect} />
+  return <LoginForm callbackURL={redirect ?? '/'} />
 }

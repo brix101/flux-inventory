@@ -1,14 +1,21 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import {
+  ErrorComponent,
   HeadContent,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
 
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 import appCss from '../styles.css?url'
 
@@ -47,17 +54,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   shellComponent: RootDocument,
-  errorComponent: RootErrorComponent,
+  errorComponent: ErrorComponent,
 })
-
-function RootErrorComponent({ error }: { error: unknown }) {
-  return (
-    <div style={{ padding: 32, color: 'red', textAlign: 'center' }}>
-      <h1>Something went wrong</h1>
-      <pre>{error ? String(error) : 'Unknown error'}</pre>
-    </div>
-  )
-}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
