@@ -39,9 +39,9 @@ function DemoDrizzle() {
   const router = useRouter()
   const categoryItems = Route.useLoaderData()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
+    const formData = new FormData(e.target)
     const name = formData.get('name') as string
     const description = formData.get('description') as string
 
@@ -50,7 +50,7 @@ function DemoDrizzle() {
     try {
       await createCategory({ data: { name, description } })
       router.invalidate()
-      ;(e.target as HTMLFormElement).reset()
+      e.target.reset()
     } catch (error) {
       console.error('Failed to create category:', error)
     }
