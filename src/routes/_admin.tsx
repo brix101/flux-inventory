@@ -1,24 +1,25 @@
-import { getSession } from '@/lib/auth.functions'
 import {
   createFileRoute,
   notFound,
   Outlet,
   redirect,
-} from '@tanstack/react-router'
+} from "@tanstack/react-router"
 
-export const Route = createFileRoute('/_admin')({
+import { getSession } from "@/lib/auth.functions"
+
+export const Route = createFileRoute("/_admin")({
   beforeLoad: async () => {
     const session = await getSession()
 
     if (!session) {
       throw redirect({
-        to: '/login',
+        to: "/login",
       })
     }
 
-    const roles = session.user.role?.split(',') || []
+    const roles = session.user.role?.split(",") || []
 
-    if (!roles.includes('admin')) {
+    if (!roles.includes("admin")) {
       throw notFound()
     }
 

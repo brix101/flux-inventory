@@ -1,15 +1,16 @@
-import { authClient } from '@/lib/auth-client'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import React from 'react'
+import React from "react"
+import { useQuery } from "@tanstack/react-query"
+import { createFileRoute, Link } from "@tanstack/react-router"
 
-export const Route = createFileRoute('/_admin/admin/')({
+import { authClient } from "@/lib/auth-client"
+
+export const Route = createFileRoute("/_admin/admin/")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['admin-user-stats'],
+    queryKey: ["admin-user-stats"],
     queryFn: async () => {
       try {
         const { data: result, error: listError } =
@@ -20,10 +21,10 @@ function RouteComponent() {
           })
 
         if (listError)
-          throw new Error(listError.message || 'Failed to fetch users')
+          throw new Error(listError.message || "Failed to fetch users")
         return result
       } catch (err) {
-        throw err instanceof Error ? err : new Error('Failed to fetch users')
+        throw err instanceof Error ? err : new Error("Failed to fetch users")
       }
     },
   })
@@ -44,11 +45,11 @@ function RouteComponent() {
 
   const statCards = [
     {
-      name: 'Total Users',
+      name: "Total Users",
       value: stats?.totalUsers ?? 0,
       icon: (
         <svg
-          className="w-6 h-6"
+          className="h-6 w-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -61,16 +62,16 @@ function RouteComponent() {
           />
         </svg>
       ),
-      color: 'bg-blue-500',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600',
+      color: "bg-blue-500",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
     },
     {
-      name: 'Active Users',
+      name: "Active Users",
       value: stats?.activeUsers ?? 0,
       icon: (
         <svg
-          className="w-6 h-6"
+          className="h-6 w-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -83,16 +84,16 @@ function RouteComponent() {
           />
         </svg>
       ),
-      color: 'bg-green-500',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-600',
+      color: "bg-green-500",
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
     },
     {
-      name: 'Banned Users',
+      name: "Banned Users",
       value: stats?.bannedUsers ?? 0,
       icon: (
         <svg
-          className="w-6 h-6"
+          className="h-6 w-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -105,16 +106,16 @@ function RouteComponent() {
           />
         </svg>
       ),
-      color: 'bg-red-500',
-      bgColor: 'bg-red-100',
-      textColor: 'text-red-600',
+      color: "bg-red-500",
+      bgColor: "bg-red-100",
+      textColor: "text-red-600",
     },
     {
-      name: 'Unverified Users',
+      name: "Unverified Users",
       value: stats?.unverifiedUsers ?? 0,
       icon: (
         <svg
-          className="w-6 h-6"
+          className="h-6 w-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -127,19 +128,19 @@ function RouteComponent() {
           />
         </svg>
       ),
-      color: 'bg-yellow-500',
-      bgColor: 'bg-yellow-100',
-      textColor: 'text-yellow-600',
+      color: "bg-yellow-500",
+      bgColor: "bg-yellow-100",
+      textColor: "text-yellow-600",
     },
   ]
 
   const quickActions = [
     {
-      name: 'View All Users',
-      href: '/admin/users',
+      name: "View All Users",
+      href: "/admin/users",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="h-5 w-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -154,11 +155,11 @@ function RouteComponent() {
       ),
     },
     {
-      name: 'Add New User',
-      href: '/admin/users/new',
+      name: "Add New User",
+      href: "/admin/users/new",
       icon: (
         <svg
-          className="w-5 h-5"
+          className="h-5 w-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -179,17 +180,17 @@ function RouteComponent() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Welcome to the admin dashboard</p>
+          <p className="mt-1 text-gray-500">Welcome to the admin dashboard</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl p-6 shadow-sm animate-pulse"
+              className="animate-pulse rounded-xl bg-white p-6 shadow-sm"
             >
-              <div className="h-10 w-10 bg-gray-200 rounded-lg mb-4" />
-              <div className="h-4 bg-gray-200 rounded w-24 mb-2" />
-              <div className="h-8 bg-gray-200 rounded w-16" />
+              <div className="mb-4 h-10 w-10 rounded-lg bg-gray-200" />
+              <div className="mb-2 h-4 w-24 rounded bg-gray-200" />
+              <div className="h-8 w-16 rounded bg-gray-200" />
             </div>
           ))}
         </div>
@@ -202,9 +203,9 @@ function RouteComponent() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Welcome to the admin dashboard</p>
+          <p className="mt-1 text-gray-500">Welcome to the admin dashboard</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-red-700">{error.message}</p>
         </div>
       </div>
@@ -216,20 +217,20 @@ function RouteComponent() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome to the admin dashboard</p>
+        <p className="mt-1 text-gray-500">Welcome to the admin dashboard</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-xl p-6 shadow-sm">
+          <div key={stat.name} className="rounded-xl bg-white p-6 shadow-sm">
             <div
-              className={`w-10 h-10 ${stat.bgColor} rounded-lg flex items-center justify-center ${stat.textColor} mb-4`}
+              className={`h-10 w-10 ${stat.bgColor} flex items-center justify-center rounded-lg ${stat.textColor} mb-4`}
             >
               {stat.icon}
             </div>
             <p className="text-sm text-gray-500">{stat.name}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">
+            <p className="mt-1 text-2xl font-bold text-gray-900">
               {stat.value}
             </p>
           </div>
@@ -237,8 +238,8 @@ function RouteComponent() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="rounded-xl bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
           Quick Actions
         </h2>
         <div className="flex flex-wrap gap-3">
@@ -246,7 +247,7 @@ function RouteComponent() {
             <Link
               key={action.href}
               to={action.href}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700"
+              className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200"
             >
               {action.icon}
               <span>{action.name}</span>

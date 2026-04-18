@@ -1,19 +1,20 @@
-import { Button } from '@/components/ui/button'
+import { useForm } from "@tanstack/react-form"
+import { createFileRoute, Link } from "@tanstack/react-router"
+import z from "zod"
+
+import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Spinner } from '@/components/ui/spinner'
-import { authClient } from '@/lib/auth-client'
-import { useForm } from '@tanstack/react-form'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import z from 'zod'
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
+import { authClient } from "@/lib/auth-client"
 
-export const Route = createFileRoute('/_admin/admin/users/new')({
+export const Route = createFileRoute("/_admin/admin/users/new")({
   component: RouteComponent,
 })
 
@@ -22,26 +23,26 @@ const newUserSchema = z
     name: z.string(),
     email: z.email(),
     password: z
-      .string({ error: 'Password is required' })
-      .min(1, 'Password is required')
-      .min(8, 'Password must be more than 8 characters')
-      .max(32, 'Password must be less than 32 characters'),
-    confirmPassword: z.string({ error: 'Confirm password is required' }),
-    role: z.enum(['user', 'admin']),
+      .string({ error: "Password is required" })
+      .min(1, "Password is required")
+      .min(8, "Password must be more than 8 characters")
+      .max(32, "Password must be less than 32 characters"),
+    confirmPassword: z.string({ error: "Confirm password is required" }),
+    role: z.enum(["user", "admin"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: 'Passwords do not match',
-    path: ['confirmPassword'],
+    error: "Passwords do not match",
+    path: ["confirmPassword"],
   })
 
 function RouteComponent() {
   const form = useForm({
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'user',
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "user",
     },
     validators: {
       onChange: newUserSchema,
@@ -50,22 +51,22 @@ function RouteComponent() {
       await authClient.admin.createUser(
         {
           ...value,
-          role: ['user', 'admin'],
+          role: ["user", "admin"],
         },
         {
           onError: (res) => {
             formApi.setErrorMap({
               onSubmit: {
                 fields: {
-                  name: [{ message: '' }],
+                  name: [{ message: "" }],
                   email: [res.error],
-                  password: [{ message: '' }],
-                  confirmPassword: [{ message: '' }],
+                  password: [{ message: "" }],
+                  confirmPassword: [{ message: "" }],
                 },
               },
             })
           },
-        },
+        }
       )
     },
   })
@@ -76,7 +77,7 @@ function RouteComponent() {
       <div className="flex items-center gap-4">
         <Link to="/admin/users" className="text-gray-500 hover:text-gray-700">
           <svg
-            className="w-5 h-5"
+            className="h-5 w-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -93,7 +94,7 @@ function RouteComponent() {
       </div>
 
       {/* Form Card */}
-      <div className="bg-white rounded-xl shadow-sm p-6 max-w-2xl">
+      <div className="max-w-2xl rounded-xl bg-white p-6 shadow-sm">
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -208,7 +209,7 @@ function RouteComponent() {
                 >
                   {([canSubmit, isSubmitting]) => (
                     <Button type="submit" disabled={!canSubmit}>
-                      {isSubmitting ? <Spinner /> : 'Create User'}
+                      {isSubmitting ? <Spinner /> : "Create User"}
                     </Button>
                   )}
                 </form.Subscribe>

@@ -1,178 +1,212 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { db } from '@/db'
-import { categories } from '@/db/schema/schema'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
-import { desc } from 'drizzle-orm'
+import { Suspense } from "react"
+import {
+  Await,
+  createFileRoute,
+  defer,
+  useRouter,
+} from "@tanstack/react-router"
+import { createServerFn } from "@tanstack/react-start"
+import { desc } from "drizzle-orm"
+import z from "zod"
 
-const getCategories = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  try {
-    return await db.query.categories.findMany({
-      orderBy: (c) => desc(c.createdAt),
-    })
-  } catch (e) {
-    console.error('Failed to fetch categories:', e)
-    return []
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { db } from "@/db"
+import { categories } from "@/db/schema/schema"
+import { ensureSession } from "@/lib/auth.functions"
+
+const CategorySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+})
+
+const getServerCategories = createServerFn({ method: "GET" }).handler(
+  async () => {
+    // await ensureSession()
+
+    try {
+      return await db.query.categories.findMany({
+        orderBy: (c) => desc(c.createdAt),
+      })
+    } catch (e) {
+      console.error("Failed to fetch categories:", e)
+      return []
+    }
   }
-})
+)
 
-const createCategory = createServerFn({
-  method: 'POST',
-})
-  .inputValidator((data: { name: string; description?: string }) => data)
+const createCategory = createServerFn({ method: "POST" })
+  .inputValidator(CategorySchema)
   .handler(async ({ data }) => {
-    await db
-      .insert(categories)
-      .values({ name: data.name, description: data.description })
+    await ensureSession()
+
+    await db.insert(categories).values(data)
+
     return { success: true }
   })
 
-export const Route = createFileRoute('/demo/drizzle')({
+export const Route = createFileRoute("/demo/drizzle")({
   component: DemoDrizzle,
-  loader: async () => await getCategories(),
+  loader: async () => {
+    return {
+      getCategories: defer(getServerCategories()),
+    }
+  },
+  pendingComponent: () => (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-lg text-gray-400">Loading categories...</p>
+    </div>
+  ),
 })
 
 function DemoDrizzle() {
   const router = useRouter()
-  const categoryItems = Route.useLoaderData()
+  const { getCategories } = Route.useLoaderData()
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    const name = formData.get('name') as string
-    const description = formData.get('description') as string
-
-    if (!name) return
+    const dataEntries = Object.fromEntries(formData.entries())
 
     try {
-      await createCategory({ data: { name, description } })
+      const data = CategorySchema.parse(dataEntries)
+
+      await createCategory({ data })
       router.invalidate()
       e.target.reset()
     } catch (error) {
-      console.error('Failed to create category:', error)
+      console.error("Failed to create category:", error)
     }
   }
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen p-4 text-white"
+      className="flex min-h-screen items-center justify-center p-4 text-white"
       style={{
         background:
-          'linear-gradient(135deg, #0c1a2b 0%, #1a2332 50%, #16202e 100%)',
+          "linear-gradient(135deg, #0c1a2b 0%, #1a2332 50%, #16202e 100%)",
       }}
     >
       <div
-        className="w-full max-w-2xl p-8 rounded-xl shadow-2xl border border-white/10"
+        className="w-full max-w-2xl rounded-xl border border-white/10 p-8 shadow-2xl"
         style={{
           background:
-            'linear-gradient(135deg, rgba(22, 32, 46, 0.95) 0%, rgba(12, 26, 43, 0.95) 100%)',
-          backdropFilter: 'blur(10px)',
+            "linear-gradient(135deg, rgba(22, 32, 46, 0.95) 0%, rgba(12, 26, 43, 0.95) 100%)",
+          backdropFilter: "blur(10px)",
         }}
       >
         <div
-          className="flex items-center justify-center gap-4 mb-8 p-4 rounded-lg"
+          className="mb-8 flex items-center justify-center gap-4 rounded-lg p-4"
           style={{
             background:
-              'linear-gradient(90deg, rgba(93, 103, 227, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
-            border: '1px solid rgba(93, 103, 227, 0.2)',
+              "linear-gradient(90deg, rgba(93, 103, 227, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)",
+            border: "1px solid rgba(93, 103, 227, 0.2)",
           }}
         >
-          <div className="relative group">
-            <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-lg blur-lg opacity-60 group-hover:opacity-100 transition duration-500"></div>
-            <div className="relative bg-gradient-to-br from-indigo-600 to-purple-600 p-3 rounded-lg">
+          <div className="group relative">
+            <div className="absolute -inset-2 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 opacity-60 blur-lg transition duration-500 group-hover:opacity-100"></div>
+            <div className="relative rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 p-3">
               <img
                 src="/drizzle.svg"
                 alt="Drizzle Logo"
-                className="w-8 h-8 transform group-hover:scale-110 transition-transform duration-300"
+                className="h-8 w-8 transform transition-transform duration-300 group-hover:scale-110"
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-300 text-transparent bg-clip-text">
+          <h1 className="bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-300 bg-clip-text text-3xl font-bold text-transparent">
             Drizzle Database Demo
           </h1>
         </div>
 
-        <h2 className="text-2xl font-bold mb-4 text-indigo-200">Categories</h2>
+        <h2 className="mb-4 text-2xl font-bold text-indigo-200">Categories</h2>
 
-        <ul className="space-y-3 mb-6">
-          {categoryItems.map((category) => (
-            <li
-              key={category.id}
-              className="rounded-lg p-4 shadow-md border transition-all hover:scale-[1.02] cursor-pointer group"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(93, 103, 227, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)',
-                borderColor: 'rgba(93, 103, 227, 0.3)',
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-medium text-white group-hover:text-indigo-200 transition-colors">
-                  {category.name}
-                </span>
-                <span className="text-xs text-indigo-300/70">
-                  #{category.id}
-                </span>
-              </div>
-            </li>
-          ))}
-          {categoryItems.length === 0 && (
-            <li className="text-center py-8 text-indigo-300/70">
-              No categories yet. Create one below!
-            </li>
-          )}
-        </ul>
-
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <Input type="text" name="name" placeholder="Add a new category..." />
-          <Input
-            type="text"
-            name="description"
-            placeholder="Add a description..."
-          />
-          <Button type="submit">Add Category</Button>
-        </form>
+        <Suspense
+          fallback={<p className="text-indigo-300/70">Loading categories...</p>}
+        >
+          <Await promise={getCategories}>
+            {(categoryItems) => (
+              <ul className="mb-6 space-y-3">
+                {categoryItems.map((category) => (
+                  <li
+                    key={category.id}
+                    className="group cursor-pointer rounded-lg border p-4 shadow-md transition-all hover:scale-[1.02]"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, rgba(93, 103, 227, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)",
+                      borderColor: "rgba(93, 103, 227, 0.3)",
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-medium text-white transition-colors group-hover:text-indigo-200">
+                        {category.name}
+                      </span>
+                      <span className="text-xs text-indigo-300/70">
+                        #{category.id}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+                {categoryItems.length === 0 && (
+                  <li className="py-8 text-center text-indigo-300/70">
+                    No categories yet. Create one below!
+                  </li>
+                )}
+              </ul>
+            )}
+          </Await>
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <Input
+              type="text"
+              name="name"
+              placeholder="Add a new category..."
+            />
+            <Input
+              type="text"
+              name="description"
+              placeholder="Add a description..."
+            />
+            <Button type="submit">Add Category</Button>
+          </form>
+        </Suspense>
 
         <div
-          className="mt-8 p-6 rounded-lg border"
+          className="mt-8 rounded-lg border p-6"
           style={{
-            background: 'rgba(93, 103, 227, 0.05)',
-            borderColor: 'rgba(93, 103, 227, 0.2)',
+            background: "rgba(93, 103, 227, 0.05)",
+            borderColor: "rgba(93, 103, 227, 0.2)",
           }}
         >
-          <h3 className="text-lg font-semibold mb-2 text-indigo-200">
+          <h3 className="mb-2 text-lg font-semibold text-indigo-200">
             Powered by Drizzle ORM
           </h3>
-          <p className="text-sm text-indigo-300/80 mb-4">
+          <p className="mb-4 text-sm text-indigo-300/80">
             Next-generation ORM for Node.js & TypeScript with PostgreSQL
           </p>
           <div className="space-y-2 text-sm">
-            <p className="text-indigo-200 font-medium">Setup Instructions:</p>
-            <ol className="list-decimal list-inside space-y-2 text-indigo-300/80">
+            <p className="font-medium text-indigo-200">Setup Instructions:</p>
+            <ol className="list-inside list-decimal space-y-2 text-indigo-300/80">
               <li>
-                Configure your{' '}
-                <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
+                Configure your{" "}
+                <code className="rounded bg-black/30 px-2 py-1 text-purple-300">
                   DATABASE_URL
-                </code>{' '}
+                </code>{" "}
                 in .env.local
               </li>
               <li>
-                Run:{' '}
-                <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
+                Run:{" "}
+                <code className="rounded bg-black/30 px-2 py-1 text-purple-300">
                   npx -y drizzle-kit generate
                 </code>
               </li>
               <li>
-                Run:{' '}
-                <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
+                Run:{" "}
+                <code className="rounded bg-black/30 px-2 py-1 text-purple-300">
                   npx -y drizzle-kit migrate
                 </code>
               </li>
               <li>
-                Optional:{' '}
-                <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
+                Optional:{" "}
+                <code className="rounded bg-black/30 px-2 py-1 text-purple-300">
                   npx -y drizzle-kit studio
                 </code>
               </li>

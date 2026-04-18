@@ -1,18 +1,19 @@
-import { authClient } from '@/lib/auth-client'
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState } from "react"
+import { createFileRoute } from "@tanstack/react-router"
 
-export const Route = createFileRoute('/demo/better-auth')({
+import { authClient } from "@/lib/auth-client"
+
+export const Route = createFileRoute("/demo/better-auth")({
   component: BetterAuthDemo,
 })
 
 function BetterAuthDemo() {
   const { data: session, isPending } = authClient.useSession()
   const [isSignUp, setIsSignUp] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [name, setName] = useState("")
+  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   if (isPending) {
@@ -25,10 +26,10 @@ function BetterAuthDemo() {
 
   if (session?.user) {
     return (
-      <div className="flex justify-center py-10 px-4">
-        <div className="w-full max-w-md p-6 space-y-6">
+      <div className="flex justify-center px-4 py-10">
+        <div className="w-full max-w-md space-y-6 p-6">
           <div className="space-y-1.5">
-            <h1 className="text-lg font-semibold leading-none tracking-tight">
+            <h1 className="text-lg leading-none font-semibold tracking-tight">
               Welcome back
             </h1>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -40,17 +41,17 @@ function BetterAuthDemo() {
             {session.user.image ? (
               <img src={session.user.image} alt="" className="h-10 w-10" />
             ) : (
-              <div className="h-10 w-10 bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center bg-neutral-200 dark:bg-neutral-800">
                 <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                  {session.user.name.charAt(0).toUpperCase() || 'U'}
+                  {session.user.name.charAt(0).toUpperCase() || "U"}
                 </span>
               </div>
             )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">
                 {session.user.name}
               </p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+              <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
                 {session.user.email}
               </p>
             </div>
@@ -60,13 +61,13 @@ function BetterAuthDemo() {
             onClick={() => {
               void authClient.signOut()
             }}
-            className="w-full h-9 px-4 text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            className="h-9 w-full border border-neutral-300 px-4 text-sm font-medium transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
           >
             Sign out
           </button>
 
-          <p className="text-xs text-center text-neutral-400 dark:text-neutral-500">
-            Built with{' '}
+          <p className="text-center text-xs text-neutral-400 dark:text-neutral-500">
+            Built with{" "}
             <a
               href="https://better-auth.com"
               target="_blank"
@@ -84,7 +85,7 @@ function BetterAuthDemo() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setError("")
     setLoading(true)
 
     try {
@@ -95,7 +96,7 @@ function BetterAuthDemo() {
           name,
         })
         if (result.error) {
-          setError(result.error.message || 'Sign up failed')
+          setError(result.error.message || "Sign up failed")
         }
       } else {
         const result = await authClient.signIn.email({
@@ -103,26 +104,26 @@ function BetterAuthDemo() {
           password,
         })
         if (result.error) {
-          setError(result.error.message || 'Sign in failed')
+          setError(result.error.message || "Sign in failed")
         }
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError("An unexpected error occurred")
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="flex justify-center py-10 px-4">
+    <div className="flex justify-center px-4 py-10">
       <div className="w-full max-w-md p-6">
-        <h1 className="text-lg font-semibold leading-none tracking-tight">
-          {isSignUp ? 'Create an account' : 'Sign in'}
+        <h1 className="text-lg leading-none font-semibold tracking-tight">
+          {isSignUp ? "Create an account" : "Sign in"}
         </h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 mb-6">
+        <p className="mt-2 mb-6 text-sm text-neutral-500 dark:text-neutral-400">
           {isSignUp
-            ? 'Enter your information to create an account'
-            : 'Enter your email below to login to your account'}
+            ? "Enter your information to create an account"
+            : "Enter your email below to login to your account"}
         </p>
 
         <form onSubmit={handleSubmit} className="grid gap-4">
@@ -130,7 +131,7 @@ function BetterAuthDemo() {
             <div className="grid gap-2">
               <label
                 htmlFor="name"
-                className="text-sm font-medium leading-none"
+                className="text-sm leading-none font-medium"
               >
                 Name
               </label>
@@ -139,14 +140,14 @@ function BetterAuthDemo() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="flex h-9 w-full border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-9 w-full border border-neutral-300 bg-transparent px-3 text-sm focus:border-neutral-900 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:focus:border-neutral-100"
                 required
               />
             </div>
           )}
 
           <div className="grid gap-2">
-            <label htmlFor="email" className="text-sm font-medium leading-none">
+            <label htmlFor="email" className="text-sm leading-none font-medium">
               Email
             </label>
             <input
@@ -154,7 +155,7 @@ function BetterAuthDemo() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex h-9 w-full border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-9 w-full border border-neutral-300 bg-transparent px-3 text-sm focus:border-neutral-900 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:focus:border-neutral-100"
               required
             />
           </div>
@@ -162,7 +163,7 @@ function BetterAuthDemo() {
           <div className="grid gap-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium leading-none"
+              className="text-sm leading-none font-medium"
             >
               Password
             </label>
@@ -171,14 +172,14 @@ function BetterAuthDemo() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex h-9 w-full border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 text-sm focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-9 w-full border border-neutral-300 bg-transparent px-3 text-sm focus:border-neutral-900 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-700 dark:focus:border-neutral-100"
               required
               minLength={8}
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+            <div className="border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
@@ -186,7 +187,7 @@ function BetterAuthDemo() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-9 px-4 text-sm font-medium text-white bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-9 w-full bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-200"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -194,9 +195,9 @@ function BetterAuthDemo() {
                 <span>Please wait</span>
               </span>
             ) : isSignUp ? (
-              'Create account'
+              "Create account"
             ) : (
-              'Sign in'
+              "Sign in"
             )}
           </button>
         </form>
@@ -206,18 +207,18 @@ function BetterAuthDemo() {
             type="button"
             onClick={() => {
               setIsSignUp(!isSignUp)
-              setError('')
+              setError("")
             }}
-            className="text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            className="text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
           >
             {isSignUp
-              ? 'Already have an account? Sign in'
+              ? "Already have an account? Sign in"
               : "Don't have an account? Sign up"}
           </button>
         </div>
 
-        <p className="mt-6 text-xs text-center text-neutral-400 dark:text-neutral-500">
-          Built with{' '}
+        <p className="mt-6 text-center text-xs text-neutral-400 dark:text-neutral-500">
+          Built with{" "}
           <a
             href="https://better-auth.com"
             target="_blank"

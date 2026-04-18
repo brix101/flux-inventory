@@ -1,13 +1,13 @@
-import { z } from 'zod'
+import { z } from "zod"
 
-import { createTRPCRouter, publicProcedure } from './init'
+import type { TRPCRouterRecord } from "@trpc/server"
 
-import type { TRPCRouterRecord } from '@trpc/server'
+import { createTRPCRouter, publicProcedure } from "./init"
 
 const todos = [
-  { id: 1, name: 'Get groceries' },
-  { id: 2, name: 'Buy a new phone' },
-  { id: 3, name: 'Finish the project' },
+  { id: 1, name: "Get groceries" },
+  { id: 2, name: "Buy a new phone" },
+  { id: 3, name: "Finish the project" },
 ]
 
 const todosRouter = {

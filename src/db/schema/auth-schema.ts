@@ -1,12 +1,12 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
+  boolean,
+  index,
   pgTable,
   text,
   timestamp,
-  boolean,
-  index,
   uniqueIndex,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -23,7 +23,7 @@ export const users = pgTable("users", {
   banned: boolean("banned").default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
-});
+})
 
 export const sessions = pgTable(
   "sessions",
@@ -43,8 +43,8 @@ export const sessions = pgTable(
     activeOrganizationId: text("active_organization_id"),
     impersonatedBy: text("impersonated_by"),
   },
-  (table) => [index("sessions_userId_idx").on(table.userId)],
-);
+  (table) => [index("sessions_userId_idx").on(table.userId)]
+)
 
 export const accounts = pgTable(
   "accounts",
@@ -67,8 +67,8 @@ export const accounts = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("accounts_userId_idx").on(table.userId)],
-);
+  (table) => [index("accounts_userId_idx").on(table.userId)]
+)
 
 export const verifications = pgTable(
   "verifications",
@@ -83,8 +83,8 @@ export const verifications = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("verifications_identifier_idx").on(table.identifier)],
-);
+  (table) => [index("verifications_identifier_idx").on(table.identifier)]
+)
 
 export const organizations = pgTable(
   "organizations",
@@ -96,8 +96,8 @@ export const organizations = pgTable(
     createdAt: timestamp("created_at").notNull(),
     metadata: text("metadata"),
   },
-  (table) => [uniqueIndex("organizations_slug_uidx").on(table.slug)],
-);
+  (table) => [uniqueIndex("organizations_slug_uidx").on(table.slug)]
+)
 
 export const members = pgTable(
   "members",
@@ -115,8 +115,8 @@ export const members = pgTable(
   (table) => [
     index("members_organizationId_idx").on(table.organizationId),
     index("members_userId_idx").on(table.userId),
-  ],
-);
+  ]
+)
 
 export const invitations = pgTable(
   "invitations",
@@ -137,34 +137,34 @@ export const invitations = pgTable(
   (table) => [
     index("invitations_organizationId_idx").on(table.organizationId),
     index("invitations_email_idx").on(table.email),
-  ],
-);
+  ]
+)
 
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   members: many(members),
   invitations: many(invitations),
-}));
+}))
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   users: one(users, {
     fields: [sessions.userId],
     references: [users.id],
   }),
-}));
+}))
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
   users: one(users, {
     fields: [accounts.userId],
     references: [users.id],
   }),
-}));
+}))
 
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   members: many(members),
   invitations: many(invitations),
-}));
+}))
 
 export const membersRelations = relations(members, ({ one }) => ({
   organizations: one(organizations, {
@@ -175,7 +175,7 @@ export const membersRelations = relations(members, ({ one }) => ({
     fields: [members.userId],
     references: [users.id],
   }),
-}));
+}))
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
   organizations: one(organizations, {
@@ -186,4 +186,4 @@ export const invitationsRelations = relations(invitations, ({ one }) => ({
     fields: [invitations.inviterId],
     references: [users.id],
   }),
-}));
+}))

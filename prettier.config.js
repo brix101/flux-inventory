@@ -2,9 +2,34 @@
 
 /** @type {import('prettier').Config} */
 const config = {
+  endOfLine: "lf",
   semi: false,
-  singleQuote: true,
-  trailingComma: "all",
-};
+  singleQuote: false,
+  tabWidth: 2,
+  trailingComma: "es5",
 
-export default config;
+  importOrder: [
+    "<TYPES>",
+    "^(react/(.*)$)|^(react$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "<TYPES>^[.|..|@]",
+    "^@/",
+    "",
+    "^[./]",
+  ],
+
+  importOrderSeparation: false,
+  importOrderSortSpecifiers: true,
+  importOrderBuiltinModulesToTop: true,
+  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
+  importOrderMergeDuplicateImports: true,
+  importOrderCombineTypeAndValueImports: true,
+
+  plugins: [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
+  ],
+}
+
+export default config

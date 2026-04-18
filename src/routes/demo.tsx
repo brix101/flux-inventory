@@ -1,8 +1,9 @@
-import Footer from '@/components/Footer'
-import Header from '@/components/Header'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 
-export const Route = createFileRoute('/demo')({
+import Footer from "@/components/Footer"
+import Header from "@/components/Header"
+
+export const Route = createFileRoute("/demo")({
   component: RouteComponent,
 })
 

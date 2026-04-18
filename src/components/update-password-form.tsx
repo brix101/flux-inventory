@@ -1,57 +1,52 @@
 import { useForm } from "@tanstack/react-form"
-import { Link } from "@tanstack/react-router"
 import { toast } from "sonner"
 import z from "zod"
 
+import { PasswordInput } from "@/components/password-input"
 import { Button } from "@/components/ui/button"
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { authClient } from "@/lib/auth-client"
 
-export const onChangeSchema = z.object({
-  email: z.email({ error: "Email is required" }),
-  password: z
-    .string({ error: "Password is required" })
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
-})
+const onChangeSchema = z
+  .object({
+    password: z
+      .string({ error: "Password is required" })
+      .min(1, "Password is required")
+      .min(8, "Password must be more than 8 characters")
+      .max(32, "Password must be less than 32 characters"),
+    confirmPassword: z.string({ error: "Confirm password is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
 
-export function LoginForm({ callbackURL }: { callbackURL?: string }) {
+export function UpdatePasswordForm({ token }: { token: string }) {
   const form = useForm({
     defaultValues: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
     validators: {
       onChange: onChangeSchema,
     },
     onSubmit: async ({ value }) => {
-      return await authClient.signIn.email(
+      return await authClient.resetPassword(
         {
-          ...value,
-          callbackURL,
+          newPassword: value.password,
+          token,
         },
         {
           onError: ({ error }) => {
             toast.error(error.code, {
               description: error.message,
             })
-            // formApi.setErrorMap({
-            //   onSubmit: {
-            //     fields: {
-            //       email: [error],
-            //       password: [{ message: "" }],
-            //     },
-            //   },
-            // })
           },
         }
       )
@@ -67,22 +62,22 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold">Reset Password</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to login to your account
+            Enter your new password below to reset your account.
           </p>
         </div>
         <form.Field
-          name="email"
+          name="password"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                <Input
+                <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                <PasswordInput
                   id={field.name}
-                  placeholder="m@example.com"
+                  placeholder="**********"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
@@ -93,25 +88,16 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
           }}
         />
         <form.Field
-          name="password"
+          name="confirmPassword"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid
             return (
               <Field data-invalid={isInvalid}>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Link
-                    to="/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-                <Input
+                <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                <PasswordInput
                   id={field.name}
-                  type="password"
-                  placeholder="********"
+                  placeholder="**********"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
@@ -127,13 +113,10 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
           >
             {([canSubmit, isSubmitting]) => (
               <Button type="submit" disabled={!canSubmit}>
-                {isSubmitting ? <Spinner /> : "Login"}
+                {isSubmitting ? <Spinner /> : "Submit"}
               </Button>
             )}
           </form.Subscribe>
-          <FieldDescription className="text-center">
-            Don’t have an account? Contact your administrator to request access.
-          </FieldDescription>
         </Field>
       </FieldGroup>
     </form>
