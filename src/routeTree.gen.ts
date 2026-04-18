@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as DemoAboutRouteImport } from './routes/demo/about'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth.forgot-password'
 import { Route as AppAboutRouteImport } from './routes/_app/about'
@@ -69,6 +70,11 @@ const DemoAboutRoute = DemoAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => DemoRoute,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AppAboutRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/about': typeof AppAboutRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/_app/about': typeof AppAboutRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/demo/about': typeof DemoAboutRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/_app/about'
     | '/_auth/forgot-password'
     | '/_auth/login'
+    | '/_auth/reset-password'
     | '/demo/about'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -287,6 +299,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/about'
       preLoaderRoute: typeof DemoAboutRouteImport
       parentRoute: typeof DemoRoute
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/login': {
       id: '/_auth/login'
@@ -376,11 +395,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 interface AuthRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

@@ -37,9 +37,9 @@ export const getPermissions = createServerFn({ method: "GET" }).handler(
     const { success } = await auth.api.userHasPermission({
       body: {
         userId: session.user.id,
-        role: "superadmin",
+        role: "manager",
         permissions: {
-          superadmin: ["*"],
+          manager: ["*"],
         },
       },
     })

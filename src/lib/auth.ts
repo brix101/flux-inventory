@@ -5,7 +5,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start"
 
 import { db } from "@/db"
 
-import { ac, admin, superadmin, user } from "./permissions"
+import { ac, admin, manager, user } from "./permissions"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,17 +14,19 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
+    disableSignUp: true,
+    sendResetPassword: async ({ user: { email }, url, token }) => {
+      const parsed = new URL(url)
+      const baseUrl = parsed.origin
+
+      const resetLink = `${baseUrl}/reset-password?token=${token}`
+
       console.log({
-        to: user.email,
+        to: email,
         subject: "Reset your password",
-        text: `Click the link to reset your password: ${url}`,
+        text: `Click the link to reset your password: ${resetLink}`,
       })
-      console.log({
-        user,
-        url,
-        token,
-      })
+      console.log(resetLink)
       // void sendEmail({
       //   to: user.email,
       //   subject: "Reset your password",
@@ -39,9 +41,9 @@ export const auth = betterAuth({
       roles: {
         user,
         admin,
-        superadmin,
+        manager,
       },
-      adminRoles: ["admin", "superadmin"],
+      adminRoles: ["admin", "manager"],
     }),
     organization(),
   ],

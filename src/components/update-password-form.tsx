@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form"
+import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
 import z from "zod"
 
@@ -27,7 +28,9 @@ const onChangeSchema = z
     path: ["confirmPassword"],
   })
 
-export function UpdatePasswordForm({ token }: { token: string }) {
+export function ResetPasswordForm({ token }: { token: string }) {
+  const navigate = useNavigate()
+
   const form = useForm({
     defaultValues: {
       password: "",
@@ -44,9 +47,16 @@ export function UpdatePasswordForm({ token }: { token: string }) {
         },
         {
           onError: ({ error }) => {
-            toast.error(error.code, {
+            toast.error("Unable to reset password", {
               description: error.message,
             })
+          },
+          onSuccess: () => {
+            toast.success("Password updated", {
+              description:
+                "Password reset successfully. Please sign in with your new password.",
+            })
+            navigate({ to: "/login" })
           },
         }
       )

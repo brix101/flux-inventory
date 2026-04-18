@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router"
 import { toast } from "sonner"
 import z from "zod"
 
+import { PasswordInput } from "@/components/password-input"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -41,17 +42,9 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
         },
         {
           onError: ({ error }) => {
-            toast.error(error.code, {
+            toast.error("Unable to sign in", {
               description: error.message,
             })
-            // formApi.setErrorMap({
-            //   onSubmit: {
-            //     fields: {
-            //       email: [error],
-            //       password: [{ message: "" }],
-            //     },
-            //   },
-            // })
           },
         }
       )
@@ -108,9 +101,8 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
                     Forgot your password?
                   </Link>
                 </div>
-                <Input
+                <PasswordInput
                   id={field.name}
-                  type="password"
                   placeholder="********"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}

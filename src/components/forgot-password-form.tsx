@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form"
-import { getRouteApi, Link } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import z from "zod"
@@ -21,7 +21,7 @@ export const onChangeSchema = z.object({
   email: z.email({ error: "Email is required" }),
 })
 
-export function RequestPasswordResetForm() {
+export function ForgotPasswordForm() {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -32,13 +32,15 @@ export function RequestPasswordResetForm() {
     onSubmit: async ({ value }) => {
       return await authClient.requestPasswordReset(value, {
         onError: ({ error }) => {
-          toast.error(error.code, {
+          toast.error("Unable to process request", {
             description: error.message,
           })
         },
         onSuccess: ({ data }) => {
+          toast.success("Check your email", {
+            description: data.message,
+          })
           form.reset()
-          toast.success(data.message)
         },
       })
     },

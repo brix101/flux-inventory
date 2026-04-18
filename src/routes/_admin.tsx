@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_admin")({
 
     const roles = session.user.role?.split(",") || []
 
-    if (!roles.includes("admin")) {
+    if (!roles.includes("manager")) {
       throw notFound()
     }
 
