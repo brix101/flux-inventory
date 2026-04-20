@@ -1,7 +1,12 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_app/")({
   component: App,
+  loader: () => {
+    throw redirect({
+      to: "/inventory",
+    })
+  },
 })
 
 function App() {

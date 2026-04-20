@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router"
-import { FolderArchive } from "lucide-react"
+import { TerminalIcon } from "lucide-react"
 import z from "zod"
 
 import { getSession } from "@/lib/auth.functions"
@@ -29,7 +29,7 @@ function RouteComponent() {
         <div className="flex justify-center gap-2 md:justify-start">
           <Link to="/" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <FolderArchive className="size-4" />
+              <TerminalIcon className="size-4" />
             </div>
             {appConfig.name}
           </Link>

@@ -1,4 +1,4 @@
 export const appConfig = {
-  name: "Flux Inventory",
-  description: "A modern inventory management system",
+  name: "Flux",
+  description: "Flux system",
 }
