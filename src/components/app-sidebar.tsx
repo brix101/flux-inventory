@@ -1,5 +1,6 @@
 import type { User } from "better-auth"
 import * as React from "react"
+import { Link } from "@tanstack/react-router"
 import { BoxIcon, FrameIcon, TerminalIcon } from "lucide-react"
 
 import type { NavItem } from "@/types/nav"
@@ -39,7 +40,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<a href="#" />}>
+            <SidebarMenuButton size="lg" render={<Link to="/inventory" />}>
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                 <TerminalIcon className="size-4" />
               </div>

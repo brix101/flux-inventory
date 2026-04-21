@@ -26,6 +26,7 @@ import { Route as AppInventoryRouteImport } from './routes/_app/inventory'
 import { Route as AppAboutRouteImport } from './routes/_app/about'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
+import { Route as ApiInitialSplatRouteImport } from './routes/api/initial.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings.account'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
@@ -113,6 +114,11 @@ const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
   path: '/api/trpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInitialSplatRoute = ApiInitialSplatRouteImport.update({
+  id: '/api/initial/$',
+  path: '/api/initial/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/demo/': typeof DemoIndexRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoIndexRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/admin': typeof AdminAdminIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/demo/': typeof DemoIndexRoute
   '/_app/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/demo/'
     | '/settings/account'
     | '/api/auth/$'
+    | '/api/initial/$'
     | '/api/trpc/$'
     | '/admin/'
     | '/admin/users/new'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/settings/account'
     | '/api/auth/$'
+    | '/api/initial/$'
     | '/api/trpc/$'
     | '/admin'
     | '/admin/users/new'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/demo/'
     | '/_app/settings/account'
     | '/api/auth/$'
+    | '/api/initial/$'
     | '/api/trpc/$'
     | '/_admin/admin/'
     | '/_admin/admin/users/new'
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   DemoRoute: typeof DemoRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiInitialSplatRoute: typeof ApiInitialSplatRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
 }
 
@@ -392,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/initial/$': {
+      id: '/api/initial/$'
+      path: '/api/initial/$'
+      fullPath: '/api/initial/$'
+      preLoaderRoute: typeof ApiInitialSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   DemoRoute: DemoRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiInitialSplatRoute: ApiInitialSplatRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -59,6 +59,7 @@ export function NavMain({ items }: NavMainProps) {
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               render={<Link to={subItem.to} />}
+                              className="[&.active]:bg-sidebar-accent [&.active]:text-sidebar-accent-foreground [&.active]:font-medium"
                             >
                               <span>{subItem.title}</span>
                             </SidebarMenuSubButton>
@@ -77,6 +78,7 @@ export function NavMain({ items }: NavMainProps) {
               key={item.title}
               tooltip={item.title}
               render={<Link to={item.to} />}
+              className="[&.active]:bg-sidebar-accent [&.active]:text-sidebar-accent-foreground [&.active]:font-medium"
             >
               {item.icon}
               <span>{item.title}</span>
