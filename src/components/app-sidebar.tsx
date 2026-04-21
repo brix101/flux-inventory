@@ -17,11 +17,24 @@ import {
 } from "@/components/ui/sidebar"
 import { appConfig } from "@/lib/config"
 
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   {
     title: "Inventory",
-    to: "/inventory",
     icon: <BoxIcon />,
+    items: [
+      {
+        title: "Stocks",
+        to: "/inventory",
+      },
+      {
+        title: "Products",
+        to: "/inventory/products",
+      },
+      {
+        title: "Purchase Orders",
+        to: "/inventory/purchase-orders",
+      },
+    ],
   },
   {
     title: "Workshops",
@@ -46,7 +59,6 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{appConfig.name}</span>
-                {/* <span className="truncate text-xs">Enterprise</span> */}
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

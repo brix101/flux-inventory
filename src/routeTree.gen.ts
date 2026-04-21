@@ -22,13 +22,15 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth.forgot-password'
 import { Route as AppWorkshopsRouteImport } from './routes/_app/workshops'
-import { Route as AppInventoryRouteImport } from './routes/_app/inventory'
 import { Route as AppAboutRouteImport } from './routes/_app/about'
+import { Route as AppInventoryIndexRouteImport } from './routes/_app/inventory.index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
 import { Route as ApiInitialSplatRouteImport } from './routes/api/initial.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings.account'
+import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/inventory.purchase-orders'
+import { Route as AppInventoryProductsRouteImport } from './routes/_app/inventory.products'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
 import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin.users.new'
 
@@ -94,14 +96,14 @@ const AppWorkshopsRoute = AppWorkshopsRouteImport.update({
   path: '/workshops',
   getParentRoute: () => AppRoute,
 } as any)
-const AppInventoryRoute = AppInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppAboutRoute = AppAboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryIndexRoute = AppInventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
   getParentRoute: () => AppRoute,
 } as any)
 const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
@@ -129,6 +131,17 @@ const AppSettingsAccountRoute = AppSettingsAccountRouteImport.update({
   path: '/settings/account',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventoryPurchaseOrdersRoute =
+  AppInventoryPurchaseOrdersRouteImport.update({
+    id: '/inventory/purchase-orders',
+    path: '/inventory/purchase-orders',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppInventoryProductsRoute = AppInventoryProductsRouteImport.update({
+  id: '/inventory/products',
+  path: '/inventory/products',
+  getParentRoute: () => AppRoute,
+} as any)
 const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
   id: '/admin/users/',
   path: '/admin/users/',
@@ -144,7 +157,6 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/demo': typeof DemoRouteWithChildren
   '/about': typeof AppAboutRoute
-  '/inventory': typeof AppInventoryRoute
   '/workshops': typeof AppWorkshopsRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -153,18 +165,20 @@ export interface FileRoutesByFullPath {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/': typeof DemoIndexRoute
+  '/inventory/products': typeof AppInventoryProductsRoute
+  '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/admin/': typeof AdminAdminIndexRoute
+  '/inventory/': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/about': typeof AppAboutRoute
-  '/inventory': typeof AppInventoryRoute
   '/workshops': typeof AppWorkshopsRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
@@ -173,11 +187,14 @@ export interface FileRoutesByTo {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo': typeof DemoIndexRoute
+  '/inventory/products': typeof AppInventoryProductsRoute
+  '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/admin': typeof AdminAdminIndexRoute
+  '/inventory': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
 }
@@ -188,7 +205,6 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/demo': typeof DemoRouteWithChildren
   '/_app/about': typeof AppAboutRoute
-  '/_app/inventory': typeof AppInventoryRoute
   '/_app/workshops': typeof AppWorkshopsRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
@@ -198,11 +214,14 @@ export interface FileRoutesById {
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/_app/': typeof AppIndexRoute
   '/demo/': typeof DemoIndexRoute
+  '/_app/inventory/products': typeof AppInventoryProductsRoute
+  '/_app/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/_app/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
 }
@@ -212,7 +231,6 @@ export interface FileRouteTypes {
     | '/'
     | '/demo'
     | '/about'
-    | '/inventory'
     | '/workshops'
     | '/forgot-password'
     | '/login'
@@ -221,18 +239,20 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/'
+    | '/inventory/products'
+    | '/inventory/purchase-orders'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
     | '/api/trpc/$'
     | '/admin/'
+    | '/inventory/'
     | '/admin/users/new'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/inventory'
     | '/workshops'
     | '/forgot-password'
     | '/login'
@@ -241,11 +261,14 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo'
+    | '/inventory/products'
+    | '/inventory/purchase-orders'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
     | '/api/trpc/$'
     | '/admin'
+    | '/inventory'
     | '/admin/users/new'
     | '/admin/users'
   id:
@@ -255,7 +278,6 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/demo'
     | '/_app/about'
-    | '/_app/inventory'
     | '/_app/workshops'
     | '/_auth/forgot-password'
     | '/_auth/login'
@@ -265,11 +287,14 @@ export interface FileRouteTypes {
     | '/demo/drizzle'
     | '/_app/'
     | '/demo/'
+    | '/_app/inventory/products'
+    | '/_app/inventory/purchase-orders'
     | '/_app/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
     | '/api/trpc/$'
     | '/_admin/admin/'
+    | '/_app/inventory/'
     | '/_admin/admin/users/new'
     | '/_admin/admin/users/'
   fileRoutesById: FileRoutesById
@@ -377,18 +402,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWorkshopsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/inventory': {
-      id: '/_app/inventory'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof AppInventoryRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/about': {
       id: '/_app/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AppAboutRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/': {
+      id: '/_app/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory/'
+      preLoaderRoute: typeof AppInventoryIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_admin/admin/': {
@@ -426,6 +451,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsAccountRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inventory/purchase-orders': {
+      id: '/_app/inventory/purchase-orders'
+      path: '/inventory/purchase-orders'
+      fullPath: '/inventory/purchase-orders'
+      preLoaderRoute: typeof AppInventoryPurchaseOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/products': {
+      id: '/_app/inventory/products'
+      path: '/inventory/products'
+      fullPath: '/inventory/products'
+      preLoaderRoute: typeof AppInventoryProductsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_admin/admin/users/': {
       id: '/_admin/admin/users/'
       path: '/admin/users'
@@ -459,18 +498,22 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
-  AppInventoryRoute: typeof AppInventoryRoute
   AppWorkshopsRoute: typeof AppWorkshopsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppInventoryProductsRoute: typeof AppInventoryProductsRoute
+  AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
   AppSettingsAccountRoute: typeof AppSettingsAccountRoute
+  AppInventoryIndexRoute: typeof AppInventoryIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
-  AppInventoryRoute: AppInventoryRoute,
   AppWorkshopsRoute: AppWorkshopsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppInventoryProductsRoute: AppInventoryProductsRoute,
+  AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
   AppSettingsAccountRoute: AppSettingsAccountRoute,
+  AppInventoryIndexRoute: AppInventoryIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

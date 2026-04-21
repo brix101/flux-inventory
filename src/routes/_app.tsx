@@ -1,6 +1,13 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import React from "react"
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useRouterState,
+} from "@tanstack/react-router"
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar, navItems } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,34 +46,65 @@ export const Route = createFileRoute("/_app")({
 
 function RouteComponent() {
   const { user } = Route.useRouteContext()
+  const {
+    location: { pathname },
+  } = useRouterState()
+
+  const locations = React.useMemo(() => {
+    const routes: (typeof navItems)[number][] = []
+
+    const findRoute = (items: typeof navItems): boolean => {
+      for (const item of items) {
+        if (item.to === pathname) {
+          routes.push(item)
+          return true
+        }
+        if (item.items && findRoute(item.items)) {
+          routes.unshift(item)
+          return true
+        }
+      }
+      return false
+    }
+
+    findRoute(navItems)
+    return routes
+  }, [pathname])
 
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" collapsible="icon" user={user} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <Tooltip>
-              <TooltipTrigger>
-                <SidebarTrigger className="-ml-1" />
-              </TooltipTrigger>
+              <TooltipTrigger className="-ml-1" render={<SidebarTrigger />} />
               <TooltipContent>Toggle sidebar</TooltipContent>
             </Tooltip>
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Build Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {locations.map((location, index) => {
+                  if (index === locations.length - 1) {
+                    return (
+                      <BreadcrumbItem key={location.to}>
+                        <BreadcrumbPage>{location.title}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    )
+                  }
+
+                  return (
+                    <React.Fragment key={location.to}>
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink render={<Link to={location.to} />}>
+                          {location.title}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+
+                      <BreadcrumbSeparator className="hidden md:block" />
+                    </React.Fragment>
+                  )
+                })}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

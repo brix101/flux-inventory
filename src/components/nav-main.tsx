@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
 import { ChevronRightIcon } from "lucide-react"
 
 import type { NavItem } from "@/types/nav"
@@ -24,22 +24,25 @@ interface NavMainProps {
 }
 
 export function NavMain({ items }: NavMainProps) {
+  const {
+    location: { pathname },
+  } = useRouterState()
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Apps</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           if (item.items && item.items.length > 0) {
+            const isActive = item.items.some((sub) => sub.to === pathname)
+
             return (
               <Collapsible
                 key={item.title}
-                // defaultOpen={item.isActive}
+                defaultOpen={isActive}
                 render={<SidebarMenuItem />}
               >
-                <SidebarMenuButton
-                  tooltip={item.title}
-                  render={<Link to={item.to} />}
-                >
+                <SidebarMenuButton tooltip={item.title}>
                   {item.icon}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
@@ -58,7 +61,14 @@ export function NavMain({ items }: NavMainProps) {
                         {item.items.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
-                              render={<Link to={subItem.to} />}
+                              render={
+                                <Link
+                                  to={subItem.to}
+                                  activeOptions={{
+                                    exact: true,
+                                  }}
+                                />
+                              }
                               className="[&.active]:bg-sidebar-accent [&.active]:text-sidebar-accent-foreground [&.active]:font-medium"
                             >
                               <span>{subItem.title}</span>
@@ -77,7 +87,14 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuButton
               key={item.title}
               tooltip={item.title}
-              render={<Link to={item.to} />}
+              render={
+                <Link
+                  to={item.to}
+                  activeOptions={{
+                    exact: true,
+                  }}
+                />
+              }
               className="[&.active]:bg-sidebar-accent [&.active]:text-sidebar-accent-foreground [&.active]:font-medium"
             >
               {item.icon}
