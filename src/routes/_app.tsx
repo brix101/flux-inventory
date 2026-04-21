@@ -44,6 +44,10 @@ export const Route = createFileRoute("/_app")({
   component: () => <RouteComponent />,
 })
 
+const locationMap = {
+  "/settings/account": "Account Settings",
+}
+
 function RouteComponent() {
   const { user } = Route.useRouteContext()
   const {
@@ -68,6 +72,17 @@ function RouteComponent() {
     }
 
     findRoute(navItems)
+
+    if (routes.length === 0) {
+      const fallbackTitle = locationMap[pathname as keyof typeof locationMap]
+      if (fallbackTitle) {
+        routes.push({
+          to: pathname as (typeof navItems)[number]["to"],
+          title: fallbackTitle,
+        })
+      }
+    }
+
     return routes
   }, [pathname])
 
