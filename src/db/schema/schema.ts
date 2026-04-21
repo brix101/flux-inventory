@@ -145,3 +145,51 @@ export const stockLevels = pgTable(
     ),
   ]
 )
+
+export const requisitions = pgTable("requisitions", (t) => ({
+  id: t.uuid().notNull().defaultRandom().primaryKey(),
+  createdBy: t
+    .text()
+    .references(() => users.id, { onDelete: "set null" })
+    .notNull(),
+  requisitionNumber: t.varchar({ length: 100 }).notNull().unique(),
+  description: t.text(),
+  status: t.varchar({ length: 50 }).notNull().default("DRAFT"), // e.g. 'DRAFT', 'PENDING', 'APPROVED', 'REJECTED'
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t
+    .timestamp({ mode: "string", withTimezone: true })
+    .$onUpdateFn(() => sql`now()`),
+}))
+
+export const requisitionItems = pgTable("requisition_items", (t) => ({
+  id: t.uuid().notNull().defaultRandom().primaryKey(),
+  requisitionId: t
+    .uuid()
+    .references(() => requisitions.id, { onDelete: "cascade" })
+    .notNull(),
+  productVariantId: t
+    .uuid()
+    .references(() => productVariants.id, { onDelete: "set null" })
+    .notNull(),
+  quantityRequested: t.integer().notNull().default(0),
+  quantityApproved: t.integer().notNull().default(0),
+  createdAt: t.timestamp().defaultNow().notNull(),
+  updatedAt: t
+    .timestamp({ mode: "string", withTimezone: true })
+    .$onUpdateFn(() => sql`now()`),
+}))
+
+export const auditLogs = pgTable("audit_logs", (t) => ({
+  id: t.uuid().notNull().defaultRandom().primaryKey(),
+  userId: t
+    .text()
+    .references(() => users.id, { onDelete: "set null" })
+    .notNull(),
+  action: t.varchar({ length: 100 }).notNull(), // e.g. 'CREATE', 'UPDATE', 'DELETE' ,
+  entityName: t.varchar({ length: 100 }).notNull(), // e.g. 'Product', 'PurchaseOrder', etc.
+  entityId: t.uuid(), // ID of the affected entity
+  oldValue: t.json(), // Previous state (for updates/deletes)
+  newValue: t.json(), // New state (for creates/updates)
+  metadata: t.json(), // Additional info (e.g. IP address, user agent, etc.)
+  createdAt: t.timestamp().defaultNow().notNull(),
+}))
