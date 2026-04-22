@@ -2,17 +2,18 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { appConfig } from "@/lib/config"
 
-export const Route = createFileRoute("/_app/inventory/products/new")({
+export const Route = createFileRoute("/_app/inventory/products/$id")({
   component: RouteComponent,
   head: () => ({
     meta: [
       {
-        title: `${appConfig.name} - New Product`,
+        title: `${appConfig.name} - Inventory Products`,
       },
     ],
   }),
 })
 
 function RouteComponent() {
-  return <div>Hello "/_app/inventory/products"!</div>
+  const { id } = Route.useParams()
+  return <div>Hello "/_app/inventory/products/{id}"!</div>
 }

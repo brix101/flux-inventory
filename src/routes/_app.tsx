@@ -1,9 +1,4 @@
-import {
-  createFileRoute,
-  Outlet,
-  redirect,
-  useRouterState,
-} from "@tanstack/react-router"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -26,20 +21,8 @@ export const Route = createFileRoute("/_app")({
   component: () => <RouteComponent />,
 })
 
-const routeMap = {
-  "/inventory": "Inventory",
-  "/inventory/products": "Products",
-  "/inventory/purchase-orders": "Purchase Orders",
-  "/workshops": "Workshops",
-}
-
 function RouteComponent() {
   const { user } = Route.useRouteContext()
-  const {
-    location: { pathname },
-  } = useRouterState()
-
-  console.log(pathname)
 
   return (
     <SidebarProvider>
@@ -47,8 +30,13 @@ function RouteComponent() {
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex w-full justify-between px-4">
-            <div className="text-lg font-semibold">
-              {routeMap[pathname as keyof typeof routeMap] || "Dashboard"}
+            <div className="flex items-center gap-2">
+              {/* <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-6 items-center justify-center rounded-lg"> */}
+              {/*   <TerminalIcon className="size-4" /> */}
+              {/* </div> */}
+              {/* <div className="grid flex-1 text-left text-sm leading-tight"> */}
+              {/*   <span className="truncate font-medium">{appConfig.name}</span> */}
+              {/* </div> */}
             </div>
             <div className="flex items-center gap-2">
               <ModeToggle />

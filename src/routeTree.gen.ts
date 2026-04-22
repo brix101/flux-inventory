@@ -33,6 +33,7 @@ import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/in
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory.products.index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
 import { Route as AppInventoryProductsNewRouteImport } from './routes/_app/inventory.products.new'
+import { Route as AppInventoryProductsIdRouteImport } from './routes/_app/inventory.products.$id'
 import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin.users.new'
 
 const DemoRoute = DemoRouteImport.update({
@@ -154,6 +155,11 @@ const AppInventoryProductsNewRoute = AppInventoryProductsNewRouteImport.update({
   path: '/inventory/products/new',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventoryProductsIdRoute = AppInventoryProductsIdRouteImport.update({
+  id: '/inventory/products/$id',
+  path: '/inventory/products/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AdminAdminUsersNewRoute = AdminAdminUsersNewRouteImport.update({
   id: '/admin/users/new',
   path: '/admin/users/new',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminAdminIndexRoute
   '/inventory/': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
   '/inventory/products/': typeof AppInventoryProductsIndexRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminAdminIndexRoute
   '/inventory': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
   '/inventory/products': typeof AppInventoryProductsIndexRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/_app/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/_app/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
   '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
@@ -257,6 +266,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/inventory/'
     | '/admin/users/new'
+    | '/inventory/products/$id'
     | '/inventory/products/new'
     | '/admin/users/'
     | '/inventory/products/'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inventory'
     | '/admin/users/new'
+    | '/inventory/products/$id'
     | '/inventory/products/new'
     | '/admin/users'
     | '/inventory/products'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/'
     | '/_app/inventory/'
     | '/_admin/admin/users/new'
+    | '/_app/inventory/products/$id'
     | '/_app/inventory/products/new'
     | '/_admin/admin/users/'
     | '/_app/inventory/products/'
@@ -492,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInventoryProductsNewRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inventory/products/$id': {
+      id: '/_app/inventory/products/$id'
+      path: '/inventory/products/$id'
+      fullPath: '/inventory/products/$id'
+      preLoaderRoute: typeof AppInventoryProductsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_admin/admin/users/new': {
       id: '/_admin/admin/users/new'
       path: '/admin/users/new'
@@ -523,6 +542,7 @@ interface AppRouteChildren {
   AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
   AppSettingsAccountRoute: typeof AppSettingsAccountRoute
   AppInventoryIndexRoute: typeof AppInventoryIndexRoute
+  AppInventoryProductsIdRoute: typeof AppInventoryProductsIdRoute
   AppInventoryProductsNewRoute: typeof AppInventoryProductsNewRoute
   AppInventoryProductsIndexRoute: typeof AppInventoryProductsIndexRoute
 }
@@ -534,6 +554,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
   AppSettingsAccountRoute: AppSettingsAccountRoute,
   AppInventoryIndexRoute: AppInventoryIndexRoute,
+  AppInventoryProductsIdRoute: AppInventoryProductsIdRoute,
   AppInventoryProductsNewRoute: AppInventoryProductsNewRoute,
   AppInventoryProductsIndexRoute: AppInventoryProductsIndexRoute,
 }
