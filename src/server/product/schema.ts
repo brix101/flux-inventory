@@ -12,7 +12,6 @@ export const createProductSchema = z.object({
     .or(z.literal("")),
   categoryId: z.uuid("Invalid category ID format").optional(),
   unit: z.string().default("pcs"),
-  variantName: z.string().default("Standard"),
 })
 
 export type CreateProductInput = z.infer<typeof createProductSchema>

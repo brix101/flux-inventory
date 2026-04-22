@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router"
 
 import BetterAuthHeader from "../integrations/better-auth/header-user.tsx"
-import ThemeToggle from "./ThemeToggle"
 
 export default function Header() {
   return (
@@ -48,7 +47,7 @@ export default function Header() {
           </a>
           <BetterAuthHeader />
 
-          <ThemeToggle />
+          <ModeToggle />
         </div>
 
         <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-2 sm:w-auto sm:flex-nowrap sm:pb-0">

@@ -30,8 +30,9 @@ import { Route as ApiInitialSplatRouteImport } from './routes/api/initial.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings.account'
 import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/inventory.purchase-orders'
-import { Route as AppInventoryProductsRouteImport } from './routes/_app/inventory.products'
+import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory.products.index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
+import { Route as AppInventoryProductsNewRouteImport } from './routes/_app/inventory.products.new'
 import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin.users.new'
 
 const DemoRoute = DemoRouteImport.update({
@@ -137,15 +138,21 @@ const AppInventoryPurchaseOrdersRoute =
     path: '/inventory/purchase-orders',
     getParentRoute: () => AppRoute,
   } as any)
-const AppInventoryProductsRoute = AppInventoryProductsRouteImport.update({
-  id: '/inventory/products',
-  path: '/inventory/products',
-  getParentRoute: () => AppRoute,
-} as any)
+const AppInventoryProductsIndexRoute =
+  AppInventoryProductsIndexRouteImport.update({
+    id: '/inventory/products/',
+    path: '/inventory/products/',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
   id: '/admin/users/',
   path: '/admin/users/',
   getParentRoute: () => AdminRoute,
+} as any)
+const AppInventoryProductsNewRoute = AppInventoryProductsNewRouteImport.update({
+  id: '/inventory/products/new',
+  path: '/inventory/products/new',
+  getParentRoute: () => AppRoute,
 } as any)
 const AdminAdminUsersNewRoute = AdminAdminUsersNewRouteImport.update({
   id: '/admin/users/new',
@@ -165,7 +172,6 @@ export interface FileRoutesByFullPath {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/': typeof DemoIndexRoute
-  '/inventory/products': typeof AppInventoryProductsRoute
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -174,7 +180,9 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminAdminIndexRoute
   '/inventory/': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
+  '/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -187,7 +195,6 @@ export interface FileRoutesByTo {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo': typeof DemoIndexRoute
-  '/inventory/products': typeof AppInventoryProductsRoute
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -196,7 +203,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminAdminIndexRoute
   '/inventory': typeof AppInventoryIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
+  '/inventory/products': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,7 +223,6 @@ export interface FileRoutesById {
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/_app/': typeof AppIndexRoute
   '/demo/': typeof DemoIndexRoute
-  '/_app/inventory/products': typeof AppInventoryProductsRoute
   '/_app/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/_app/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -223,7 +231,9 @@ export interface FileRoutesById {
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/_app/inventory/products/new': typeof AppInventoryProductsNewRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
+  '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -239,7 +249,6 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/'
-    | '/inventory/products'
     | '/inventory/purchase-orders'
     | '/settings/account'
     | '/api/auth/$'
@@ -248,7 +257,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/inventory/'
     | '/admin/users/new'
+    | '/inventory/products/new'
     | '/admin/users/'
+    | '/inventory/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -261,7 +272,6 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo'
-    | '/inventory/products'
     | '/inventory/purchase-orders'
     | '/settings/account'
     | '/api/auth/$'
@@ -270,7 +280,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/inventory'
     | '/admin/users/new'
+    | '/inventory/products/new'
     | '/admin/users'
+    | '/inventory/products'
   id:
     | '__root__'
     | '/_admin'
@@ -287,7 +299,6 @@ export interface FileRouteTypes {
     | '/demo/drizzle'
     | '/_app/'
     | '/demo/'
-    | '/_app/inventory/products'
     | '/_app/inventory/purchase-orders'
     | '/_app/settings/account'
     | '/api/auth/$'
@@ -296,7 +307,9 @@ export interface FileRouteTypes {
     | '/_admin/admin/'
     | '/_app/inventory/'
     | '/_admin/admin/users/new'
+    | '/_app/inventory/products/new'
     | '/_admin/admin/users/'
+    | '/_app/inventory/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -458,11 +471,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInventoryPurchaseOrdersRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/inventory/products': {
-      id: '/_app/inventory/products'
+    '/_app/inventory/products/': {
+      id: '/_app/inventory/products/'
       path: '/inventory/products'
-      fullPath: '/inventory/products'
-      preLoaderRoute: typeof AppInventoryProductsRouteImport
+      fullPath: '/inventory/products/'
+      preLoaderRoute: typeof AppInventoryProductsIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_admin/admin/users/': {
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/users/'
       preLoaderRoute: typeof AdminAdminUsersIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/_app/inventory/products/new': {
+      id: '/_app/inventory/products/new'
+      path: '/inventory/products/new'
+      fullPath: '/inventory/products/new'
+      preLoaderRoute: typeof AppInventoryProductsNewRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_admin/admin/users/new': {
       id: '/_admin/admin/users/new'
@@ -500,20 +520,22 @@ interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppWorkshopsRoute: typeof AppWorkshopsRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppInventoryProductsRoute: typeof AppInventoryProductsRoute
   AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
   AppSettingsAccountRoute: typeof AppSettingsAccountRoute
   AppInventoryIndexRoute: typeof AppInventoryIndexRoute
+  AppInventoryProductsNewRoute: typeof AppInventoryProductsNewRoute
+  AppInventoryProductsIndexRoute: typeof AppInventoryProductsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppWorkshopsRoute: AppWorkshopsRoute,
   AppIndexRoute: AppIndexRoute,
-  AppInventoryProductsRoute: AppInventoryProductsRoute,
   AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
   AppSettingsAccountRoute: AppSettingsAccountRoute,
   AppInventoryIndexRoute: AppInventoryIndexRoute,
+  AppInventoryProductsNewRoute: AppInventoryProductsNewRoute,
+  AppInventoryProductsIndexRoute: AppInventoryProductsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

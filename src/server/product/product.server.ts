@@ -30,16 +30,16 @@ export async function createProduct(data: CreateProductInput, userId: string) {
       })
       .returning()
 
-    const variantName = data.variantName || "Standard"
+    const variant = "Standard"
 
-    const sku = generateSKU(newProduct.name, variantName, 0)
+    const sku = generateSKU(newProduct.name, variant, 0)
 
     const variants = await tx
       .insert(productVariants)
       .values({
         productId: newProduct.id,
         sku: sku,
-        name: variantName,
+        name: variant,
         unit: data.unit,
       })
       .returning()
