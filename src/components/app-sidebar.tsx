@@ -1,11 +1,13 @@
 import type { User } from "better-auth"
 import * as React from "react"
+import { Link } from "@tanstack/react-router"
 import {
   ArchiveIcon,
   ClipboardListIcon,
   PackageIcon,
   PaletteIcon,
   PlusIcon,
+  TerminalIcon,
 } from "lucide-react"
 
 import type { NavItem } from "@/types/nav"
@@ -16,11 +18,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
-
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { appConfig } from "@/lib/config"
 
 export const navItems: Record<string, NavItem[]> = {
   inventory: [
@@ -66,10 +67,14 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Tooltip>
-              <TooltipTrigger className="-ml-1" render={<SidebarTrigger />} />
-              <TooltipContent>Toggle sidebar</TooltipContent>
-            </Tooltip>
+            <SidebarMenuButton size="lg" render={<Link to="/inventory" />}>
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <TerminalIcon className="size-4" />
+              </div>
+              <div className="flex flex-col gap-0.5 leading-none">
+                <span className="font-medium">{appConfig.name}</span>
+              </div>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

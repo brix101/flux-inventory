@@ -4,7 +4,6 @@ import { admin as adminPlugin, organization } from "better-auth/plugins"
 import { tanstackStartCookies } from "better-auth/tanstack-start"
 
 import { db } from "@/db"
-
 import { ac, admin, manager, user } from "./permissions"
 
 export const auth = betterAuth({

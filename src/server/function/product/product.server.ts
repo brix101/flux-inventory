@@ -1,21 +1,48 @@
+import { and, count, eq } from "drizzle-orm"
+
+import type { SearchSchema } from "@/server/schema/search.schema"
 import type { CreateProductInput } from "./schema"
 import { db } from "@/db"
 import { auditLogs, products, productVariants } from "@/db/schema"
 import { generateSKU } from "@/lib/sku"
 
-export async function getDbProducts() {
+export async function getDbProducts(_params: SearchSchema) {
   try {
-    const items = await db.query.productVariants.findMany({
-      where: (variant, { eq }) => eq(variant.isActive, true),
-      with: {
-        product: true,
-      },
+    const result = await db.transaction(async (tx) => {
+      const where = and(eq(productVariants.isActive, true))
+
+      const items = await tx.query.productVariants.findMany({
+        where: where,
+        with: {
+          product: true,
+        },
+      })
+
+      const totalCount = await tx
+        .select({
+          count: count(),
+        })
+        .from(productVariants)
+        .where(where)
+        .execute()
+        .then((res) => res[0].count || 0)
+
+      return {
+        items,
+        totalCount,
+      }
     })
 
-    return items
+    return {
+      items: result.items,
+      itemCount: result.totalCount,
+    }
   } catch (e) {
     console.error("Failed to fetch products:", e)
-    return []
+    return {
+      items: [],
+      itemCount: 0,
+    }
   }
 }
 

@@ -6,7 +6,7 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header"
 
-export const Route = createFileRoute("/_app/workshops")({
+export const Route = createFileRoute("/_app/workshops/")({
   component: RouteComponent,
 })
 

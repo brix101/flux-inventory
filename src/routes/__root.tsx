@@ -1,3 +1,5 @@
+import type { QueryClient } from "@tanstack/react-query"
+import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import {
   createRootRouteWithContext,
@@ -8,14 +10,11 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
 import type { TRPCRouter } from "@/integrations/trpc/router"
-import type { QueryClient } from "@tanstack/react-query"
-import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 import { appConfig } from "@/lib/config"
-
 import appCss from "../styles.css?url"
 
 interface MyRouterContext {
@@ -37,7 +36,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: appConfig.name,
+        label: appConfig.name,
         description: appConfig.description,
       },
     ],

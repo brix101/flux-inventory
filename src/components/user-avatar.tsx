@@ -19,7 +19,7 @@ interface UserDropdownProps {
   user: User
 }
 
-export function UserDropdown({ user }: UserDropdownProps) {
+export function UserAvatar({ user }: UserDropdownProps) {
   const router = useRouter()
 
   const initials = user.name

@@ -1,6 +1,8 @@
-//  @ts-check
+/** @typedef {import("prettier").Config} PrettierConfig */
+/** @typedef {import("prettier-plugin-tailwindcss").PluginOptions} TailwindConfig */
+/** @typedef {import("@ianvs/prettier-plugin-sort-imports").PluginConfig} SortImportsConfig */
 
-/** @type {import('prettier').Config} */
+/** @type { PrettierConfig | SortImportsConfig | TailwindConfig } */
 const config = {
   endOfLine: "lf",
   semi: false,
@@ -8,27 +10,37 @@ const config = {
   tabWidth: 2,
   trailingComma: "es5",
 
+  plugins: [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
+  ],
+  tailwindFunctions: ["cn", "cva"],
   importOrder: [
     "<TYPES>",
     "^(react/(.*)$)|^(react$)",
     "<THIRD_PARTY_MODULES>",
     "",
-    "<TYPES>^[.|..|@]",
+    "<TYPES>^@/",
+    "<TYPES>^[.|..]",
     "^@/",
-    "",
+    "^[../]",
     "^[./]",
   ],
-
-  importOrderSeparation: false,
-  importOrderSortSpecifiers: true,
-  importOrderBuiltinModulesToTop: true,
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
-  importOrderMergeDuplicateImports: true,
-  importOrderCombineTypeAndValueImports: true,
-
-  plugins: [
-    "@ianvs/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss",
+  importOrderTypeScriptVersion: "5.0.0",
+  overrides: [
+    {
+      files: "*.json.hbs",
+      options: {
+        parser: "json",
+      },
+    },
+    {
+      files: "*.ts.hbs",
+      options: {
+        parser: "babel",
+      },
+    },
   ],
 }
 
