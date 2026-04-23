@@ -2,9 +2,9 @@ import { and, count, eq } from "drizzle-orm"
 
 import type { SearchSchema } from "@/server/schema/search.schema"
 import type { CreateProductInput } from "./schema"
-import { db } from "@/db"
-import { auditLogs, products, productVariants } from "@/db/schema"
 import { generateSKU } from "@/lib/sku"
+import { db } from "@/server/db"
+import { auditLogs, products, productVariants } from "@/server/db/schema"
 
 export async function getDbProducts(_params: SearchSchema) {
   try {

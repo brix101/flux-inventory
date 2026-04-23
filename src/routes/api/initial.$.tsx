@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router"
 import { eq } from "drizzle-orm"
 import z from "zod"
 
-import { db } from "@/db"
-import { users } from "@/db/schema"
-import { auth } from "@/lib/auth"
+import { auth } from "@/server/auth"
+import { db } from "@/server/db"
+import { users } from "@/server/db/schema"
 
 const secretKey = process.env.ROUTE_SECRET
 

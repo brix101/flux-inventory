@@ -53,8 +53,8 @@ function ProductList() {
   const { data } = useSuspenseQuery(productQueryOptions(search))
 
   const table = useDataTable({
-    data,
-    pageCount: 1,
+    data: data.items,
+    pageCount: data.pageCount,
     columns: productColumns,
   })
 

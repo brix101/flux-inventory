@@ -2,8 +2,8 @@ import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router"
 import { TerminalIcon } from "lucide-react"
 import z from "zod"
 
-import { getSession } from "@/lib/auth.functions"
 import { appConfig } from "@/lib/config"
+import { getSession } from "@/server/auth/auth.functions"
 
 const seachSchema = z.object({
   redirect: z.string().optional(),

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start"
 import { getRequestHeaders } from "@tanstack/react-start/server"
 
-import { auth } from "@/lib/auth"
+import { auth } from "@/server/auth"
 
 export const getSession = createServerFn({ method: "GET" }).handler(
   async () => {
@@ -39,7 +39,7 @@ export const getPermissions = createServerFn({ method: "GET" }).handler(
         userId: session.user.id,
         role: "manager",
         permissions: {
-          manager: ["*"],
+          // manager: ["*"],
         },
       },
     })

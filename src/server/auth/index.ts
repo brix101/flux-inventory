@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin as adminPlugin, organization } from "better-auth/plugins"
 import { tanstackStartCookies } from "better-auth/tanstack-start"
 
-import { db } from "@/db"
+import { db } from "@/server/db"
 import { ac, admin, manager, user } from "./permissions"
 
 export const auth = betterAuth({
