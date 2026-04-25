@@ -7,6 +7,7 @@ import {
   PackageIcon,
   PaletteIcon,
   PlusIcon,
+  ShoppingCartIcon,
   TerminalIcon,
 } from "lucide-react"
 
@@ -45,6 +46,11 @@ export const navItems: Record<string, NavItem[]> = {
     {
       title: "Purchase Orders",
       to: "/inventory/purchase-orders",
+      icon: <ShoppingCartIcon />,
+    },
+    {
+      title: "Requests",
+      to: "/inventory/requests",
       icon: <ClipboardListIcon />,
     },
   ],

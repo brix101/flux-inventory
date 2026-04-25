@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1776744975183,
-      "tag": "0000_awesome_brood",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1776758307378,
-      "tag": "0001_deep_spectrum",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1776758854316,
-      "tag": "0002_real_kinsey_walden",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1776786461701,
-      "tag": "0003_chunky_iceman",
+      "when": 1777120846706,
+      "tag": "0000_hot_deathstrike",
       "breakpoints": true
     }
   ]

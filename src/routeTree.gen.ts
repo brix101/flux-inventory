@@ -29,6 +29,7 @@ import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
 import { Route as ApiInitialSplatRouteImport } from './routes/api/initial.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings/account'
+import { Route as AppInventoryRequestsRouteImport } from './routes/_app/inventory/requests'
 import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/inventory/purchase-orders'
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products.index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
@@ -133,6 +134,11 @@ const AppSettingsAccountRoute = AppSettingsAccountRouteImport.update({
   path: '/settings/account',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventoryRequestsRoute = AppInventoryRequestsRouteImport.update({
+  id: '/inventory/requests',
+  path: '/inventory/requests',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInventoryPurchaseOrdersRoute =
   AppInventoryPurchaseOrdersRouteImport.update({
     id: '/inventory/purchase-orders',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/': typeof DemoIndexRoute
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/inventory/requests': typeof AppInventoryRequestsRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo': typeof DemoIndexRoute
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/inventory/requests': typeof AppInventoryRequestsRoute
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/demo/': typeof DemoIndexRoute
   '/_app/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/_app/inventory/requests': typeof AppInventoryRequestsRoute
   '/_app/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/demo/drizzle'
     | '/demo/'
     | '/inventory/purchase-orders'
+    | '/inventory/requests'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/demo/drizzle'
     | '/demo'
     | '/inventory/purchase-orders'
+    | '/inventory/requests'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/demo/'
     | '/_app/inventory/purchase-orders'
+    | '/_app/inventory/requests'
     | '/_app/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -476,6 +488,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsAccountRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inventory/requests': {
+      id: '/_app/inventory/requests'
+      path: '/inventory/requests'
+      fullPath: '/inventory/requests'
+      preLoaderRoute: typeof AppInventoryRequestsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/inventory/purchase-orders': {
       id: '/_app/inventory/purchase-orders'
       path: '/inventory/purchase-orders'
@@ -539,6 +558,7 @@ interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppIndexRoute: typeof AppIndexRoute
   AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
+  AppInventoryRequestsRoute: typeof AppInventoryRequestsRoute
   AppSettingsAccountRoute: typeof AppSettingsAccountRoute
   AppInventoryIndexRoute: typeof AppInventoryIndexRoute
   AppWorkshopsIndexRoute: typeof AppWorkshopsIndexRoute
@@ -551,6 +571,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppIndexRoute: AppIndexRoute,
   AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
+  AppInventoryRequestsRoute: AppInventoryRequestsRoute,
   AppSettingsAccountRoute: AppSettingsAccountRoute,
   AppInventoryIndexRoute: AppInventoryIndexRoute,
   AppWorkshopsIndexRoute: AppWorkshopsIndexRoute,
