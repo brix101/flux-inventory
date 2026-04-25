@@ -42,6 +42,7 @@ export function NavMain({ name, items }: NavMainProps) {
                     to={item.to}
                     activeOptions={{
                       exact: true,
+                      includeSearch: true,
                     }}
                   />
                 }

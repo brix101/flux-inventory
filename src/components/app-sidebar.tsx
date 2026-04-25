@@ -4,10 +4,12 @@ import { Link } from "@tanstack/react-router"
 import {
   ArchiveIcon,
   ClipboardListIcon,
+  FactoryIcon,
   PackageIcon,
   PaletteIcon,
   PlusIcon,
   ShoppingCartIcon,
+  TagsIcon,
   TerminalIcon,
 } from "lucide-react"
 
@@ -31,6 +33,7 @@ export const navItems: Record<string, NavItem[]> = {
       to: "/inventory",
       icon: <ArchiveIcon />,
     },
+
     {
       title: "Products",
       to: "/inventory/products",
@@ -39,6 +42,16 @@ export const navItems: Record<string, NavItem[]> = {
         {
           title: "Add Product",
           to: "/inventory/products/new",
+          icon: <PlusIcon />,
+        },
+        {
+          title: "Add Category",
+          to: "/inventory/categories/new",
+          icon: <PlusIcon />,
+        },
+        {
+          title: "Add Supplier",
+          to: "/inventory/suppliers/new",
           icon: <PlusIcon />,
         },
       ],
@@ -52,6 +65,16 @@ export const navItems: Record<string, NavItem[]> = {
       title: "Requests",
       to: "/inventory/requests",
       icon: <ClipboardListIcon />,
+    },
+    {
+      title: "Categories",
+      to: "/inventory/categories",
+      icon: <TagsIcon />,
+    },
+    {
+      title: "Suppliers",
+      to: "/inventory/suppliers",
+      icon: <FactoryIcon />,
     },
   ],
   workshops: [

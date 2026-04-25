@@ -179,6 +179,7 @@ CREATE TABLE "requisition_items" (
 	"quantity_requested" integer DEFAULT 0 NOT NULL,
 	"quantity_approved" integer DEFAULT 0 NOT NULL,
 	"suplier_id" uuid,
+	"notes" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp
 );

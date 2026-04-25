@@ -1,5 +1,5 @@
 {
-  "id": "75c68f32-9422-47f4-9b9c-737b3e2e9c27",
+  "id": "be4ebb3d-599e-4f93-ab16-466ce7ec2174",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1427,6 +1427,12 @@
         "suplier_id": {
           "name": "suplier_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },

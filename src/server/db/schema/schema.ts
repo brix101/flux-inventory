@@ -153,7 +153,7 @@ export const locations = pgTable("locations", (t) => ({
 }))
 
 export const locationsRelations = relations(locations, ({ many }) => ({
-  movements: many(stockMoves),
+  // movements: many(stockMoves),
   stockLevels: many(stockLevels),
 }))
 
@@ -393,6 +393,7 @@ export const requisitionItems = pgTable("requisition_items", (t) => ({
   quantityRequested: t.integer().notNull().default(0),
   quantityApproved: t.integer().notNull().default(0),
   suplierId: t.uuid().references(() => suppliers.id, { onDelete: "set null" }),
+  notes: t.text(),
   createdAt: t.timestamp().defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }))

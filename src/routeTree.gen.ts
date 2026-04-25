@@ -29,12 +29,16 @@ import { Route as ApiTrpcSplatRouteImport } from './routes/api/trpc.$'
 import { Route as ApiInitialSplatRouteImport } from './routes/api/initial.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings/account'
+import { Route as AppInventorySuppliersRouteImport } from './routes/_app/inventory/suppliers'
 import { Route as AppInventoryRequestsRouteImport } from './routes/_app/inventory/requests'
 import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/inventory/purchase-orders'
+import { Route as AppInventoryCategoriesRouteImport } from './routes/_app/inventory/categories'
 import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products.index'
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin.users.index'
+import { Route as AppInventorySuppliersNewRouteImport } from './routes/_app/inventory/suppliers.new'
 import { Route as AppInventoryProductsNewRouteImport } from './routes/_app/inventory/products.new'
 import { Route as AppInventoryProductsIdRouteImport } from './routes/_app/inventory/products.$id'
+import { Route as AppInventoryCategoriesNewRouteImport } from './routes/_app/inventory/categories.new'
 import { Route as AdminAdminUsersNewRouteImport } from './routes/_admin/admin.users.new'
 
 const DemoRoute = DemoRouteImport.update({
@@ -134,6 +138,11 @@ const AppSettingsAccountRoute = AppSettingsAccountRouteImport.update({
   path: '/settings/account',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventorySuppliersRoute = AppInventorySuppliersRouteImport.update({
+  id: '/inventory/suppliers',
+  path: '/inventory/suppliers',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInventoryRequestsRoute = AppInventoryRequestsRouteImport.update({
   id: '/inventory/requests',
   path: '/inventory/requests',
@@ -145,6 +154,11 @@ const AppInventoryPurchaseOrdersRoute =
     path: '/inventory/purchase-orders',
     getParentRoute: () => AppRoute,
   } as any)
+const AppInventoryCategoriesRoute = AppInventoryCategoriesRouteImport.update({
+  id: '/inventory/categories',
+  path: '/inventory/categories',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInventoryProductsIndexRoute =
   AppInventoryProductsIndexRouteImport.update({
     id: '/inventory/products/',
@@ -156,6 +170,12 @@ const AdminAdminUsersIndexRoute = AdminAdminUsersIndexRouteImport.update({
   path: '/admin/users/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AppInventorySuppliersNewRoute =
+  AppInventorySuppliersNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AppInventorySuppliersRoute,
+  } as any)
 const AppInventoryProductsNewRoute = AppInventoryProductsNewRouteImport.update({
   id: '/inventory/products/new',
   path: '/inventory/products/new',
@@ -166,6 +186,12 @@ const AppInventoryProductsIdRoute = AppInventoryProductsIdRouteImport.update({
   path: '/inventory/products/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInventoryCategoriesNewRoute =
+  AppInventoryCategoriesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AppInventoryCategoriesRoute,
+  } as any)
 const AdminAdminUsersNewRoute = AdminAdminUsersNewRouteImport.update({
   id: '/admin/users/new',
   path: '/admin/users/new',
@@ -183,8 +209,10 @@ export interface FileRoutesByFullPath {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/': typeof DemoIndexRoute
+  '/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/inventory/requests': typeof AppInventoryRequestsRoute
+  '/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -193,8 +221,10 @@ export interface FileRoutesByFullPath {
   '/inventory/': typeof AppInventoryIndexRoute
   '/workshops/': typeof AppWorkshopsIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
   '/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
   '/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
@@ -208,8 +238,10 @@ export interface FileRoutesByTo {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo': typeof DemoIndexRoute
+  '/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
   '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/inventory/requests': typeof AppInventoryRequestsRoute
+  '/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
   '/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -218,8 +250,10 @@ export interface FileRoutesByTo {
   '/inventory': typeof AppInventoryIndexRoute
   '/workshops': typeof AppWorkshopsIndexRoute
   '/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
   '/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
   '/inventory/products': typeof AppInventoryProductsIndexRoute
 }
@@ -238,8 +272,10 @@ export interface FileRoutesById {
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/_app/': typeof AppIndexRoute
   '/demo/': typeof DemoIndexRoute
+  '/_app/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
   '/_app/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
   '/_app/inventory/requests': typeof AppInventoryRequestsRoute
+  '/_app/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
   '/_app/settings/account': typeof AppSettingsAccountRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/initial/$': typeof ApiInitialSplatRoute
@@ -248,8 +284,10 @@ export interface FileRoutesById {
   '/_app/inventory/': typeof AppInventoryIndexRoute
   '/_app/workshops/': typeof AppWorkshopsIndexRoute
   '/_admin/admin/users/new': typeof AdminAdminUsersNewRoute
+  '/_app/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
   '/_app/inventory/products/$id': typeof AppInventoryProductsIdRoute
   '/_app/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/_app/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
   '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
@@ -266,8 +304,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/'
+    | '/inventory/categories'
     | '/inventory/purchase-orders'
     | '/inventory/requests'
+    | '/inventory/suppliers'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -276,8 +316,10 @@ export interface FileRouteTypes {
     | '/inventory/'
     | '/workshops/'
     | '/admin/users/new'
+    | '/inventory/categories/new'
     | '/inventory/products/$id'
     | '/inventory/products/new'
+    | '/inventory/suppliers/new'
     | '/admin/users/'
     | '/inventory/products/'
   fileRoutesByTo: FileRoutesByTo
@@ -291,8 +333,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo'
+    | '/inventory/categories'
     | '/inventory/purchase-orders'
     | '/inventory/requests'
+    | '/inventory/suppliers'
     | '/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -301,8 +345,10 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/workshops'
     | '/admin/users/new'
+    | '/inventory/categories/new'
     | '/inventory/products/$id'
     | '/inventory/products/new'
+    | '/inventory/suppliers/new'
     | '/admin/users'
     | '/inventory/products'
   id:
@@ -320,8 +366,10 @@ export interface FileRouteTypes {
     | '/demo/drizzle'
     | '/_app/'
     | '/demo/'
+    | '/_app/inventory/categories'
     | '/_app/inventory/purchase-orders'
     | '/_app/inventory/requests'
+    | '/_app/inventory/suppliers'
     | '/_app/settings/account'
     | '/api/auth/$'
     | '/api/initial/$'
@@ -330,8 +378,10 @@ export interface FileRouteTypes {
     | '/_app/inventory/'
     | '/_app/workshops/'
     | '/_admin/admin/users/new'
+    | '/_app/inventory/categories/new'
     | '/_app/inventory/products/$id'
     | '/_app/inventory/products/new'
+    | '/_app/inventory/suppliers/new'
     | '/_admin/admin/users/'
     | '/_app/inventory/products/'
   fileRoutesById: FileRoutesById
@@ -488,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsAccountRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/inventory/suppliers': {
+      id: '/_app/inventory/suppliers'
+      path: '/inventory/suppliers'
+      fullPath: '/inventory/suppliers'
+      preLoaderRoute: typeof AppInventorySuppliersRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/inventory/requests': {
       id: '/_app/inventory/requests'
       path: '/inventory/requests'
@@ -500,6 +557,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory/purchase-orders'
       fullPath: '/inventory/purchase-orders'
       preLoaderRoute: typeof AppInventoryPurchaseOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/categories': {
+      id: '/_app/inventory/categories'
+      path: '/inventory/categories'
+      fullPath: '/inventory/categories'
+      preLoaderRoute: typeof AppInventoryCategoriesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/inventory/products/': {
@@ -516,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_app/inventory/suppliers/new': {
+      id: '/_app/inventory/suppliers/new'
+      path: '/new'
+      fullPath: '/inventory/suppliers/new'
+      preLoaderRoute: typeof AppInventorySuppliersNewRouteImport
+      parentRoute: typeof AppInventorySuppliersRoute
+    }
     '/_app/inventory/products/new': {
       id: '/_app/inventory/products/new'
       path: '/inventory/products/new'
@@ -529,6 +600,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/inventory/products/$id'
       preLoaderRoute: typeof AppInventoryProductsIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/categories/new': {
+      id: '/_app/inventory/categories/new'
+      path: '/new'
+      fullPath: '/inventory/categories/new'
+      preLoaderRoute: typeof AppInventoryCategoriesNewRouteImport
+      parentRoute: typeof AppInventoryCategoriesRoute
     }
     '/_admin/admin/users/new': {
       id: '/_admin/admin/users/new'
@@ -554,11 +632,40 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AppInventoryCategoriesRouteChildren {
+  AppInventoryCategoriesNewRoute: typeof AppInventoryCategoriesNewRoute
+}
+
+const AppInventoryCategoriesRouteChildren: AppInventoryCategoriesRouteChildren =
+  {
+    AppInventoryCategoriesNewRoute: AppInventoryCategoriesNewRoute,
+  }
+
+const AppInventoryCategoriesRouteWithChildren =
+  AppInventoryCategoriesRoute._addFileChildren(
+    AppInventoryCategoriesRouteChildren,
+  )
+
+interface AppInventorySuppliersRouteChildren {
+  AppInventorySuppliersNewRoute: typeof AppInventorySuppliersNewRoute
+}
+
+const AppInventorySuppliersRouteChildren: AppInventorySuppliersRouteChildren = {
+  AppInventorySuppliersNewRoute: AppInventorySuppliersNewRoute,
+}
+
+const AppInventorySuppliersRouteWithChildren =
+  AppInventorySuppliersRoute._addFileChildren(
+    AppInventorySuppliersRouteChildren,
+  )
+
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppInventoryCategoriesRoute: typeof AppInventoryCategoriesRouteWithChildren
   AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
   AppInventoryRequestsRoute: typeof AppInventoryRequestsRoute
+  AppInventorySuppliersRoute: typeof AppInventorySuppliersRouteWithChildren
   AppSettingsAccountRoute: typeof AppSettingsAccountRoute
   AppInventoryIndexRoute: typeof AppInventoryIndexRoute
   AppWorkshopsIndexRoute: typeof AppWorkshopsIndexRoute
@@ -570,8 +677,10 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppIndexRoute: AppIndexRoute,
+  AppInventoryCategoriesRoute: AppInventoryCategoriesRouteWithChildren,
   AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
   AppInventoryRequestsRoute: AppInventoryRequestsRoute,
+  AppInventorySuppliersRoute: AppInventorySuppliersRouteWithChildren,
   AppSettingsAccountRoute: AppSettingsAccountRoute,
   AppInventoryIndexRoute: AppInventoryIndexRoute,
   AppWorkshopsIndexRoute: AppWorkshopsIndexRoute,
