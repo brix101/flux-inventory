@@ -1,10 +1,11 @@
 import { and, count, eq } from "drizzle-orm"
-import { Data, Effect } from "effect"
+import * as Data from "effect/Data"
+import * as Effect from "effect/Effect"
 
 import type { SearchSchema } from "../../schema/search.schema"
 import type { CreateProductInput } from "./schema"
 import { generateSKU } from "@/lib/sku"
-import { db } from "@/server/db"
+import { Database } from "@/server/db/db.effect"
 import { auditLogs, products, productVariants } from "@/server/db/schema"
 
 export class ProductError extends Data.TaggedError("ProductError")<{
@@ -14,26 +15,20 @@ export class ProductError extends Data.TaggedError("ProductError")<{
 
 export function getDbProducts(_params: SearchSchema) {
   return Effect.gen(function* () {
+    const db = yield* Database
+
     const where = and(eq(productVariants.isActive, true))
 
-    const items = yield* Effect.tryPromise({
-      try: async () => {
-        return await db.transaction(async (tx) => {
-          return await tx.query.productVariants.findMany({
-            where: where,
-            with: {
-              product: true,
-            },
-          })
+    return yield* db.use((client) =>
+      client.transaction(async (tx) => {
+        const items = await tx.query.productVariants.findMany({
+          where: where,
+          with: {
+            product: true,
+          },
         })
-      },
-      catch: (cause) =>
-        new ProductError({ cause, message: "Failed to fetch products" }),
-    })
 
-    const totalCount = yield* Effect.tryPromise({
-      try: async () => {
-        return await db
+        const totalCount = await tx
           .select({
             count: count(),
           })
@@ -41,22 +36,22 @@ export function getDbProducts(_params: SearchSchema) {
           .where(where)
           .execute()
           .then((res) => res[0].count || 0)
-      },
-      catch: (cause) =>
-        new ProductError({ cause, message: "Failed to count products" }),
-    })
 
-    return {
-      items,
-      itemCount: totalCount,
-    }
+        return {
+          items,
+          itemCount: totalCount,
+        }
+      })
+    )
   })
 }
 
 export function createProduct(data: CreateProductInput, userId: string) {
-  return Effect.tryPromise({
-    try: async () => {
-      return await db.transaction(async (tx) => {
+  return Effect.gen(function* () {
+    const db = yield* Database
+
+    return yield* db.use((client) =>
+      client.transaction(async (tx) => {
         const [newProduct] = await tx
           .insert(products)
           .values({
@@ -94,8 +89,6 @@ export function createProduct(data: CreateProductInput, userId: string) {
           variants,
         }
       })
-    },
-    catch: (cause) =>
-      new ProductError({ cause, message: "Failed to create product" }),
+    )
   })
 }

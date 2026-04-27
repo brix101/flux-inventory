@@ -1,6 +1,5 @@
 import { queryOptions } from "@tanstack/react-query"
 import { createServerFn } from "@tanstack/react-start"
-import { Effect } from "effect"
 
 import type { SearchSchema } from "@/server/schema/search.schema"
 import { searchSchema } from "@/server/schema/search.schema"
@@ -21,9 +20,9 @@ export const getProducts = createServerFn({ method: "GET" })
 
 export const getProductsEffect = createServerFn({ method: "GET" })
   .inputValidator(searchSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context: { runEffect } }) => {
     const limit = data.limit || 20
-    const effectResult = await Effect.runPromise(getDbProductsEffect(data))
+    const effectResult = await runEffect(getDbProductsEffect(data))
     return {
       items: effectResult.items,
       itemCount: effectResult.itemCount,
