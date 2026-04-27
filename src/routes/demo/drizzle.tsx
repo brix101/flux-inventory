@@ -37,11 +37,10 @@ const getServerCategories = createServerFn({ method: "GET" }).handler(
 
 const createCategory = createServerFn({ method: "POST" })
   .inputValidator(CategorySchema)
-  .handler(async ({ data, context: { runEffect } }) =>
-    runEffect(
+  .handler(async ({ data, context: { runEffect } }) => {
+    await ensureSession()
+    return runEffect(
       Effect.gen(function* () {
-        ensureSession()
-
         const db = yield* Database
 
         yield* db.use((client) =>
@@ -54,7 +53,7 @@ const createCategory = createServerFn({ method: "POST" })
         return { success: true }
       })
     )
-  )
+  })
 
 export const Route = createFileRoute("/demo/drizzle")({
   component: DemoDrizzle,

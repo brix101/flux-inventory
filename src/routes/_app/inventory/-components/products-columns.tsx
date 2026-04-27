@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table"
 import { Text } from "lucide-react"
 
-import type { getProducts } from "@/server/function/product/product.functions"
+import type { getProductsFn } from "@/server/function/product/product.functions"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
 export type ProductType = Awaited<
-  ReturnType<typeof getProducts>
+  ReturnType<typeof getProductsFn>
 >["items"][number]
 
 export const productColumns: ColumnDef<ProductType>[] = [

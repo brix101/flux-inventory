@@ -34,7 +34,7 @@ export const ensureSession = createServerFn({ method: "GET" }).handler(
         const session = yield* auth.getSession(headers)
 
         if (Option.isNone(session)) {
-          throw new Error("Unauthorized")
+          return yield* Effect.fail(new Error("Unauthorized"))
         }
 
         return session.value

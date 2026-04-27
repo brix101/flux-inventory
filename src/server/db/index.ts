@@ -1,10 +1,12 @@
 import type { PoolConfig } from "pg"
+import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/node-postgres"
 import * as Config from "effect/Config"
 import * as Context from "effect/Context"
 import * as Data from "effect/Data"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
+import * as Match from "effect/Match"
 import * as Redacted from "effect/Redacted"
 import pg from "pg"
 
@@ -22,19 +24,50 @@ export class DatabaseError extends Data.TaggedError("DatabaseError")<{
     | "unique_violation"
     | "foreign_key_violation"
     | "connection_error"
-    | "unknown"
-  readonly cause: pg.DatabaseError
+    | "unknown_error"
+  readonly cause: unknown
 }> {
-  public override toString() {
-    return `DatabaseError: ${this.cause.message}`
+  public get message(): string {
+    if (this.cause instanceof Error) {
+      return this.cause.message
+    }
+
+    if (
+      this.cause &&
+      typeof this.cause === "object" &&
+      "message" in this.cause
+    ) {
+      return String(this.cause.message)
+    }
+
+    return String(this.cause)
   }
 
-  public get message() {
-    return this.cause.message
+  public override toString(): string {
+    return `DatabaseError [${this.type}]: ${this.message}`
   }
 }
 
 type Client = ReturnType<typeof drizzle<typeof schema, pg.Pool>>
+
+const handleDatabaseError = (error: unknown): DatabaseError =>
+  Match.value(error).pipe(
+    Match.when(
+      (e: any) => e?.code === "23505" || e?.cause?.code === "23505",
+      () => new DatabaseError({ type: "unique_violation", cause: error })
+    ),
+    Match.when(
+      (e: any) => e?.code === "23503" || e?.cause?.code === "23503",
+      () => new DatabaseError({ type: "foreign_key_violation", cause: error })
+    ),
+    Match.when(
+      (e: any) => e?.code === "08000" || e?.cause?.code === "08000",
+      () => new DatabaseError({ type: "connection_error", cause: error })
+    ),
+    Match.orElse(
+      () => new DatabaseError({ type: "unknown_error", cause: error })
+    )
+  )
 
 export class Database extends Context.Service<Database>()("Database", {
   make: Effect.gen(function* () {
@@ -69,7 +102,7 @@ export class Database extends Context.Service<Database>()("Database", {
       ),
       Effect.tap(() =>
         Effect.sync(() =>
-          console.info("[Database Client]: Connection to database established.")
+          Effect.log("[Database] Successfully connected to the database")
         )
       )
     )
@@ -84,35 +117,36 @@ export class Database extends Context.Service<Database>()("Database", {
     ) {
       return yield* Effect.tryPromise({
         try: () => fn(client),
-        catch: (error): DatabaseError => {
-          if (error instanceof pg.DatabaseError) {
-            switch (error.code) {
-              case "23505":
-                return new DatabaseError({
-                  type: "unique_violation",
-                  cause: error,
-                })
-              case "23503":
-                return new DatabaseError({
-                  type: "foreign_key_violation",
-                  cause: error,
-                })
-              case "08000":
-                return new DatabaseError({
-                  type: "connection_error",
-                  cause: error,
-                })
-            }
-          }
+        catch: handleDatabaseError,
+      })
+    })
 
-          throw error
-        },
+    type Tx = Parameters<typeof client.transaction>[0] extends (
+      tx: infer T
+    ) => any
+      ? T
+      : never
+
+    const withAudit = Effect.fn("database.withAudit")(function* <T>(
+      userId: string,
+      fn: (tx: Tx) => Promise<T>
+    ) {
+      return yield* Effect.tryPromise({
+        try: () =>
+          client.transaction(async (tx) => {
+            await tx.execute(
+              sql`SELECT set_config('app.user_id', ${userId}, true)`
+            )
+            return fn(tx)
+          }),
+        catch: handleDatabaseError,
       })
     })
 
     return {
-      db: client,
+      client,
       use,
+      withAudit,
     }
   }),
 }) {

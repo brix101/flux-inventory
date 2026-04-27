@@ -1,10 +1,13 @@
 import { and, count, eq } from "drizzle-orm"
 import * as Data from "effect/Data"
 import * as Effect from "effect/Effect"
+import * as Option from "effect/Option"
 
 import type { SearchSchema } from "../../schema/search.schema"
 import type { CreateProductInput } from "./schema"
 import { generateSKU } from "@/lib/sku"
+import { AppRequest } from "@/server/AppRequest"
+import { Auth } from "@/server/auth"
 import { Database } from "@/server/db"
 import { auditLogs, products, productVariants } from "@/server/db/schema"
 
@@ -46,49 +49,50 @@ export function getDbProducts(_params: SearchSchema) {
   })
 }
 
-export function createProduct(data: CreateProductInput, userId: string) {
+export function createProduct(data: CreateProductInput) {
   return Effect.gen(function* () {
+    const req = yield* AppRequest
     const db = yield* Database
+    const auth = yield* Auth
 
-    return yield* db.use((client) =>
-      client.transaction(async (tx) => {
-        const [newProduct] = await tx
-          .insert(products)
-          .values({
-            name: data.name,
-            description: data.description,
-            categoryId: data.categoryId,
-          })
-          .returning()
+    const session = yield* auth.getSession(req.headers)
 
-        const variant = "Standard"
+    if (Option.isNone(session)) {
+      return yield* Effect.fail(new Error("Unauthorized"))
+    }
 
-        const sku = generateSKU(newProduct.name, variant, 0)
+    const userId = session.value.user.id
 
-        const variants = await tx
-          .insert(productVariants)
-          .values({
-            productId: newProduct.id,
-            sku: sku,
-            name: variant,
-            unit: data.unit,
-          })
-          .returning()
-
-        await tx.insert(auditLogs).values({
-          userId,
-          action: "CREATE",
-          entityName: products._.name,
-          entityId: newProduct.id,
-          oldValue: null,
-          newValue: JSON.stringify(newProduct),
+    const result = yield* db.withAudit(userId, async (tx) => {
+      const [newProduct] = await tx
+        .insert(products)
+        .values({
+          name: data.name,
+          description: data.description,
+          categoryId: data.categoryId,
         })
+        .returning()
 
-        return {
-          ...newProduct,
-          variants,
-        }
-      })
-    )
+      const variant = "Standard"
+
+      const sku = generateSKU(newProduct.name, variant, 0)
+
+      const variants = await tx
+        .insert(productVariants)
+        .values({
+          productId: newProduct.id,
+          sku: sku,
+          name: variant,
+          unit: data.unit,
+        })
+        .returning()
+
+      return {
+        ...newProduct,
+        variants,
+      }
+    })
+
+    return result
   })
 }

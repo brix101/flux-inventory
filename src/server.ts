@@ -1,10 +1,12 @@
 import { isNotFound, isRedirect } from "@tanstack/react-router"
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry"
 import * as Cause from "effect/Cause"
+import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import * as Layer from "effect/Layer"
 
+import { AppRequest } from "./server/AppRequest"
 import { Auth } from "./server/auth"
 import { Database } from "./server/db"
 import { makeLoggerLayer } from "./server/LayerEx"
@@ -40,11 +42,15 @@ import { makeLoggerLayer } from "./server/LayerEx"
  * server context that would otherwise be lost after `ShallowErrorPlugin`
  * strips everything except `.message`.
  */
-const makeRunEffect = (_request: Request) => {
-  // const dbLayer = Layer.provide(Database.layer)
+const makeRunEffect = (request: Request) => {
+  const requestLayer = Layer.succeedContext(Context.make(AppRequest, request))
   const authLayer = Layer.provideMerge(Auth.layer, Database.layer)
 
-  const runtimeLayer = Layer.merge(authLayer, makeLoggerLayer(process.env))
+  const authRequestLayer = Layer.merge(authLayer, requestLayer)
+  const runtimeLayer = Layer.merge(
+    authRequestLayer,
+    makeLoggerLayer(process.env)
+  )
 
   return async <TValue, TError>(
     effect: Effect.Effect<TValue, TError, Layer.Success<typeof runtimeLayer>>
@@ -52,16 +58,23 @@ const makeRunEffect = (_request: Request) => {
     const exit = await Effect.runPromiseExit(
       Effect.provide(effect, runtimeLayer)
     )
-    if (Exit.isSuccess(exit)) return exit.value
+
+    if (Exit.isSuccess(exit)) {
+      return exit.value
+    }
+
     const squashed = Cause.squash(exit.cause)
-    // oxlint-disable-next-line @typescript-eslint/only-throw-error -- redirect is a Response, notFound is a plain object; TanStack expects these thrown as-is
-    if (isRedirect(squashed) || isNotFound(squashed)) throw squashed
+    if (isRedirect(squashed) || isNotFound(squashed)) {
+      throw squashed
+    }
+
     if (squashed instanceof Error) {
       if (Cause.isUnknownError(squashed) && squashed.cause instanceof Error) {
         squashed.message = squashed.cause.message
       } else if (!squashed.message) {
         squashed.message = Cause.pretty(exit.cause)
       }
+
       throw squashed
     }
     throw new Error(Cause.pretty(exit.cause))

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm"
-import { index, pgEnum, pgTable } from "drizzle-orm/pg-core"
+import { index, pgTable } from "drizzle-orm/pg-core"
 
 import { users } from "./auth-schema"
 
@@ -7,19 +7,13 @@ import { users } from "./auth-schema"
 // AUDIT LOGS
 // ===========================================================================
 
-export const auditActionEnum = pgEnum("audit_action", [
-  "CREATE",
-  "UPDATE",
-  "DELETE",
-])
-
 export const auditLogs = pgTable(
   "audit_logs",
   (t) => ({
     id: t.uuid().notNull().defaultRandom().primaryKey(),
 
     userId: t.text().references(() => users.id, { onDelete: "set null" }),
-    action: auditActionEnum("action").notNull(),
+    action: t.text(),
 
     entityName: t.varchar({ length: 100 }).notNull(),
     entityId: t.uuid().notNull(),

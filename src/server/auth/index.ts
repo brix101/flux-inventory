@@ -14,10 +14,10 @@ import { ac, admin, manager, user } from "./permissions"
 
 export class Auth extends Context.Service<Auth>()("Auth", {
   make: Effect.gen(function* () {
-    const { db } = yield* Database
+    const { client } = yield* Database
 
     const auth = betterAuth({
-      database: drizzleAdapter(db, {
+      database: drizzleAdapter(client, {
         provider: "pg",
         usePlural: true,
       }),
@@ -97,6 +97,7 @@ export class Auth extends Context.Service<Auth>()("Auth", {
 
     return {
       auth,
+      api: auth.api,
       use,
       handler,
       getSession,
