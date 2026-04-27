@@ -1,5 +1,6 @@
 import type { User } from "better-auth"
-import { Link, useRouter } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
+import { useServerFn } from "@tanstack/react-start"
 import { BadgeCheckIcon, LogOutIcon } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,32 +14,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { authClient } from "@/lib/auth-client"
+import { signOutServerFn } from "@/server/auth/auth.functions"
 
 interface UserDropdownProps {
   user: User
 }
 
 export function UserAvatar({ user }: UserDropdownProps) {
-  const router = useRouter()
+  const signOutFn = useServerFn(signOutServerFn)
 
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
     .join("")
     .toUpperCase()
-
-  function handleLogout() {
-    authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.navigate({
-            to: "/login",
-          })
-        },
-      },
-    })
-  }
 
   return (
     <DropdownMenu>
@@ -83,7 +72,7 @@ export function UserAvatar({ user }: UserDropdownProps) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
+        <DropdownMenuItem onClick={() => signOutFn()}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

@@ -11,10 +11,7 @@ import {
 } from "@/components/page-header"
 import { useDataTable } from "@/hooks/use-data-table"
 import { appConfig } from "@/lib/config"
-import {
-  productQueryOptions,
-  productQueryOptionsEffect,
-} from "@/server/function/product/product.functions"
+import { productQueryOptions } from "@/server/function/product/product.functions"
 import { searchSchema } from "@/server/schema/search.schema"
 import { productColumns } from "./-components/products-columns"
 import { ProductsTableActionBar } from "./-components/products-table-actions"
@@ -31,7 +28,7 @@ export const Route = createFileRoute("/_app/inventory/products/")({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ search }),
   loader: async ({ context, deps }) => {
-    context.queryClient.ensureQueryData(productQueryOptionsEffect(deps.search))
+    context.queryClient.ensureQueryData(productQueryOptions(deps.search))
   },
 })
 
@@ -53,7 +50,7 @@ function RouteComponent() {
 
 function ProductList() {
   const search = Route.useSearch()
-  const { data } = useSuspenseQuery(productQueryOptionsEffect(search))
+  const { data } = useSuspenseQuery(productQueryOptions(search))
 
   const table = useDataTable({
     data: data.items,

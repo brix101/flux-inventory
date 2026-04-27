@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { eq } from "drizzle-orm"
+import * as Effect from "effect/Effect"
 import z from "zod"
 
-import { auth } from "@/server/auth"
-import { db } from "@/server/db"
+import { Auth } from "@/server/auth"
+import { Database } from "@/server/db"
 import { users } from "@/server/db/schema"
 
 const secretKey = process.env.ROUTE_SECRET
@@ -17,7 +18,7 @@ const defaultUserSchema = z.object({
 export const Route = createFileRoute("/api/initial/$")({
   server: {
     handlers: {
-      POST: async ({ params, request }) => {
+      POST: async ({ params, request, context: { runEffect } }) => {
         const { _splat } = params
 
         switch (_splat) {
@@ -44,21 +45,34 @@ export const Route = createFileRoute("/api/initial/$")({
                 )
               }
 
-              const res = await auth.api.createUser({
-                body: {
-                  ...data,
-                  role: "admin",
-                },
-              })
+              const user = await runEffect(
+                Effect.gen(function* () {
+                  const auth = yield* Auth
+                  const db = yield* Database
 
-              await db
-                .update(users)
-                .set({ emailVerified: true })
-                .where(eq(users.id, res.user.id))
+                  const result = yield* auth.use((api) =>
+                    api.createUser({
+                      body: {
+                        ...data,
+                        role: "admin",
+                      },
+                    })
+                  )
+
+                  yield* db.use((client) =>
+                    client
+                      .update(users)
+                      .set({ emailVerified: true })
+                      .where(eq(users.id, result.user.id))
+                  )
+
+                  return result.user
+                })
+              )
 
               return new Response(
                 JSON.stringify({
-                  ...res.user,
+                  ...user,
                   emailVerified: true,
                 }),
                 {

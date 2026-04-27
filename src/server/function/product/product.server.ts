@@ -1,88 +1,94 @@
 import { and, count, eq } from "drizzle-orm"
+import * as Data from "effect/Data"
+import * as Effect from "effect/Effect"
 
-import type { SearchSchema } from "@/server/schema/search.schema"
+import type { SearchSchema } from "../../schema/search.schema"
 import type { CreateProductInput } from "./schema"
 import { generateSKU } from "@/lib/sku"
-import { db } from "@/server/db"
+import { Database } from "@/server/db"
 import { auditLogs, products, productVariants } from "@/server/db/schema"
 
-export async function getDbProducts(_params: SearchSchema) {
-  try {
-    const result = await db.transaction(async (tx) => {
-      const where = and(eq(productVariants.isActive, true))
+export class ProductError extends Data.TaggedError("ProductError")<{
+  readonly cause: unknown
+  readonly message: string
+}> {}
 
-      const items = await tx.query.productVariants.findMany({
-        where: where,
-        with: {
-          product: true,
-        },
-      })
+export function getDbProducts(_params: SearchSchema) {
+  return Effect.gen(function* () {
+    const db = yield* Database
 
-      const totalCount = await tx
-        .select({
-          count: count(),
+    const where = and(eq(productVariants.isActive, true))
+
+    return yield* db.use((client) =>
+      client.transaction(async (tx) => {
+        const items = await tx.query.productVariants.findMany({
+          where: where,
+          with: {
+            product: true,
+          },
         })
-        .from(productVariants)
-        .where(where)
-        .execute()
-        .then((res) => res[0].count || 0)
 
-      return {
-        items,
-        totalCount,
-      }
-    })
+        const totalCount = await tx
+          .select({
+            count: count(),
+          })
+          .from(productVariants)
+          .where(where)
+          .execute()
+          .then((res) => res[0].count || 0)
 
-    return {
-      items: result.items,
-      itemCount: result.totalCount,
-    }
-  } catch (e) {
-    console.error("Failed to fetch products:", e)
-    return {
-      items: [],
-      itemCount: 0,
-    }
-  }
+        return {
+          items,
+          itemCount: totalCount,
+        }
+      })
+    )
+  })
 }
 
-export async function createProduct(data: CreateProductInput, userId: string) {
-  return await db.transaction(async (tx) => {
-    const [newProduct] = await tx
-      .insert(products)
-      .values({
-        name: data.name,
-        description: data.description,
-        categoryId: data.categoryId,
+export function createProduct(data: CreateProductInput, userId: string) {
+  return Effect.gen(function* () {
+    const db = yield* Database
+
+    return yield* db.use((client) =>
+      client.transaction(async (tx) => {
+        const [newProduct] = await tx
+          .insert(products)
+          .values({
+            name: data.name,
+            description: data.description,
+            categoryId: data.categoryId,
+          })
+          .returning()
+
+        const variant = "Standard"
+
+        const sku = generateSKU(newProduct.name, variant, 0)
+
+        const variants = await tx
+          .insert(productVariants)
+          .values({
+            productId: newProduct.id,
+            sku: sku,
+            name: variant,
+            unit: data.unit,
+          })
+          .returning()
+
+        await tx.insert(auditLogs).values({
+          userId,
+          action: "CREATE",
+          entityName: products._.name,
+          entityId: newProduct.id,
+          oldValue: null,
+          newValue: JSON.stringify(newProduct),
+        })
+
+        return {
+          ...newProduct,
+          variants,
+        }
       })
-      .returning()
-
-    const variant = "Standard"
-
-    const sku = generateSKU(newProduct.name, variant, 0)
-
-    const variants = await tx
-      .insert(productVariants)
-      .values({
-        productId: newProduct.id,
-        sku: sku,
-        name: variant,
-        unit: data.unit,
-      })
-      .returning()
-
-    await tx.insert(auditLogs).values({
-      userId,
-      action: "CREATE",
-      entityName: products._.name,
-      entityId: newProduct.id,
-      oldValue: null,
-      newValue: JSON.stringify(newProduct),
-    })
-
-    return {
-      ...newProduct,
-      variants,
-    }
+    )
   })
 }

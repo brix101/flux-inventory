@@ -7,12 +7,13 @@ import {
 } from "@tanstack/react-router"
 import { createServerFn } from "@tanstack/react-start"
 import { desc } from "drizzle-orm"
+import * as Effect from "effect/Effect"
 import z from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ensureSession } from "@/server/auth/auth.functions"
-import { db } from "@/server/db"
+import { Database } from "@/server/db"
 import { categories } from "@/server/db/schema/inventory-schema"
 
 const CategorySchema = z.object({
@@ -21,29 +22,39 @@ const CategorySchema = z.object({
 })
 
 const getServerCategories = createServerFn({ method: "GET" }).handler(
-  async () => {
-    // await ensureSession()
-
-    try {
-      return await db.query.categories.findMany({
-        orderBy: (c) => desc(c.createdAt),
+  async ({ context: { runEffect } }) =>
+    runEffect(
+      Effect.gen(function* () {
+        const db = yield* Database
+        return yield* db.use((client) =>
+          client.query.categories.findMany({
+            orderBy: (c) => desc(c.createdAt),
+          })
+        )
       })
-    } catch (e) {
-      console.error("Failed to fetch categories:", e)
-      return []
-    }
-  }
+    )
 )
 
 const createCategory = createServerFn({ method: "POST" })
   .inputValidator(CategorySchema)
-  .handler(async ({ data }) => {
-    await ensureSession()
+  .handler(async ({ data, context: { runEffect } }) =>
+    runEffect(
+      Effect.gen(function* () {
+        ensureSession()
 
-    await db.insert(categories).values(data)
+        const db = yield* Database
 
-    return { success: true }
-  })
+        yield* db.use((client) =>
+          client.insert(categories).values({
+            ...data,
+            path: `${data.name}/`,
+          })
+        )
+
+        return { success: true }
+      })
+    )
+  )
 
 export const Route = createFileRoute("/demo/drizzle")({
   component: DemoDrizzle,

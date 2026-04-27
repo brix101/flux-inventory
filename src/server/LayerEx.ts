@@ -1,8 +1,7 @@
-import { Layer, Logger, References } from "effect";
-import * as Schema from "effect/Schema";
+import { Layer, Logger, References } from "effect"
+import * as Schema from "effect/Schema"
 
-import * as Domain from "@/server/Domain";
-
+import * as Domain from "@/server/Domain"
 
 export const makeLoggerLayer = (env: NodeJS.ProcessEnv) => {
   const environment = Schema.decodeUnknownSync(Domain.Environment)(

@@ -5,7 +5,8 @@ import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import * as Layer from "effect/Layer"
 
-import { Database } from "./server/db/db.effect"
+import { Auth } from "./server/auth"
+import { Database } from "./server/db"
 import { makeLoggerLayer } from "./server/LayerEx"
 
 /**
@@ -41,7 +42,9 @@ import { makeLoggerLayer } from "./server/LayerEx"
  */
 const makeRunEffect = (_request: Request) => {
   // const dbLayer = Layer.provide(Database.layer)
-  const runtimeLayer = Layer.merge(Database.layer, makeLoggerLayer(process.env))
+  const authLayer = Layer.provideMerge(Auth.layer, Database.layer)
+
+  const runtimeLayer = Layer.merge(authLayer, makeLoggerLayer(process.env))
 
   return async <TValue, TError>(
     effect: Effect.Effect<TValue, TError, Layer.Success<typeof runtimeLayer>>
