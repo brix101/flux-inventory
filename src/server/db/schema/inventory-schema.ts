@@ -8,7 +8,7 @@ import {
   unique,
 } from "drizzle-orm/pg-core"
 
-import { users } from "./auth"
+import { users } from "./auth-schema"
 
 // ============================================================================
 // ENUMS

@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm"
 import { index, pgEnum, pgTable } from "drizzle-orm/pg-core"
 
-import { users } from "./auth"
+import { users } from "./auth-schema"
 
 // ===========================================================================
 // AUDIT LOGS

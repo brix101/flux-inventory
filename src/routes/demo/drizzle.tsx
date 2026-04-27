@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ensureSession } from "@/server/auth/auth.functions"
 import { db } from "@/server/db"
-import { categories } from "@/server/db/schema/schema"
+import { categories } from "@/server/db/schema/inventory-schema"
 
 const CategorySchema = z.object({
   name: z.string().min(1, "Name is required"),
