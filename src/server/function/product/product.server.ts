@@ -9,7 +9,7 @@ import { generateSKU } from "@/lib/sku"
 import { AppRequest } from "@/server/AppRequest"
 import { Auth } from "@/server/auth"
 import { Database } from "@/server/db"
-import { auditLogs, products, productVariants } from "@/server/db/schema"
+import { products, productVariants } from "@/server/db/schema"
 
 export class ProductError extends Data.TaggedError("ProductError")<{
   readonly cause: unknown
