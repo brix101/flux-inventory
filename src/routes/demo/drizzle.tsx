@@ -13,9 +13,9 @@ import z from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ensureSession } from "@/server/auth/auth.functions"
-import { Database } from "@/server/db"
 import { categories } from "@/server/db/schema/inventory-schema"
+import { ensureSession } from "@/server/function/auth/auth.functions"
+import { Database } from "@/server/lib/Database"
 
 const CategorySchema = z.object({
   name: z.string().min(1, "Name is required"),

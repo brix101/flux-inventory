@@ -6,10 +6,10 @@ import * as Effect from "effect/Effect"
 import * as Exit from "effect/Exit"
 import * as Layer from "effect/Layer"
 
-import { AppRequest } from "./server/AppRequest"
-import { Auth } from "./server/auth"
-import { Database } from "./server/db"
-import { makeLoggerLayer } from "./server/LayerEx"
+import { AppRequest } from "./server/lib/AppRequest"
+import { Auth } from "./server/lib/Auth"
+import { Database } from "./server/lib/Database"
+import { makeLoggerLayer } from "./server/lib/LayerEx"
 
 /**
  * Runs an Effect within the full app layer for HTTP request handlers (fetch,

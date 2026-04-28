@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { UserAvatar } from "@/components/user-avatar"
-import { getSession } from "@/server/auth/auth.functions"
+import { getSession } from "@/server/function/auth/auth.functions"
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ location }) => {

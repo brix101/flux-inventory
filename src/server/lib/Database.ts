@@ -10,7 +10,7 @@ import * as Match from "effect/Match"
 import * as Redacted from "effect/Redacted"
 import pg from "pg"
 
-import * as schema from "./schema"
+import * as schema from "../db/schema"
 
 export class DatabaseConnectionLostError extends Data.TaggedError(
   "DatabaseConnectionLostError"

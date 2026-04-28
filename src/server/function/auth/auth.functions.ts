@@ -1,19 +1,19 @@
 import { redirect } from "@tanstack/react-router"
 import { createServerFn } from "@tanstack/react-start"
-import { getRequestHeaders } from "@tanstack/react-start/server"
 import * as Effect from "effect/Effect"
 import * as Option from "effect/Option"
 
-import { Auth } from "."
+import { AppRequest } from "@/server/lib/AppRequest"
+import { Auth } from "@/server/lib/Auth"
 
 export const getSession = createServerFn({ method: "GET" }).handler(
   async ({ context: { runEffect } }) =>
     runEffect(
       Effect.gen(function* () {
-        const headers = getRequestHeaders()
+        const request = yield* AppRequest
         const auth = yield* Auth
 
-        const session = yield* auth.getSession(headers)
+        const session = yield* auth.getSession(request.headers)
 
         if (Option.isNone(session)) {
           return null
@@ -28,10 +28,10 @@ export const ensureSession = createServerFn({ method: "GET" }).handler(
   async ({ context: { runEffect } }) =>
     runEffect(
       Effect.gen(function* () {
-        const headers = getRequestHeaders()
+        const request = yield* AppRequest
         const auth = yield* Auth
 
-        const session = yield* auth.getSession(headers)
+        const session = yield* auth.getSession(request.headers)
 
         if (Option.isNone(session)) {
           return yield* Effect.fail(new Error("Unauthorized"))
@@ -46,9 +46,10 @@ export const signOutServerFn = createServerFn({ method: "POST" }).handler(
   ({ context: { runEffect } }) =>
     runEffect(
       Effect.gen(function* () {
-        const headers = getRequestHeaders()
+        const request = yield* AppRequest
         const auth = yield* Auth
-        yield* auth.use((api) => api.signOut({ headers }))
+
+        yield* auth.use((api) => api.signOut({ headers: request.headers }))
         return yield* Effect.die(redirect({ to: "/login" }))
       })
     )

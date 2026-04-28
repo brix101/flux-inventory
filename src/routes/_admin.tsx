@@ -5,7 +5,7 @@ import {
   redirect,
 } from "@tanstack/react-router"
 
-import { getSession } from "@/server/auth/auth.functions"
+import { getSession } from "@/server/function/auth/auth.functions"
 
 export const Route = createFileRoute("/_admin")({
   beforeLoad: async () => {

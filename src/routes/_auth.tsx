@@ -3,7 +3,7 @@ import { TerminalIcon } from "lucide-react"
 import z from "zod"
 
 import { appConfig } from "@/lib/config"
-import { getSession } from "@/server/auth/auth.functions"
+import { getSession } from "@/server/function/auth/auth.functions"
 
 const seachSchema = z.object({
   redirect: z.string().optional(),

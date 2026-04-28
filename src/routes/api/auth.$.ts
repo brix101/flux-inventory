@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import * as Effect from "effect/Effect"
 
-import { Auth } from "@/server/auth"
+import { Auth } from "@/server/lib/Auth"
 
 export const Route = createFileRoute("/api/auth/$")({
   server: {

@@ -6,10 +6,10 @@ import * as Option from "effect/Option"
 import type { SearchSchema } from "../../schema/search.schema"
 import type { CreateProductInput } from "./schema"
 import { generateSKU } from "@/lib/sku"
-import { AppRequest } from "@/server/AppRequest"
-import { Auth } from "@/server/auth"
-import { Database } from "@/server/db"
 import { products, productVariants } from "@/server/db/schema"
+import { AppRequest } from "@/server/lib/AppRequest"
+import { Auth } from "@/server/lib/Auth"
+import { Database } from "@/server/lib/Database"
 
 export class ProductError extends Data.TaggedError("ProductError")<{
   readonly cause: unknown

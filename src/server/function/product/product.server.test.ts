@@ -4,9 +4,9 @@ import * as Layer from "effect/Layer"
 import * as Option from "effect/Option"
 import { describe, expect, it, vi } from "vitest"
 
-import { AppRequest } from "@/server/AppRequest"
-import { Auth } from "@/server/auth"
-import { Database } from "@/server/db"
+import { AppRequest } from "@/server/lib/AppRequest"
+import { Auth } from "@/server/lib/Auth"
+import { Database } from "@/server/lib/Database"
 // Replace these imports with your actual file paths
 import { createProduct } from "./product.server"
 

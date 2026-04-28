@@ -5,8 +5,8 @@ import * as Logger from "effect/Logger"
 import * as References from "effect/References"
 import * as Schema from "effect/Schema"
 
-import { CloudflareEnv } from "@/server/CloudflareEnv"
-import * as Domain from "@/server/Domain"
+import { CloudflareEnv } from "@/server/lib/CloudflareEnv"
+import * as Domain from "@/server/lib/Domain"
 
 export const makeEnvLayer = (env: Env) =>
   Layer.succeedContext(

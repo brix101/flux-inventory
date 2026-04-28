@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOutServerFn } from "@/server/auth/auth.functions"
+import { signOutServerFn } from "@/server/function/auth/auth.functions"
 
 interface UserDropdownProps {
   user: User

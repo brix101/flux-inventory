@@ -3,9 +3,9 @@ import { eq } from "drizzle-orm"
 import * as Effect from "effect/Effect"
 import z from "zod"
 
-import { Auth } from "@/server/auth"
-import { Database } from "@/server/db"
 import { users } from "@/server/db/schema"
+import { Auth } from "@/server/lib/Auth"
+import { Database } from "@/server/lib/Database"
 
 const secretKey = process.env.ROUTE_SECRET
 

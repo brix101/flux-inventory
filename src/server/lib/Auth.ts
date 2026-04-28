@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin as adminPlugin, organization } from "better-auth/plugins"
+import { createAccessControl } from "better-auth/plugins/access"
+import { adminAc, defaultStatements } from "better-auth/plugins/admin/access"
 import { tanstackStartCookies } from "better-auth/tanstack-start"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
@@ -8,9 +10,30 @@ import * as Layer from "effect/Layer"
 import * as Option from "effect/Option"
 import * as Schema from "effect/Schema"
 
-import * as Domain from "@/server/Domain"
-import { Database } from "../db"
-import { ac, admin, manager, user } from "./permissions"
+import { Database } from "@/server/lib/Database"
+import * as Domain from "@/server/lib/Domain"
+
+export const statement = {
+  ...defaultStatements,
+  project: ["create", "share", "update", "delete"], // <-- Permissions available for created roles
+  // manager: ["*"], // <-- Super admin has access to all permissions without needing them to be specified
+} as const
+
+export const ac = createAccessControl(statement)
+
+export const user = ac.newRole({
+  project: ["create"],
+})
+
+export const manager = ac.newRole({
+  project: ["create", "update"],
+  user: ["list", "create", "update"],
+})
+
+export const admin = ac.newRole({
+  project: ["create", "update", "delete"],
+  ...adminAc.statements,
+})
 
 export class Auth extends Context.Service<Auth>()("Auth", {
   make: Effect.gen(function* () {
