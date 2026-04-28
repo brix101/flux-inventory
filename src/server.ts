@@ -104,21 +104,13 @@ export interface ServerContext {
   runEffect: ReturnType<typeof makeRunEffect>
 }
 
-declare module "@tanstack/react-start" {
-  interface Register {
-    server: {
-      requestContext: ServerContext
-    }
-  }
-}
-
 export default createServerEntry({
   async fetch(request, env) {
     console.log(`[${new Date().toISOString()}] fetch: ${request.url}`)
 
-    const runEffect = makeRunEffect(request, env as Env)
+    const convertedEnv = env as unknown as Env
+    const runEffect = makeRunEffect(request, convertedEnv)
 
-    // @ts-expect-error -- inject runEffect into Start's server request context for consumption in server functions without importing @tanstack/react-start/server
-    return handler.fetch(request, { context: { env, runEffect } })
+    return handler.fetch(request, { context: { env: convertedEnv, runEffect } })
   },
 })
