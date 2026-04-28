@@ -4,7 +4,7 @@ import * as Effect from "effect/Effect"
 import * as Option from "effect/Option"
 
 import type { SearchSchema } from "../../schema/search.schema"
-import type { CreateProductInput } from "./schema"
+import type { CreateProductInput } from "./product.domain"
 import { generateSKU } from "@/lib/sku"
 import { products, productVariants } from "@/server/db/schema"
 import { AppRequest } from "@/server/lib/AppRequest"
@@ -55,13 +55,9 @@ export function createProduct(data: CreateProductInput) {
     const db = yield* Database
     const auth = yield* Auth
 
-    const session = yield* auth.getSession(req.headers)
+    const session = yield* auth.ensureSession(req.headers)
 
-    if (Option.isNone(session)) {
-      return yield* Effect.fail(new Error("Unauthorized"))
-    }
-
-    const userId = session.value.user.id
+    const userId = session.user.id
 
     const result = yield* db.withAudit(userId, async (tx) => {
       const [newProduct] = await tx

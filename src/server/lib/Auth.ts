@@ -12,6 +12,7 @@ import * as Schema from "effect/Schema"
 
 import { Database } from "@/server/lib/Database"
 import * as Domain from "@/server/lib/Domain"
+import { UnauthorizedError } from "../function/auth/auth.functions"
 
 export const statement = {
   ...defaultStatements,
@@ -117,6 +118,18 @@ export class Auth extends Context.Service<Auth>()("Auth", {
       return Option.some({ user: decodedUser, session: decodedSession })
     })
 
+    const ensureSession = Effect.fn("auth.ensureSession")(function* (
+      headers: Headers
+    ) {
+      const session = yield* getSession(headers)
+
+      if (Option.isNone(session)) {
+        return yield* new UnauthorizedError()
+      }
+
+      return session.value
+    })
+
     const use = Effect.fn("auth.use")(function* <T>(
       fn: (api: typeof auth.api) => Promise<T>
     ) {
@@ -129,6 +142,7 @@ export class Auth extends Context.Service<Auth>()("Auth", {
       use,
       handler,
       getSession,
+      ensureSession,
     }
   }),
 }) {

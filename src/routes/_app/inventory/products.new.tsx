@@ -1,19 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { appConfig } from "@/lib/config"
 import { createProductFn } from "@/server/function/product/product.functions"
 
 export const Route = createFileRoute("/_app/inventory/products/new")({
   component: RouteComponent,
-  head: () => ({
-    meta: [
-      {
-        label: `${appConfig.name} - New Product`,
-      },
-    ],
-  }),
+  // head: () => ({
+  //   meta: [
+  //     {
+  //       label: `${appConfig.name} - New Product`,
+  //     },
+  //   ],
+  // }),
 })
 
 function RouteComponent() {
@@ -23,13 +23,21 @@ function RouteComponent() {
         data: {
           name: "Test Product",
           categoryId: "1463528d-ef62-476b-8983-656ae87fa9ee",
+          description: "This is a test product created for testing purposes.",
+          unit: "pcs",
         },
       })
       console.log("Test product created:", response)
+      toast.success("Product created successfully!")
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message)
-      }
+      const message =
+        error instanceof Error
+          ? error.message.includes("already exists")
+            ? "A product with this name already exists"
+            : error.message
+          : "Failed to create product"
+      console.error(error)
+      toast.error(message)
     }
   }
 

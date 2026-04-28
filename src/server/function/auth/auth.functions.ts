@@ -1,10 +1,17 @@
 import { redirect } from "@tanstack/react-router"
 import { createServerFn } from "@tanstack/react-start"
+import * as Data from "effect/Data"
 import * as Effect from "effect/Effect"
 import * as Option from "effect/Option"
 
 import { AppRequest } from "@/server/lib/AppRequest"
 import { Auth } from "@/server/lib/Auth"
+
+export class AuthError extends Data.TaggedError("AuthError")<{}> {}
+
+export class UnauthorizedError extends Data.TaggedError(
+  "UnauthorizedError"
+)<{}> {}
 
 export const getSession = createServerFn({ method: "GET" }).handler(
   async ({ context: { runEffect } }) =>
@@ -34,7 +41,7 @@ export const ensureSession = createServerFn({ method: "GET" }).handler(
         const session = yield* auth.getSession(request.headers)
 
         if (Option.isNone(session)) {
-          return yield* Effect.fail(new Error("Unauthorized"))
+          return yield* new UnauthorizedError()
         }
 
         return session.value
