@@ -42,15 +42,12 @@ import { makeLoggerLayer } from "./server/LayerEx"
  * server context that would otherwise be lost after `ShallowErrorPlugin`
  * strips everything except `.message`.
  */
-const makeRunEffect = (request: Request) => {
+const makeRunEffect = (request: Request, env: Env) => {
   const requestLayer = Layer.succeedContext(Context.make(AppRequest, request))
   const authLayer = Layer.provideMerge(Auth.layer, Database.layer)
 
   const authRequestLayer = Layer.merge(authLayer, requestLayer)
-  const runtimeLayer = Layer.merge(
-    authRequestLayer,
-    makeLoggerLayer(process.env)
-  )
+  const runtimeLayer = Layer.merge(authRequestLayer, makeLoggerLayer(env))
 
   return async <TValue, TError>(
     effect: Effect.Effect<TValue, TError, Layer.Success<typeof runtimeLayer>>
@@ -103,6 +100,7 @@ const makeRunEffect = (request: Request) => {
  *   https://tanstack.com/start/latest/docs/framework/react/guide/server-entry-point#request-context
  */
 export interface ServerContext {
+  env: Env
   runEffect: ReturnType<typeof makeRunEffect>
 }
 
@@ -115,10 +113,12 @@ declare module "@tanstack/react-start" {
 }
 
 export default createServerEntry({
-  async fetch(request) {
-    const runEffect = makeRunEffect(request)
+  async fetch(request, env) {
+    console.log(`[${new Date().toISOString()}] fetch: ${request.url}`)
+
+    const runEffect = makeRunEffect(request, env as Env)
 
     // @ts-expect-error -- inject runEffect into Start's server request context for consumption in server functions without importing @tanstack/react-start/server
-    return handler.fetch(request, { context: { runEffect } })
+    return handler.fetch(request, { context: { env, runEffect } })
   },
 })

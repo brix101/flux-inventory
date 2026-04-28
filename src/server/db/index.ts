@@ -72,6 +72,7 @@ const handleDatabaseError = (error: unknown): DatabaseError =>
 export class Database extends Context.Service<Database>()("Database", {
   make: Effect.gen(function* () {
     const url = yield* Config.redacted("DATABASE_URL")
+
     const config: PoolConfig = {
       connectionString: Redacted.value(url),
     }

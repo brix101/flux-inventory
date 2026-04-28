@@ -51,6 +51,11 @@ export class Auth extends Context.Service<Auth>()("Auth", {
         }),
         organization(),
       ],
+      advanced: {
+        ipAddress: {
+          ipAddressHeaders: ["CF-Connecting-IP"],
+        },
+      },
     })
 
     const handler = Effect.fn("auth.handler")(function* (request: Request) {

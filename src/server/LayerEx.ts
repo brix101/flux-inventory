@@ -1,11 +1,26 @@
-import { Layer, Logger, References } from "effect"
+import * as ConfigProvider from "effect/ConfigProvider"
+import * as Context from "effect/Context"
+import * as Layer from "effect/Layer"
+import * as Logger from "effect/Logger"
+import * as References from "effect/References"
 import * as Schema from "effect/Schema"
 
+import { CloudflareEnv } from "@/server/CloudflareEnv"
 import * as Domain from "@/server/Domain"
 
-export const makeLoggerLayer = (env: NodeJS.ProcessEnv) => {
+export const makeEnvLayer = (env: Env) =>
+  Layer.succeedContext(
+    Context.make(CloudflareEnv, env).pipe(
+      Context.add(
+        ConfigProvider.ConfigProvider,
+        ConfigProvider.fromUnknown(env)
+      )
+    )
+  )
+
+export const makeLoggerLayer = (env: Env) => {
   const environment = Schema.decodeUnknownSync(Domain.Environment)(
-    env.ENVIRONMENT ?? "development"
+    env.ENVIRONMENT || "development"
   )
   return Layer.merge(
     Logger.layer(

@@ -8,6 +8,7 @@ import {
 import { createServerFn } from "@tanstack/react-start"
 import { desc } from "drizzle-orm"
 import * as Effect from "effect/Effect"
+import { toast } from "sonner"
 import z from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -85,7 +86,9 @@ function DemoDrizzle() {
       router.invalidate()
       e.target.reset()
     } catch (error) {
-      console.error("Failed to create category:", error)
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred"
+      toast.error(message)
     }
   }
 
