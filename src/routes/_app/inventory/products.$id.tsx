@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_app/inventory/products/$id")({
   head: () => ({
     meta: [
       {
-        label: `${appConfig.name} - Inventory Products`,
+        title: `${appConfig.name} - Inventory Products`,
       },
     ],
   }),

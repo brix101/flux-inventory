@@ -10,20 +10,15 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header"
 import { useDataTable } from "@/hooks/use-data-table"
+import { appConfig } from "@/lib/config"
 import { productQueryOptions } from "@/server/function/product/product.functions"
 import { searchSchema } from "@/server/schema/search.schema"
 import { productColumns } from "./-components/products-columns"
 import { ProductsTableActionBar } from "./-components/products-table-actions"
 
 export const Route = createFileRoute("/_app/inventory/products/")({
+  head: () => ({ meta: [{ title: `${appConfig.name} - Products` }] }),
   component: RouteComponent,
-  // head: () => ({
-  //   meta: [
-  //     {
-  //       label: `${appConfig.name} - Products`,
-  //     },
-  //   ],
-  // }),
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ search }),
   loader: async ({ context, deps }) => {

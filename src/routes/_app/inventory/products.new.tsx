@@ -1,13 +1,23 @@
+import React from "react"
 import { useForm } from "@tanstack/react-form"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import * as Schema from "effect/Schema"
+import { CloudUploadIcon, Package, XIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -16,24 +26,51 @@ import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
+import { Textarea } from "@/components/ui/textarea"
 import { appConfig } from "@/lib/config"
+import { categoriesQueryOptions } from "@/server/function/category/category.functions"
 import { CreateProductSchema } from "@/server/function/product/product.domain"
 import { createProductFn } from "@/server/function/product/product.functions"
+import { unitsQueryOptions } from "@/server/function/unit/unit.functions"
 
 export const Route = createFileRoute("/_app/inventory/products/new")({
+  head: () => ({ meta: [{ title: `${appConfig.name} - New Product` }] }),
   component: RouteComponent,
-  head: () => ({
-    meta: [{ title: `${appConfig.name} - New Product` }],
-  }),
+  loader: async ({ context }) => {
+    context.queryClient.ensureQueryData(unitsQueryOptions)
+  },
 })
 
 function RouteComponent() {
   const serverFn = useServerFn(createProductFn)
+
+  const { data: categories } = useQuery(categoriesQueryOptions)
+  const { data: units } = useSuspenseQuery(unitsQueryOptions)
+
+  const categoryOptions = React.useMemo(
+    () =>
+      categories?.map((category) => ({
+        label: category.name,
+        value: category.id,
+      })) || [],
+    [categories]
+  )
+
+  const unitOptions = React.useMemo(
+    () =>
+      units.map((unit) => ({
+        label: unit.name,
+        value: unit.id,
+      })),
+    [units]
+  )
 
   const form = useForm({
     defaultValues: {
@@ -49,159 +86,246 @@ function RouteComponent() {
     onSubmit: async ({ value }) => serverFn({ data: value }),
   })
 
-  const testCategories = [
-    { id: "1463528d-ef62-476b-8983-656ae87fa9ee", name: "Electronics" },
-    { id: "2c9f4e21-9ac3-4d7b-a5e1-8c3d9f0ab123", name: "Furniture" },
-    { id: "3d8a5f32-bc24-4e8c-b6d2-9e4f0a1cd234", name: "Office Supplies" },
-  ]
+  const hasData = form.state.canSubmit && form.state.isDirty
+
+  React.useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasData) {
+        e.preventDefault()
+      }
+    }
+
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (!hasData) return
+
+      const target = (e.target as HTMLElement).closest("a")
+
+      if (!target || !target.href) return
+
+      if (target.target === "_blank") return
+
+      const isHashLink =
+        target.href.includes("#") &&
+        target.pathname === window.location.pathname
+      if (isHashLink) return
+
+      e.preventDefault()
+
+      const wantsToSave = window.confirm(
+        "You have unsaved changes! Click OK to SAVE and leave, or Cancel to stay on this page."
+      )
+
+      if (wantsToSave) {
+        form.handleSubmit()
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    document.addEventListener("click", handleGlobalClick)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+      document.removeEventListener("click", handleGlobalClick)
+    }
+  }, [hasData])
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Create New Product</h1>
-        <Link
-          to="/inventory/products"
-          className="text-muted-foreground hover:text-foreground text-sm"
-        >
-          Back to Products
-        </Link>
-      </div>
-      <Card>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            form.handleSubmit()
-          }}
-        >
-          <FieldGroup>
-            <form.Field
-              name="name"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Product Name</FieldLabel>
-                    <Input
-                      id={field.name}
-                      placeholder="Enter product name"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                    <FieldDescription>
-                      Must be at least 3 characters
-                    </FieldDescription>
-                  </Field>
-                )
-              }}
+    <div className="flex flex-col gap-6">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              render={
+                <Link
+                  to="/inventory/products"
+                  className="flex items-center gap-2"
+                >
+                  <Package className="h-4 w-4" />
+                  <span>Products</span>
+                </Link>
+              }
             />
-            <form.Field
-              name="categoryId"
-              children={(field) => {
-                return (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Category</FieldLabel>
-                    <Select
-                      value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value || "")}
-                    >
-                      <SelectTrigger id={field.name}>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {testCategories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )
-              }}
-            />
-            <form.Field
-              name="unit"
-              children={(field) => {
-                return (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Unit</FieldLabel>
-                    <Select
-                      value={field.state.value || "pcs"}
-                      onValueChange={(value) =>
-                        field.handleChange(value || "pcs")
-                      }
-                    >
-                      <SelectTrigger id={field.name}>
-                        <SelectValue placeholder="Select a unit" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pcs">Pieces (pcs)</SelectItem>
-                        <SelectItem value="kg">Kilograms (kg)</SelectItem>
-                        <SelectItem value="g">Grams (g)</SelectItem>
-                        <SelectItem value="m">Meters (m)</SelectItem>
-                        <SelectItem value="cm">Centimeters (cm)</SelectItem>
-                        <SelectItem value="L">Liters (L)</SelectItem>
-                        <SelectItem value="ml">Milliliters (ml)</SelectItem>
-                        <SelectItem value="box">Box</SelectItem>
-                        <SelectItem value="pack">Pack</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )
-              }}
-            />
-            <form.Field
-              name="description"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                    <Input
-                      id={field.name}
-                      placeholder="Enter product description"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                    <FieldDescription>
-                      Optional, max 500 characters
-                    </FieldDescription>
-                  </Field>
-                )
-              }}
-            />
-            <Field>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>New</BreadcrumbPage>
+            <div className="ml-2 flex gap-2">
               <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                selector={(state) => [
+                  state.canSubmit,
+                  state.isDirty,
+                  state.isSubmitting,
+                ]}
               >
-                {([canSubmit, isSubmitting]) => (
-                  <div className="flex gap-4">
-                    <Button type="submit" disabled={!canSubmit}>
-                      {isSubmitting ? <Spinner /> : "Create Product"}
-                    </Button>
-                    <Link
-                      to="/inventory/products"
-                      className="hover:bg-accent hover:text-accent-foreground inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors"
-                    >
-                      Cancel
-                    </Link>
-                  </div>
+                {([canSubmit, isDirty, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    form="product-form"
+                    disabled={!canSubmit && !isDirty}
+                    size="icon"
+                    variant="link"
+                  >
+                    {isSubmitting ? <Spinner /> : <CloudUploadIcon />}
+                  </Button>
                 )}
               </form.Subscribe>
-            </Field>
-          </FieldGroup>
-        </form>
-      </Card>
+              <Link
+                to="/inventory/products"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "icon",
+                })}
+              >
+                <XIcon />
+              </Link>
+            </div>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="grid w-full flex-1 grid-cols-1 gap-6 md:grid-cols-3">
+        <Card className="col-span-1 md:col-span-2">
+          <CardContent>
+            <form
+              id="product-form"
+              onSubmit={(e) => {
+                e.preventDefault()
+                form.handleSubmit()
+              }}
+            >
+              <FieldGroup>
+                <form.Field
+                  name="name"
+                  children={(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>
+                          Product Name
+                        </FieldLabel>
+                        <Input
+                          id={field.name}
+                          placeholder="Enter product name"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          aria-invalid={isInvalid}
+                        />
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <form.Field
+                    name="categoryId"
+                    children={(field) => {
+                      return (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>Category</FieldLabel>
+                          <Select
+                            items={categoryOptions}
+                            value={field.state.value}
+                            onValueChange={(value) =>
+                              field.handleChange(value || "")
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent alignItemWithTrigger={false}>
+                              <SelectGroup>
+                                <SelectLabel>Categories</SelectLabel>
+                                {categoryOptions.map((category) => (
+                                  <SelectItem
+                                    key={category.value}
+                                    value={category.value}
+                                    className="capitalize"
+                                  >
+                                    {category.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                      )
+                    }}
+                  />
+                  <form.Field
+                    name="unit"
+                    children={(field) => {
+                      return (
+                        <Field>
+                          <FieldLabel htmlFor={field.name}>
+                            Unit of Measure
+                          </FieldLabel>
+                          <Select
+                            value={field.state.value || "pcs"}
+                            onValueChange={(value) =>
+                              field.handleChange(value || "pcs")
+                            }
+                            items={unitOptions}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a unit" />
+                            </SelectTrigger>
+                            <SelectContent alignItemWithTrigger={false}>
+                              <SelectGroup>
+                                <SelectLabel>UOM</SelectLabel>
+                                {unitOptions.map((unit) => (
+                                  <SelectItem
+                                    key={unit.value}
+                                    value={unit.value}
+                                  >
+                                    {unit.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                      )
+                    }}
+                  />
+                </div>
+                <form.Field
+                  name="description"
+                  children={(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>
+                          Description
+                        </FieldLabel>
+                        <Textarea
+                          id={field.name}
+                          placeholder="Enter product description"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          aria-invalid={isInvalid}
+                        />
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                />
+              </FieldGroup>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1 border-0">
+          <CardContent>
+            <h3 className="mb-3 font-medium">Audit Log</h3>
+            <p className="text-muted-foreground text-sm">No activity yet</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
