@@ -1,19 +1,10 @@
-export function generateSKU(
-  productName: string,
-  variantName: string,
-  count: number
-): string {
-  const cleanProductName = (productName || "UNKNW")
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "")
-    .slice(0, 5)
+export function generateSKU(productId: string, variantId: string): string {
+  const year = new Date().getFullYear().toString().slice(-2)
 
-  const cleanVariantName = variantName
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "")
-    .slice(0, 5)
+  const productSlice = productId.replace(/-/g, "").slice(0, 6).toUpperCase()
 
-  const sequence = String(count + 1).padStart(3, "0")
+  const variantSlice = variantId.replace(/-/g, "").slice(0, 6).toUpperCase()
 
-  return `${cleanProductName}-${cleanVariantName}-${sequence}`
+  // Format: 26550E84-A9F2B1
+  return `${year}${productSlice}-${variantSlice}`
 }

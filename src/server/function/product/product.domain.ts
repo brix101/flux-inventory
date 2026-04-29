@@ -21,6 +21,7 @@ export const CreateProductSchema = Schema.Struct({
   unit: Schema.String.pipe(
     Schema.withConstructorDefault(Effect.succeed("pcs"))
   ),
+  sku: Schema.optional(Schema.String),
 })
 
 export type CreateProductInput = typeof CreateProductSchema.Type

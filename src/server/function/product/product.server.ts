@@ -1,7 +1,7 @@
+import * as crypto from "node:crypto"
 import { and, count, eq } from "drizzle-orm"
 import * as Data from "effect/Data"
 import * as Effect from "effect/Effect"
-import * as Option from "effect/Option"
 
 import type { SearchSchema } from "../../schema/search.schema"
 import type { CreateProductInput } from "./product.domain"
@@ -27,7 +27,11 @@ export function getDbProducts(_params: SearchSchema) {
         const items = await tx.query.productVariants.findMany({
           where: where,
           with: {
-            product: true,
+            product: {
+              with: {
+                category: true,
+              },
+            },
           },
         })
 
@@ -69,16 +73,18 @@ export function createProduct(data: CreateProductInput) {
         })
         .returning()
 
-      const variant = "Standard"
+      const variantName = "Standard"
+      const variantId = crypto.randomUUID()
 
-      const sku = generateSKU(newProduct.name, variant, 0)
+      const sku = generateSKU(newProduct.id, variantId)
 
       const variants = await tx
         .insert(productVariants)
         .values({
+          id: variantId,
           productId: newProduct.id,
-          sku: sku,
-          name: variant,
+          sku: data.sku || sku,
+          name: variantName,
           unit: data.unit,
         })
         .returning()
