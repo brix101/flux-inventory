@@ -79,7 +79,7 @@ export class Database extends Context.Service<Database>()("Database", {
 
     const pool = yield* Effect.acquireRelease(
       Effect.sync(() => new pg.Pool(config)),
-      (p) => Effect.promise(() => p.end())
+      (conn) => Effect.promise(() => conn.end())
     )
 
     yield* Effect.tryPromise(() => pool.query("SELECT 1")).pipe(
@@ -102,8 +102,8 @@ export class Database extends Context.Service<Database>()("Database", {
         )
       ),
       Effect.tap(() =>
-        Effect.sync(() =>
-          Effect.log("[Database] Successfully connected to the database")
+        Effect.logInfo(
+          "[Database client]: Connection to the database established."
         )
       )
     )
