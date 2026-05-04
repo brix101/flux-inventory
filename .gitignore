@@ -14,3 +14,33 @@ __unconfig*
 todos.json
 pgdata
 .vercel
+
+# TurboRepo and monorepo-specific ignores
+.turbo
+turbo
+turbo-output
+.turbo-output
+out
+build
+coverage
+*.tsbuildinfo
+
+# Ignore all node_modules in subfolders (monorepo)
+**/node_modules
+
+# Ignore build artifacts in all packages/apps
+apps/**/dist
+apps/**/build
+packages/**/dist
+packages/**/build
+
+# IDE and OS files
+.idea
+.vscode
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.sass-cache
+.npm
+.yarn
+.pnp.*

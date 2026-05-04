@@ -1,0 +1,31 @@
+{
+  "name": "@flux/server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/main.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env bin/start",
+    "test": "vitest run",
+    "lint": "oxlint",
+    "format": "oxfmt --check ."
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@flux/contracts": "workspace:*",
+    "@neondatabase/serverless": "^1.0.2",
+    "drizzle-orm": "^0.45.1",
+    "effect": "catalog:",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@effect/language-service": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.6",
+    "dotenv": "^17.3.1",
+    "tsx": "^4.21.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
