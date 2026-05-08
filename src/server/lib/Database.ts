@@ -1,3 +1,6 @@
+import type { ExtractTablesWithRelations } from "drizzle-orm"
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres"
+import type { PgTransaction } from "drizzle-orm/pg-core"
 import type { PoolConfig } from "pg"
 import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/node-postgres"
@@ -69,8 +72,25 @@ const handleDatabaseError = (error: unknown): DatabaseError =>
     )
   )
 
-export class Database extends Context.Service<Database>()("Database", {
-  make: Effect.gen(function* () {
+type DBTransaction = PgTransaction<
+  NodePgQueryResultHKT,
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>
+
+export interface DatabaseShape {
+  client: Client
+  use: <T>(
+    fn: (client: Client) => Promise<T>
+  ) => Effect.Effect<T, DatabaseError, never>
+  withAudit: <T>(
+    userId: string,
+    fn: (tx: DBTransaction) => Promise<T>
+  ) => Effect.Effect<T, DatabaseError, never>
+}
+
+const make = () =>
+  Effect.gen(function* () {
     const url = yield* Config.redacted("DATABASE_URL")
 
     const config: PoolConfig = {
@@ -122,15 +142,9 @@ export class Database extends Context.Service<Database>()("Database", {
       })
     })
 
-    type Tx = Parameters<typeof client.transaction>[0] extends (
-      tx: infer T
-    ) => any
-      ? T
-      : never
-
     const withAudit = Effect.fn("database.withAudit")(function* <T>(
       userId: string,
-      fn: (tx: Tx) => Promise<T>
+      fn: (tx: DBTransaction) => Promise<T>
     ) {
       return yield* Effect.tryPromise({
         try: () =>
@@ -149,7 +163,10 @@ export class Database extends Context.Service<Database>()("Database", {
       use,
       withAudit,
     }
-  }),
-}) {
-  static readonly layer = Layer.effect(this, this.make)
+  })
+
+export class Database extends Context.Service<Database, DatabaseShape>()(
+  "@flux/server/Database"
+) {
+  static readonly layer = Layer.effect(Database, make())
 }
