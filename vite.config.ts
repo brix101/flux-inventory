@@ -10,12 +10,12 @@ import neon from "./neon-vite-plugin.ts"
 
 const config = defineConfig({
   plugins: [
+    tsconfigPaths({ projects: ["./tsconfig.json"] }),
+    tanstackStart(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     devtools(),
     neon,
-    tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
-    tanstackStart(),
     viteReact(),
   ],
 })
