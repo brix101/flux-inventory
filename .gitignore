@@ -1,16 +1,64 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
 node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
+.pnp
+.pnp.js
+
+# Local env files
 .env
-.dev.vars
-.nitro
-.tanstack
-.wrangler
-.output
-.vinxi
-__unconfig*
-todos.json
-pgdata
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage
+
+# Turbo
+.turbo
+
+# Vercel
 .vercel
+
+# Build Outputs
+.next/
+out/
+build
+dist
+
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.pem
+
+# --- Merged from apps/api/.gitignore ---
+# dev
+.yarn/
+!.yarn/releases
+.vscode/*
+!.vscode/launch.json
+!.vscode/*.code-snippets
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf
+
+# deps
+# node_modules/ already present above
+
+# env
+# .env and .env.production already present above
+
+# logs
+logs/
+*.log
+pnpm-debug.log*
+lerna-debug.log*
+
+# misc
+# .DS_Store already present above

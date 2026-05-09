@@ -1,6 +1,0 @@
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-
-/drizzle
-worker-configuration.d.ts
