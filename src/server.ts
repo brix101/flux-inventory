@@ -9,7 +9,7 @@ import * as Layer from "effect/Layer"
 import { AppRequest } from "./server/lib/AppRequest"
 import { Auth } from "./server/lib/Auth"
 import { Database } from "./server/lib/Database"
-import { makeLoggerLayer } from "./server/lib/LayerEx"
+import { makeEnvLayer, makeLoggerLayer } from "./server/lib/LayerEx"
 
 /**
  * Runs an Effect within the full app layer for HTTP request handlers (fetch,
@@ -43,8 +43,11 @@ import { makeLoggerLayer } from "./server/lib/LayerEx"
  * strips everything except `.message`.
  */
 const makeRunEffect = (request: Request, env: Env) => {
+  const envLayer = makeEnvLayer(env)
+  const databaseLayer = Layer.provideMerge(Database.layer, envLayer)
+
   const requestLayer = Layer.succeedContext(Context.make(AppRequest, request))
-  const authLayer = Layer.provideMerge(Auth.layer, Database.layer)
+  const authLayer = Layer.provideMerge(Auth.layer, databaseLayer)
 
   const authRequestLayer = Layer.merge(authLayer, requestLayer)
   const runtimeLayer = Layer.merge(authRequestLayer, makeLoggerLayer(env))
@@ -106,8 +109,6 @@ export interface ServerContext {
 
 export default createServerEntry({
   async fetch(request, env) {
-    console.log(`[${new Date().toISOString()}] fetch: ${request.url}`)
-
     const convertedEnv = env as unknown as Env
     const runEffect = makeRunEffect(request, convertedEnv)
 

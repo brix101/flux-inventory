@@ -38,13 +38,18 @@ export const admin = ac.newRole({
 
 export class Auth extends Context.Service<Auth>()("Auth", {
   make: Effect.gen(function* () {
-    const { client } = yield* Database
+    const { db } = yield* Database
 
     const auth = betterAuth({
-      database: drizzleAdapter(client, {
+      database: drizzleAdapter(db, {
         provider: "pg",
         usePlural: true,
       }),
+      advanced: {
+        ipAddress: {
+          ipAddressHeaders: ["CF-Connecting-IP"],
+        },
+      },
       emailAndPassword: {
         enabled: true,
         disableSignUp: true,
@@ -75,11 +80,6 @@ export class Auth extends Context.Service<Auth>()("Auth", {
         }),
         organization(),
       ],
-      advanced: {
-        ipAddress: {
-          ipAddressHeaders: ["CF-Connecting-IP"],
-        },
-      },
     })
 
     const handler = Effect.fn("auth.handler")(function* (request: Request) {

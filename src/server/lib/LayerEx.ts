@@ -20,7 +20,7 @@ export const makeEnvLayer = (env: Env) =>
 
 export const makeLoggerLayer = (env: Env) => {
   const environment = Schema.decodeUnknownSync(Domain.Environment)(
-    env.ENVIRONMENT || "development"
+    env.ENVIRONMENT
   )
   return Layer.merge(
     Logger.layer(
