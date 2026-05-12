@@ -48,5 +48,16 @@ export const isoDatetimeToDate = Schema.String.pipe(
   ),
 );
 
+export const CategoryId = makeEntityId("CategoryId");
+export type CategoryId = typeof CategoryId.Type;
+
 export const ProductId = makeEntityId("ProductId");
 export type ProductId = typeof ProductId.Type;
+
+export const SuccessSchema = Schema.Struct({
+  message: Schema.String,
+});
+
+export const ParamsSchema = Schema.Struct({
+  name: Schema.String,
+});

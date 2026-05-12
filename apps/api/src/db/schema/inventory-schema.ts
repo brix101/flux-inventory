@@ -44,7 +44,7 @@ export const categories = pgTable(
     color: t.varchar({ length: 20 }).default("#6B7280"),
     path: t.text().notNull(), // e.g., "1/", "1/2/", etc. for hierarchy
     parentId: t.uuid(),
-    createdAt: t.timestamp().defaultNow().notNull(),
+    createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
     updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
   }),
   (table) => [
@@ -76,7 +76,7 @@ export const suppliers = pgTable("suppliers", (t) => ({
   phone: t.text(),
   notes: t.text(),
   isActive: t.boolean().notNull().default(true),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
@@ -94,7 +94,7 @@ export const products = pgTable("products", (t) => ({
   description: t.text(),
   categoryId: t.uuid().references(() => categories.id),
   isActive: t.boolean().notNull().default(true),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
@@ -106,21 +106,25 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   variants: many(productVariants),
 }));
 
-export const productVariants = pgTable("product_variants", (t) => ({
-  id: t.uuid().notNull().defaultRandom().primaryKey(),
-  productId: t
-    .uuid()
-    .references(() => products.id, { onDelete: "cascade" })
-    .notNull(),
-  name: t.text().notNull(),
-  sku: t.varchar({ length: 100 }).notNull().unique(),
-  barcode: t.varchar({ length: 100 }).unique(),
-  unit: t.varchar({ length: 20 }).default("unit"), // e.g., unit, kg, liter, pcs, etc.
-  imageUrl: t.text(),
-  isActive: t.boolean().notNull().default(true),
-  createdAt: t.timestamp().defaultNow().notNull(),
-  updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
-}));
+export const productVariants = pgTable(
+  "product_variants",
+  (t) => ({
+    id: t.uuid().notNull().defaultRandom().primaryKey(),
+    productId: t
+      .uuid()
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    name: t.text().notNull(),
+    sku: t.varchar({ length: 100 }).notNull().unique(),
+    barcode: t.varchar({ length: 100 }).unique(),
+    unit: t.varchar({ length: 20 }).default("unit"), // e.g., unit, kg, liter, pcs, etc.
+    imageUrl: t.text(),
+    isActive: t.boolean().notNull().default(true),
+    createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
+  }),
+  (t) => [index("name_id_idx").on(t.name, t.id)],
+);
 
 export const productVariantsRelations = relations(productVariants, ({ one }) => ({
   product: one(products, {
@@ -167,7 +171,7 @@ export const purchaseOrders = pgTable("purchase_orders", (t) => ({
   notes: t.text(),
   status: pruchaseOrderStatusEnum("status").notNull().default("DRAFT"),
   isActive: t.boolean().notNull().default(true),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
@@ -200,7 +204,7 @@ export const purchaseOrderItems = pgTable("purchase_order_items", (t) => ({
   quantityOrdered: t.integer().notNull().default(0),
   quantityReceived: t.integer().notNull().default(0),
   unitPrice: t.numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
@@ -301,7 +305,7 @@ export const stockLevels = pgTable(
     quantity: t.integer().notNull().default(0),
     reserved: t.integer().notNull().default(0),
     minLevel: t.integer().notNull().default(0),
-    createdAt: t.timestamp().defaultNow().notNull(),
+    createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
     updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
   }),
   (t) => [
@@ -340,7 +344,7 @@ export const requisitions = pgTable("requisitions", (t) => ({
   description: t.text(),
   status: requisitionStatusEnum("status").notNull().default("DRAFT"),
   isActive: t.boolean().notNull().default(true),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
@@ -366,7 +370,7 @@ export const requisitionItems = pgTable("requisition_items", (t) => ({
   quantityApproved: t.integer().notNull().default(0),
   suplierId: t.uuid().references(() => suppliers.id, { onDelete: "set null" }),
   notes: t.text(),
-  createdAt: t.timestamp().defaultNow().notNull(),
+  createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
 }));
 
