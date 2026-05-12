@@ -1,5 +1,3 @@
-import type { PoolConfig } from "pg";
-
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as Context from "effect/Context";

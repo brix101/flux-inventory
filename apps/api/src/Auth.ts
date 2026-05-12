@@ -1,4 +1,5 @@
 import * as NodeHttpServerRequest from "@effect/platform-node/NodeHttpServerRequest";
+import { Session, User } from "@flux/contracts";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { toNodeHandler } from "better-auth/node";
@@ -16,7 +17,6 @@ import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstab
 
 import { ApiConfig } from "./config.ts";
 import { Database } from "./database.ts";
-import * as Domain from "./Domain.ts";
 
 export class UnauthorizedError extends Data.TaggedError("UnauthorizedError")<{}> {}
 export class BeterAuthError extends Data.TaggedError("BeterAuthError")<{
@@ -131,10 +131,8 @@ export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
     const getSession = Effect.fn("auth.getSession")(function* (headers: Headers) {
       const result = yield* Effect.tryPromise(() => auth.api.getSession({ headers }));
       if (!result) return Option.none();
-      const decodedUser = yield* Schema.decodeUnknownEffect(Schema.toType(Domain.User))(
-        result.user,
-      );
-      const decodedSession = yield* Schema.decodeUnknownEffect(Schema.toType(Domain.Session))(
+      const decodedUser = yield* Schema.decodeUnknownEffect(Schema.toType(User))(result.user);
+      const decodedSession = yield* Schema.decodeUnknownEffect(Schema.toType(Session))(
         result.session,
       );
       return Option.some({ user: decodedUser, session: decodedSession });
