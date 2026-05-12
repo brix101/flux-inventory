@@ -5,7 +5,6 @@ import { toNodeHandler } from "better-auth/node";
 import { admin as adminPlugin, organization } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 import * as Context from "effect/Context";
 import * as Data from "effect/Data";
 import * as Effect from "effect/Effect";
@@ -71,7 +70,6 @@ export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
         },
       },
       plugins: [
-        tanstackStartCookies(),
         adminPlugin({
           ac,
           roles: {
@@ -152,8 +150,6 @@ export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
     });
 
     return {
-      auth,
-      api: auth.api,
       use,
       handler,
       getSession,
