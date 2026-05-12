@@ -1,4 +1,4 @@
-import { NodeHttpServerRequest } from "@effect/platform-node";
+import * as NodeHttpServerRequest from "@effect/platform-node/NodeHttpServerRequest";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { toNodeHandler } from "better-auth/node";
@@ -12,7 +12,7 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
-import { HttpServerResponse, type HttpServerRequest } from "effect/unstable/http";
+import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
 
 import { Database } from "./Database.ts";
 import * as Domain from "./Domain.ts";
@@ -163,3 +163,16 @@ export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
 }) {
   static readonly layer = Layer.effect(this, this.make);
 }
+
+const betterAuthHandler = Effect.gen(function* () {
+  const request = yield* HttpServerRequest.HttpServerRequest;
+
+  const auth = yield* Auth;
+
+  return yield* auth.handler(request);
+});
+
+const betterAuthGetRouter = HttpRouter.add("GET", "/api/auth/*", betterAuthHandler);
+const betterAuthPostRouter = HttpRouter.add("POST", "/api/auth/*", betterAuthHandler);
+
+export const authRouteLayer = Layer.mergeAll(betterAuthGetRouter, betterAuthPostRouter);
