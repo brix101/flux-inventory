@@ -2,7 +2,6 @@ import type { PoolConfig } from "pg";
 
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as Config from "effect/Config";
 import * as Context from "effect/Context";
 import * as Data from "effect/Data";
 import * as Effect from "effect/Effect";
@@ -11,6 +10,7 @@ import * as Match from "effect/Match";
 import * as Redacted from "effect/Redacted";
 import pg from "pg";
 
+import { ApiConfig } from "./config.ts";
 import * as schema from "./db/schema/index.ts";
 
 export class DatabaseConnectionLostError extends Data.TaggedError("DatabaseConnectionLostError")<{
@@ -62,16 +62,17 @@ const handleDatabaseError = (error: unknown): DatabaseError =>
     Match.orElse(() => new DatabaseError({ type: "unknown_error", cause: error })),
   );
 
-export class Database extends Context.Service<Database>()("@flux/api/Database", {
+export class Database extends Context.Service<Database>()("@flux/api/database", {
   make: Effect.gen(function* () {
-    const url = yield* Config.redacted("DATABASE_URL");
-
-    const config: PoolConfig = {
-      connectionString: Redacted.value(url),
-    };
+    const config = yield* ApiConfig;
 
     const pool = yield* Effect.acquireRelease(
-      Effect.sync(() => new pg.Pool(config)),
+      Effect.sync(
+        () =>
+          new pg.Pool({
+            connectionString: Redacted.value(config.databaseUrl),
+          }),
+      ),
       (conn) => Effect.promise(() => conn.end()),
     );
 

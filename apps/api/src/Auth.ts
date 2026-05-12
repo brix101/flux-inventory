@@ -10,10 +10,12 @@ import * as Data from "effect/Data";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
+import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
 import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
 
-import { Database } from "./Database.ts";
+import { ApiConfig } from "./config.ts";
+import { Database } from "./database.ts";
 import * as Domain from "./Domain.ts";
 
 export class UnauthorizedError extends Data.TaggedError("UnauthorizedError")<{}> {}
@@ -43,15 +45,18 @@ export const admin = ac.newRole({
   ...adminAc.statements,
 });
 
-export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
+export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
   make: Effect.gen(function* () {
-    const { client } = yield* Database;
+    const config = yield* ApiConfig;
+    const db = yield* Database;
 
     const auth = betterAuth({
-      database: drizzleAdapter(client, {
+      database: drizzleAdapter(db.client, {
         provider: "pg",
         usePlural: true,
       }),
+      secret: Redacted.value(config.betterAuthSecret),
+      baseURL: config.betterAuthUrl,
       emailAndPassword: {
         enabled: true,
         disableSignUp: true,

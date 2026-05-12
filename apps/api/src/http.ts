@@ -1,6 +1,4 @@
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer";
-import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
-import { config } from "dotenv";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Schema from "effect/Schema";
@@ -8,11 +6,9 @@ import { HttpRouter } from "effect/unstable/http";
 import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 import * as NodeHttp from "node:http";
 
-import { Auth, authRouteLayer } from "./Auth.ts";
+import { Auth, authRouteLayer } from "./auth.ts";
 import { ApiConfig } from "./config.ts";
-import { Database } from "./Database.ts";
-
-config({ path: [".env.local", ".env"] });
+import { Database } from "./database.ts";
 
 const SuccessSchema = Schema.Struct({
   message: Schema.String,
@@ -57,7 +53,7 @@ const GoodbyeApiLive = HttpApiBuilder.group(MyApi, "GoodbyeGroup", (h) =>
     ),
 );
 
-const MyApiLive = HttpApiBuilder.layer(MyApi).pipe(
+const apiRouterLayer = HttpApiBuilder.layer(MyApi).pipe(
   Layer.provide(HelloApiLive),
   Layer.provide(GoodbyeApiLive),
 );
@@ -72,11 +68,9 @@ const HttpServerLive = Layer.unwrap(
   }),
 );
 
-const ApiLive = Layer.mergeAll(authRouteLayer, MyApiLive);
+const makesRoutesLayer = Layer.mergeAll(authRouteLayer, apiRouterLayer);
 
-export const HttpLive = HttpRouter.serve(ApiLive, {
-  //   disableLogger: true,
-}).pipe(
+export const HttpLive = HttpRouter.serve(makesRoutesLayer, {}).pipe(
   Layer.provide(HttpServerLive),
   Layer.provide(Auth.layer),
   Layer.provide(Database.layer),
