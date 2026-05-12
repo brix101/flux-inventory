@@ -1,64 +1,46 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# Dependencies
 node_modules
-.pnp
-.pnp.js
-
-# Local env files
+.DS_Store
+dist
+dist-ssr
+*.local
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-coverage
-
-# Turbo
-.turbo
-
-# Vercel
+.dev.vars
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json
+pgdata
 .vercel
 
-# Build Outputs
-.next/
-out/
+# TurboRepo and monorepo-specific ignores
+.turbo
+turbo
+turbo-output
+.turbo-output
+out
 build
-dist
+coverage
+*.tsbuildinfo
 
+# Ignore all node_modules in subfolders (monorepo)
+**/node_modules
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Ignore build artifacts in all packages/apps
+apps/**/dist
+apps/**/build
+packages/**/dist
+packages/**/build
 
-# Misc
-.DS_Store
-*.pem
-
-# --- Merged from apps/api/.gitignore ---
-# dev
-.yarn/
-!.yarn/releases
-.vscode/*
-!.vscode/launch.json
-!.vscode/*.code-snippets
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/shelf
-
-# deps
-# node_modules/ already present above
-
-# env
-# .env and .env.production already present above
-
-# logs
-logs/
-*.log
-pnpm-debug.log*
-lerna-debug.log*
-
-# misc
-# .DS_Store already present above
+# IDE and OS files
+.idea
+.vscode
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.sass-cache
+.npm
+.yarn
+.pnp.*

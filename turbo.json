@@ -1,19 +1,54 @@
 {
-  "$schema": "https://turborepo.dev/schema.json",
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["HOST", "PORT", "VITE_WS_URL", "VITE_DEV_SERVER_URL"],
   "ui": "tui",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "build/**",
+        "apps/**/dist/**",
+        "apps/**/build/**",
+        "packages/**/dist/**",
+        "packages/**/build/**",
+        "!.next/cache/**"
+      ]
     },
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "format": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test": {
+      "outputs": ["coverage/**", "test-results/**"],
+      "cache": true
+    },
+    "db:generate": {
+      "outputs": ["drizzle/**"],
+      "cache": true
+    },
+    "db:migrate": {
+      "outputs": ["drizzle/**"],
+      "cache": true
+    },
+    "db:push": {
+      "outputs": ["drizzle/**"],
+      "cache": true
+    },
+    "db:pull": {
+      "outputs": ["drizzle/**"],
+      "cache": true
+    },
+    "db:studio": {
       "cache": false,
       "persistent": true
     }

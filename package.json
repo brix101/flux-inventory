@@ -1,20 +1,30 @@
 {
   "name": "flux",
-  "private": true,
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "test": "turbo run test",
+    "lint": "oxlint --report-unused-disable-directives",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "devDependencies": {
-    "prettier": "^3.8.3",
-    "turbo": "^2.9.12",
-    "typescript": "catalog:"
+    "@effect/language-service": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "effect": "catalog:",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0",
+    "tsdown": "catalog:",
+    "turbo": "^2.9.8",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
-  "packageManager": "pnpm@10.3.0",
   "engines": {
-    "node": ">=24.15.0"
-  }
+    "node": "^24.13.1",
+    "pnpm": "10.33.0"
+  },
+  "packageManager": "pnpm@10.33.0"
 }

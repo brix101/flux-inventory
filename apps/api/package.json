@@ -1,18 +1,38 @@
 {
   "name": "@flux/api",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "dev": "node --watch src/main.ts",
+    "build": "node scripts/cli.ts build",
+    "build:bundle": "tsdown",
+    "start": "node dist/main.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:studio": "drizzle-kit studio"
   },
+  "packageManager": "pnpm@10.33.0",
   "dependencies": {
-    "@hono/node-server": "^2.0.2",
-    "hono": "^4.12.18"
+    "@effect/platform-node": "catalog:",
+    "better-auth": "catalog:",
+    "drizzle-orm": "^0.45.2",
+    "effect": "catalog:",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.2",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "@effect/language-service": "catalog:",
+    "@types/pg": "^8.20.0",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.10",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "^22.16 || ^23.11 || >=24.10"
   }
 }
