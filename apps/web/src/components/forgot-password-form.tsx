@@ -4,18 +4,18 @@ import { ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import z from "zod"
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "~/components/ui/button"
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
-import { authClient } from "@/lib/auth-client"
-import { cn } from "@/lib/utils"
+} from "~/components/ui/field"
+import { Input } from "~/components/ui/input"
+import { Spinner } from "~/components/ui/spinner"
+import { authClient } from "~/lib/auth-client"
+import { cn } from "~/lib/utils"
 
 export const onChangeSchema = z.object({
   email: z.email({ error: "Email is required" }),

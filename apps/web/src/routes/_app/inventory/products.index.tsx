@@ -5,6 +5,7 @@ import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
 import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
 
+import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "~/components/page-header";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -16,12 +17,12 @@ import {
 } from "~/components/ui/card";
 import { AtomApiClient } from "~/lib/atom-client";
 
-export const Route = createFileRoute("/_app/")({
-  component: Home,
+export const Route = createFileRoute("/_app/inventory/products/")({
+  component: RouteComponent,
   validateSearch: Schema.toStandardSchemaV1(SearchParamsSchema),
 });
 
-function Home() {
+function RouteComponent() {
   const query = Route.useSearch();
 
   const productAtom = AtomApiClient.query("products", "list", {
@@ -33,11 +34,11 @@ function Home() {
   const refreshProducts = useAtomRefresh(productAtom);
 
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
+    <section className="space-y-6">
+      <PageHeader>
+        <PageHeaderHeading>Products</PageHeaderHeading>
+        <PageHeaderDescription>Manage your inventory products here.</PageHeaderDescription>
+      </PageHeader>
       {AsyncResult.builder(products)
         .onInitial(() => <p>Loading...</p>)
         // .onWaiting(() => <p>Loading...</p>)
@@ -55,19 +56,16 @@ function Home() {
           </Card>
         ))
         .onSuccess((data) => (
-          <div className="mt-4">
-            <h2 className="text-2xl font-bold">Products</h2>
-            <ul className="mt-2">
-              {data.items.map((product) => (
-                <li key={product.id} className="border p-4 rounded mb-2">
-                  <h3 className="text-xl font-semibold">{product.name}</h3>
-                  <p>{product.sku}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="mt-2">
+            {data.items.map((product) => (
+              <li key={product.id} className="border p-4 rounded mb-2">
+                <h3 className="text-xl font-semibold">{product.name}</h3>
+                <p>{product.sku}</p>
+              </li>
+            ))}
+          </ul>
         ))
         .render()}
-    </div>
+    </section>
   );
 }

@@ -1,9 +1,12 @@
-import { Toaster } from "~/components/ui/sonner";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
+import { TailwindIndicator } from "~/components/tailwind-indicator";
+
 import "../styles.css";
+import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -11,9 +14,10 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <>
+    <ThemeProvider>
       <Outlet />
       <Toaster />
+      <TailwindIndicator />
       <TanStackDevtools
         config={{
           position: "bottom-right",
@@ -25,6 +29,6 @@ function RootComponent() {
           },
         ]}
       />
-    </>
+    </ThemeProvider>
   );
 }

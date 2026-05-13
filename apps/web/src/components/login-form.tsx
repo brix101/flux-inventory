@@ -3,12 +3,12 @@ import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 
-import { PasswordInput } from "@/components/password-input";
-import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { authClient } from "@/lib/auth-client";
+import { PasswordInput } from "~/components/password-input";
+import { Button } from "~/components/ui/button";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
+import { Spinner } from "~/components/ui/spinner";
+import { authClient } from "~/lib/auth-client";
 
 export const onChangeSchema = z.object({
   email: z.email({ error: "Email is required" }),

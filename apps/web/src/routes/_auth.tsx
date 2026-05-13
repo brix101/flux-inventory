@@ -3,7 +3,7 @@ import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router"
 import { TerminalIcon } from "lucide-react";
 import z from "zod";
 
-import { appConfig } from "@/lib/config";
+import { appConfig } from "~/lib/config";
 
 const seachSchema = z.object({
   redirect: z.string().optional(),

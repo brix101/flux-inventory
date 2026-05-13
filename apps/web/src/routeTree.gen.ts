@@ -11,10 +11,22 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
-import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth.reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth.forgot-password'
+import { Route as AppWorkshopsIndexRouteImport } from './routes/_app/workshops/index'
+import { Route as AppInventoryIndexRouteImport } from './routes/_app/inventory/index'
+import { Route as AppSettingsAccountRouteImport } from './routes/_app/settings/account'
+import { Route as AppInventorySuppliersRouteImport } from './routes/_app/inventory/suppliers'
+import { Route as AppInventoryRequestsRouteImport } from './routes/_app/inventory/requests'
+import { Route as AppInventoryPurchaseOrdersRouteImport } from './routes/_app/inventory/purchase-orders'
+import { Route as AppInventoryCategoriesRouteImport } from './routes/_app/inventory/categories'
+import { Route as AppInventoryProductsIndexRouteImport } from './routes/_app/inventory/products.index'
+import { Route as AppInventorySuppliersNewRouteImport } from './routes/_app/inventory/suppliers.new'
+import { Route as AppInventoryProductsNewRouteImport } from './routes/_app/inventory/products.new'
+import { Route as AppInventoryProductsIdRouteImport } from './routes/_app/inventory/products.$id'
+import { Route as AppInventoryCategoriesNewRouteImport } from './routes/_app/inventory/categories.new'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -44,18 +56,106 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppWorkshopsIndexRoute = AppWorkshopsIndexRouteImport.update({
+  id: '/workshops/',
+  path: '/workshops/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryIndexRoute = AppInventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsAccountRoute = AppSettingsAccountRouteImport.update({
+  id: '/settings/account',
+  path: '/settings/account',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventorySuppliersRoute = AppInventorySuppliersRouteImport.update({
+  id: '/inventory/suppliers',
+  path: '/inventory/suppliers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryRequestsRoute = AppInventoryRequestsRouteImport.update({
+  id: '/inventory/requests',
+  path: '/inventory/requests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryPurchaseOrdersRoute =
+  AppInventoryPurchaseOrdersRouteImport.update({
+    id: '/inventory/purchase-orders',
+    path: '/inventory/purchase-orders',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppInventoryCategoriesRoute = AppInventoryCategoriesRouteImport.update({
+  id: '/inventory/categories',
+  path: '/inventory/categories',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryProductsIndexRoute =
+  AppInventoryProductsIndexRouteImport.update({
+    id: '/inventory/products/',
+    path: '/inventory/products/',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppInventorySuppliersNewRoute =
+  AppInventorySuppliersNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AppInventorySuppliersRoute,
+  } as any)
+const AppInventoryProductsNewRoute = AppInventoryProductsNewRouteImport.update({
+  id: '/inventory/products/new',
+  path: '/inventory/products/new',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryProductsIdRoute = AppInventoryProductsIdRouteImport.update({
+  id: '/inventory/products/$id',
+  path: '/inventory/products/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryCategoriesNewRoute =
+  AppInventoryCategoriesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AppInventoryCategoriesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
+  '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/inventory/requests': typeof AppInventoryRequestsRoute
+  '/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
+  '/settings/account': typeof AppSettingsAccountRoute
+  '/inventory/': typeof AppInventoryIndexRoute
+  '/workshops/': typeof AppWorkshopsIndexRoute
+  '/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
+  '/inventory/products/$id': typeof AppInventoryProductsIdRoute
+  '/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
+  '/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
+  '/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/inventory/requests': typeof AppInventoryRequestsRoute
+  '/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
+  '/settings/account': typeof AppSettingsAccountRoute
+  '/inventory': typeof AppInventoryIndexRoute
+  '/workshops': typeof AppWorkshopsIndexRoute
+  '/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
+  '/inventory/products/$id': typeof AppInventoryProductsIdRoute
+  '/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
+  '/inventory/products': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -65,12 +165,56 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/inventory/categories': typeof AppInventoryCategoriesRouteWithChildren
+  '/_app/inventory/purchase-orders': typeof AppInventoryPurchaseOrdersRoute
+  '/_app/inventory/requests': typeof AppInventoryRequestsRoute
+  '/_app/inventory/suppliers': typeof AppInventorySuppliersRouteWithChildren
+  '/_app/settings/account': typeof AppSettingsAccountRoute
+  '/_app/inventory/': typeof AppInventoryIndexRoute
+  '/_app/workshops/': typeof AppWorkshopsIndexRoute
+  '/_app/inventory/categories/new': typeof AppInventoryCategoriesNewRoute
+  '/_app/inventory/products/$id': typeof AppInventoryProductsIdRoute
+  '/_app/inventory/products/new': typeof AppInventoryProductsNewRoute
+  '/_app/inventory/suppliers/new': typeof AppInventorySuppliersNewRoute
+  '/_app/inventory/products/': typeof AppInventoryProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forgot-password' | '/login' | '/reset-password'
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/inventory/categories'
+    | '/inventory/purchase-orders'
+    | '/inventory/requests'
+    | '/inventory/suppliers'
+    | '/settings/account'
+    | '/inventory/'
+    | '/workshops/'
+    | '/inventory/categories/new'
+    | '/inventory/products/$id'
+    | '/inventory/products/new'
+    | '/inventory/suppliers/new'
+    | '/inventory/products/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgot-password' | '/login' | '/reset-password'
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/inventory/categories'
+    | '/inventory/purchase-orders'
+    | '/inventory/requests'
+    | '/inventory/suppliers'
+    | '/settings/account'
+    | '/inventory'
+    | '/workshops'
+    | '/inventory/categories/new'
+    | '/inventory/products/$id'
+    | '/inventory/products/new'
+    | '/inventory/suppliers/new'
+    | '/inventory/products'
   id:
     | '__root__'
     | '/_app'
@@ -79,6 +223,18 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_app/'
+    | '/_app/inventory/categories'
+    | '/_app/inventory/purchase-orders'
+    | '/_app/inventory/requests'
+    | '/_app/inventory/suppliers'
+    | '/_app/settings/account'
+    | '/_app/inventory/'
+    | '/_app/workshops/'
+    | '/_app/inventory/categories/new'
+    | '/_app/inventory/products/$id'
+    | '/_app/inventory/products/new'
+    | '/_app/inventory/suppliers/new'
+    | '/_app/inventory/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,15 +286,146 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/workshops/': {
+      id: '/_app/workshops/'
+      path: '/workshops'
+      fullPath: '/workshops/'
+      preLoaderRoute: typeof AppWorkshopsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/': {
+      id: '/_app/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory/'
+      preLoaderRoute: typeof AppInventoryIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings/account': {
+      id: '/_app/settings/account'
+      path: '/settings/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof AppSettingsAccountRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/suppliers': {
+      id: '/_app/inventory/suppliers'
+      path: '/inventory/suppliers'
+      fullPath: '/inventory/suppliers'
+      preLoaderRoute: typeof AppInventorySuppliersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/requests': {
+      id: '/_app/inventory/requests'
+      path: '/inventory/requests'
+      fullPath: '/inventory/requests'
+      preLoaderRoute: typeof AppInventoryRequestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/purchase-orders': {
+      id: '/_app/inventory/purchase-orders'
+      path: '/inventory/purchase-orders'
+      fullPath: '/inventory/purchase-orders'
+      preLoaderRoute: typeof AppInventoryPurchaseOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/categories': {
+      id: '/_app/inventory/categories'
+      path: '/inventory/categories'
+      fullPath: '/inventory/categories'
+      preLoaderRoute: typeof AppInventoryCategoriesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/products/': {
+      id: '/_app/inventory/products/'
+      path: '/inventory/products'
+      fullPath: '/inventory/products/'
+      preLoaderRoute: typeof AppInventoryProductsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/suppliers/new': {
+      id: '/_app/inventory/suppliers/new'
+      path: '/new'
+      fullPath: '/inventory/suppliers/new'
+      preLoaderRoute: typeof AppInventorySuppliersNewRouteImport
+      parentRoute: typeof AppInventorySuppliersRoute
+    }
+    '/_app/inventory/products/new': {
+      id: '/_app/inventory/products/new'
+      path: '/inventory/products/new'
+      fullPath: '/inventory/products/new'
+      preLoaderRoute: typeof AppInventoryProductsNewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/products/$id': {
+      id: '/_app/inventory/products/$id'
+      path: '/inventory/products/$id'
+      fullPath: '/inventory/products/$id'
+      preLoaderRoute: typeof AppInventoryProductsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inventory/categories/new': {
+      id: '/_app/inventory/categories/new'
+      path: '/new'
+      fullPath: '/inventory/categories/new'
+      preLoaderRoute: typeof AppInventoryCategoriesNewRouteImport
+      parentRoute: typeof AppInventoryCategoriesRoute
+    }
   }
 }
 
+interface AppInventoryCategoriesRouteChildren {
+  AppInventoryCategoriesNewRoute: typeof AppInventoryCategoriesNewRoute
+}
+
+const AppInventoryCategoriesRouteChildren: AppInventoryCategoriesRouteChildren =
+  {
+    AppInventoryCategoriesNewRoute: AppInventoryCategoriesNewRoute,
+  }
+
+const AppInventoryCategoriesRouteWithChildren =
+  AppInventoryCategoriesRoute._addFileChildren(
+    AppInventoryCategoriesRouteChildren,
+  )
+
+interface AppInventorySuppliersRouteChildren {
+  AppInventorySuppliersNewRoute: typeof AppInventorySuppliersNewRoute
+}
+
+const AppInventorySuppliersRouteChildren: AppInventorySuppliersRouteChildren = {
+  AppInventorySuppliersNewRoute: AppInventorySuppliersNewRoute,
+}
+
+const AppInventorySuppliersRouteWithChildren =
+  AppInventorySuppliersRoute._addFileChildren(
+    AppInventorySuppliersRouteChildren,
+  )
+
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppInventoryCategoriesRoute: typeof AppInventoryCategoriesRouteWithChildren
+  AppInventoryPurchaseOrdersRoute: typeof AppInventoryPurchaseOrdersRoute
+  AppInventoryRequestsRoute: typeof AppInventoryRequestsRoute
+  AppInventorySuppliersRoute: typeof AppInventorySuppliersRouteWithChildren
+  AppSettingsAccountRoute: typeof AppSettingsAccountRoute
+  AppInventoryIndexRoute: typeof AppInventoryIndexRoute
+  AppWorkshopsIndexRoute: typeof AppWorkshopsIndexRoute
+  AppInventoryProductsIdRoute: typeof AppInventoryProductsIdRoute
+  AppInventoryProductsNewRoute: typeof AppInventoryProductsNewRoute
+  AppInventoryProductsIndexRoute: typeof AppInventoryProductsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppInventoryCategoriesRoute: AppInventoryCategoriesRouteWithChildren,
+  AppInventoryPurchaseOrdersRoute: AppInventoryPurchaseOrdersRoute,
+  AppInventoryRequestsRoute: AppInventoryRequestsRoute,
+  AppInventorySuppliersRoute: AppInventorySuppliersRouteWithChildren,
+  AppSettingsAccountRoute: AppSettingsAccountRoute,
+  AppInventoryIndexRoute: AppInventoryIndexRoute,
+  AppWorkshopsIndexRoute: AppWorkshopsIndexRoute,
+  AppInventoryProductsIdRoute: AppInventoryProductsIdRoute,
+  AppInventoryProductsNewRoute: AppInventoryProductsNewRoute,
+  AppInventoryProductsIndexRoute: AppInventoryProductsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

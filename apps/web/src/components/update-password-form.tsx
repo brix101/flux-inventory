@@ -3,16 +3,16 @@ import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
 import z from "zod"
 
-import { PasswordInput } from "@/components/password-input"
-import { Button } from "@/components/ui/button"
+import { PasswordInput } from "~/components/password-input"
+import { Button } from "~/components/ui/button"
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Spinner } from "@/components/ui/spinner"
-import { authClient } from "@/lib/auth-client"
+} from "~/components/ui/field"
+import { Spinner } from "~/components/ui/spinner"
+import { authClient } from "~/lib/auth-client"
 
 const onChangeSchema = z
   .object({
