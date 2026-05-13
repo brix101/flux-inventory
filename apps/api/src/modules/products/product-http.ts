@@ -1,10 +1,10 @@
+import { DomainApi } from "@flux/contracts";
 import * as Effect from "effect/Effect";
 import * as HttpApiBuilder from "effect/unstable/httpapi/HttpApiBuilder";
 
-import { Api } from "../../api.ts";
 import { ProductService } from "./product-services.ts";
 
-export const ProductHttpLive = HttpApiBuilder.group(Api, "ProductApi", (b) =>
+export const ProductHttpLive = HttpApiBuilder.group(DomainApi, "products", (b) =>
   Effect.gen(function* () {
     const services = yield* ProductService;
     return b

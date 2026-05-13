@@ -1,4 +1,4 @@
-import { authClient } from "#/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { TerminalIcon } from "lucide-react";
 import z from "zod";
