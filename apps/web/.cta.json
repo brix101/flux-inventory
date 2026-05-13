@@ -1,15 +1,15 @@
 {
-  "projectName": "web",
+  "projectName": "admin",
   "mode": "file-router",
   "typescript": true,
-  "packageManager": "npm",
+  "packageManager": "pnpm",
   "includeExamples": false,
   "tailwind": true,
   "addOnOptions": {},
   "envVarValues": {},
   "git": false,
   "install": true,
-  "routerOnly": false,
+  "routerOnly": true,
   "version": 1,
   "framework": "react",
   "chosenAddOns": []

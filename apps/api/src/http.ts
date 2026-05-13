@@ -27,11 +27,17 @@ const HttpServerLive = Layer.unwrap(
   }),
 );
 
-const makesRoutesLayer = Layer.mergeAll(authRouteLayer, apiRouterLayer);
+const apiCorsLayer = HttpRouter.cors({
+  credentials: true,
+  allowedOrigins: ["http://localhost:5173"], // TODO: Move to config
+});
+
+const makesRoutesLayer = Layer.mergeAll(authRouteLayer, apiRouterLayer).pipe(
+  Layer.provide(apiCorsLayer),
+);
 
 export const HttpLive = HttpRouter.serve(makesRoutesLayer, {}).pipe(
   Layer.provide(HttpApiSwagger.layer(Api)),
-  // Layer.provide(HttpApiBuilder.middlewareCors()),
   Layer.provide(HttpRouter.layer),
   Layer.provide(HttpServerLive),
   Layer.provide(servicesLayer),

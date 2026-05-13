@@ -55,6 +55,7 @@ export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
         provider: "pg",
         usePlural: true,
       }),
+      trustedOrigins: ["http://localhost:5173"],
       secret: Redacted.value(config.betterAuthSecret),
       baseURL: config.betterAuthUrl,
       emailAndPassword: {
