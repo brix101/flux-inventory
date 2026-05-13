@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/main.ts",
-    "build": "node scripts/cli.ts build",
-    "build:bundle": "tsdown",
+    "build": "tsdown",
     "start": "node dist/main.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -15,7 +14,6 @@
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio"
   },
-  "packageManager": "pnpm@10.33.0",
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "@flux/contracts": "workspace:*",
@@ -35,5 +33,6 @@
   },
   "engines": {
     "node": "^22.16 || ^23.11 || >=24.10"
-  }
+  },
+  "packageManager": "pnpm@10.33.0"
 }
