@@ -1,6 +1,8 @@
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { SearchParamsSchema } from "@flux/contracts";
 import { createFileRoute } from "@tanstack/react-router";
 import * as Cause from "effect/Cause";
+import * as Schema from "effect/Schema";
 import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
 
 import { Button } from "~/components/ui/button";
@@ -14,14 +16,19 @@ import {
 } from "~/components/ui/card";
 import { AtomApiClient } from "~/lib/atom-client";
 
-export const Route = createFileRoute("/_app/")({ component: Home });
-
-const productAtom = AtomApiClient.query("products", "list", {
-  query: { pageSize: 20 },
-  reactivityKeys: ["products"],
+export const Route = createFileRoute("/_app/")({
+  component: Home,
+  validateSearch: Schema.toStandardSchemaV1(SearchParamsSchema),
 });
 
 function Home() {
+  const query = Route.useSearch();
+
+  const productAtom = AtomApiClient.query("products", "list", {
+    query,
+    reactivityKeys: ["products"],
+  });
+
   const products = useAtomValue(productAtom);
   const refreshProducts = useAtomRefresh(productAtom);
 
@@ -32,15 +39,15 @@ function Home() {
         Edit <code>src/routes/index.tsx</code> to get started.
       </p>
       {AsyncResult.builder(products)
-        // .onInitial(() => <p>Loading...</p>)
-        .onWaiting(() => <p>Loading...</p>)
-        .onFailure((error) => (
+        .onInitial(() => <p>Loading...</p>)
+        // .onWaiting(() => <p>Loading...</p>)
+        .onFailure((cause) => (
           <Card>
             <CardHeader>
               <CardTitle>Something went wrong loading products.</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>{Cause.pretty(error)}</CardDescription>
+              <CardDescription>{Cause.pretty(cause)}</CardDescription>
             </CardContent>
             <CardFooter>
               <Button onClick={refreshProducts}>Retry</Button>

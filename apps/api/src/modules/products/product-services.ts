@@ -1,5 +1,5 @@
-import { ProductList } from "@flux/contracts";
-import { and, count, eq } from "drizzle-orm";
+import { ProductList, SortBySchema, type SearchParams } from "@flux/contracts";
+import { asc, count, desc, eq, getTableColumns, SQL } from "drizzle-orm";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
@@ -7,7 +7,6 @@ import * as Schema from "effect/Schema";
 
 import { Database } from "../../database.ts";
 import { productVariants } from "../../db/schema/inventory-schema.ts";
-import { buildCursor } from "../../pagination.ts";
 
 export class ProductService extends Context.Service<ProductService>()(
   "@flux/api/modules/products/product-services/ProductService",
@@ -15,26 +14,25 @@ export class ProductService extends Context.Service<ProductService>()(
     make: Effect.gen(function* () {
       const db = yield* Database;
 
-      const find = Effect.fn("ProductService.find")(function* (
-        pageSize: number,
-        cursorStr?: string,
-        sortBy?: string,
-      ) {
-        const { cursorCondition, orderBy, generateNextCursor } = yield* buildCursor(
-          productVariants,
-          cursorStr,
-          sortBy,
-        );
+      const find = Effect.fn("ProductService.find")(function* (query: SearchParams) {
+        const { page = 1, pageSize = 20, sort = "" } = query;
+        const [column, direction] = yield* Schema.decodeEffect(SortBySchema)(sort);
 
-        const baseWhere = eq(productVariants.isActive, true);
+        const where = eq(productVariants.isActive, true);
 
         return yield* db
           .use((client) =>
             client.transaction(async (tx) => {
-              const finalWhere = cursorCondition ? and(baseWhere, cursorCondition) : baseWhere;
+              const availableColumns = getTableColumns(productVariants) as Record<string, any>;
+
+              let orderBy: SQL<unknown>[] = [];
+              if (column && column in availableColumns) {
+                const sortedColumn = availableColumns[column];
+                const sortDirection = direction === "asc" ? asc : desc;
+                orderBy.push(sortDirection(sortedColumn));
+              }
 
               const items = await tx.query.productVariants.findMany({
-                where: finalWhere,
                 with: {
                   product: {
                     with: {
@@ -42,18 +40,18 @@ export class ProductService extends Context.Service<ProductService>()(
                     },
                   },
                 },
+                where: where,
                 limit: pageSize,
+                offset: (page - 1) * pageSize,
                 orderBy: orderBy,
               });
-
-              const nextCursor = generateNextCursor(items, pageSize);
 
               const total = await tx
                 .select({
                   count: count(),
                 })
                 .from(productVariants)
-                .where(baseWhere)
+                .where(where)
                 .execute()
                 .then((res) => res[0]?.count ?? 0);
 
@@ -61,9 +59,10 @@ export class ProductService extends Context.Service<ProductService>()(
                 items,
                 meta: {
                   total,
+                  page,
                   pageSize,
-                  nextCursor,
-                  hasMore: !!nextCursor,
+                  totalPages: Math.ceil(total / pageSize),
+                  nextPage: page * pageSize < total ? page + 1 : null,
                 },
               };
             }),

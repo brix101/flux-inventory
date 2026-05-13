@@ -9,8 +9,7 @@ export const ProductHttpLive = HttpApiBuilder.group(DomainApi, "products", (b) =
     const services = yield* ProductService;
     return b
       .handle("list", ({ query }) => {
-        const { pageSize = 20, cursor, sortBy } = query;
-        return services.find(pageSize, cursor, sortBy);
+        return services.find(query);
       })
       .handle("create", ({ payload }) => {
         console.log(payload);
