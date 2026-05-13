@@ -8,6 +8,8 @@ import * as Schema from "effect/Schema";
 import { Database } from "../../database.ts";
 import { productVariants } from "../../db/schema/inventory-schema.ts";
 
+const columns = getTableColumns(productVariants);
+
 export class ProductService extends Context.Service<ProductService>()(
   "@flux/api/modules/products/product-services/ProductService",
   {
@@ -23,11 +25,9 @@ export class ProductService extends Context.Service<ProductService>()(
         return yield* db
           .use((client) =>
             client.transaction(async (tx) => {
-              const availableColumns = getTableColumns(productVariants) as Record<string, any>;
-
-              let orderBy: SQL<unknown>[] = [];
-              if (column && column in availableColumns) {
-                const sortedColumn = availableColumns[column];
+              const orderBy: SQL<unknown>[] = [];
+              if (column in columns) {
+                const sortedColumn = columns[column as keyof typeof columns];
                 const sortDirection = direction === "asc" ? asc : desc;
                 orderBy.push(sortDirection(sortedColumn));
               }
