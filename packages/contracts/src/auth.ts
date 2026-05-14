@@ -48,7 +48,8 @@ export const Session = Schema.Struct({
 });
 export type Session = typeof Session.Type;
 
-export class UserInfo extends Schema.Class<UserInfo>("UserInfo")({
+export const UserInfo = Schema.Struct({
   user: User,
   session: Session,
-}) {}
+});
+export type UserInfo = typeof UserInfo.Type;

@@ -1,27 +1,20 @@
-import * as NodeHttpServerRequest from "@effect/platform-node/NodeHttpServerRequest";
 import { UserInfo } from "@flux/contracts";
+import { Unauthorized } from "@flux/contracts/middleware";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { toNodeHandler } from "better-auth/node";
 import { admin as adminPlugin, organization } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
 import * as Context from "effect/Context";
-import * as Data from "effect/Data";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Redacted from "effect/Redacted";
 import * as Schema from "effect/Schema";
-import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
+import { HttpEffect, HttpRouter } from "effect/unstable/http";
 
 import { ApiConfig } from "./config.ts";
 import { Database } from "./Database.ts";
-
-export class UnauthorizedError extends Data.TaggedError("UnauthorizedError")<{}> {}
-export class BeterAuthError extends Data.TaggedError("BeterAuthError")<{
-  message: string;
-}> {}
 
 export const statement = {
   ...defaultStatements,
@@ -94,50 +87,26 @@ export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
       },
     });
 
-    const handler = Effect.fn("auth.handler")(function* (
-      request: HttpServerRequest.HttpServerRequest,
-    ) {
-      const nodeRequest = NodeHttpServerRequest.toIncomingMessage(request);
-      const nodeResponse = NodeHttpServerRequest.toServerResponse(request);
+    const handler = HttpEffect.fromWebHandler(auth.handler);
 
-      yield* Effect.tryPromise({
-        try: () => toNodeHandler(auth)(nodeRequest, nodeResponse),
-        catch: (error) => {
-          console.log(error);
-          return new BeterAuthError({ message: "Authentication failed" });
-        },
-      });
-
-      return HttpServerResponse.empty({
-        status: nodeResponse.writableFinished ? nodeResponse.statusCode : 499,
-      });
-    });
-
-    /**
-     * Resolves the current session from request headers and validates it into
-     * `Domain.User` / `Domain.Session`.
-     *
-     * `Domain.*` schemas decode D1 rows (encoded side: ints, ISO strings,
-     * plain strings) into the domain shape (decoded side: booleans, Dates,
-     * branded ids). Better Auth's `auth.api.getSession` returns the **decoded
-     * side already** — its adapter coerced D1 rows before we see them.
-     * Running `Schema.decodeUnknownEffect(Domain.User)` on that output would
-     * fail because the transforms expect the encoded shape as input.
-     *
-     * `Schema.toType(S)` derives a schema whose `Encoded === Type ===
-     * S["Type"]` — a validator over the decoded shape. It enforces that
-     * Better Auth's output actually matches `Domain.User` / `Domain.Session`
-     * (including branded ids) without re-running the D1 transforms.
-     */
     const getSession = Effect.fn("auth.getSession")(function* (headers: Headers) {
-      const result = yield* Effect.tryPromise(() => auth.api.getSession({ headers }));
-      if (!result) return Option.none();
-      const userInfo = yield* Schema.decodeUnknownEffect(Schema.toType(UserInfo))({
-        user: result.user,
-        session: result.session,
+      const result = yield* Effect.tryPromise({
+        try: () => auth.api.getSession({ headers }),
+        catch: () => new Unauthorized({ message: "Unauthorized" }),
       });
 
-      return Option.some(userInfo);
+      if (!result) return Option.none();
+
+      return yield* Schema.decodeUnknownEffect(Schema.toType(UserInfo))(result).pipe(
+        Effect.map(Option.some),
+        Effect.catchTags({
+          SchemaError: (error) =>
+            Effect.gen(function* () {
+              yield* Effect.logError(`Failed to decode session: ${error.message}`);
+              return Option.none();
+            }),
+        }),
+      );
     });
 
     return {
@@ -154,10 +123,9 @@ export const BetterAuthRouterLive = HttpRouter.use((router) =>
     "*",
     "/api/auth*",
     Effect.gen(function* () {
-      const request = yield* HttpServerRequest.HttpServerRequest;
       const auth = yield* Auth;
 
-      return yield* auth.handler(request);
+      return yield* auth.handler;
     }),
   ),
 );

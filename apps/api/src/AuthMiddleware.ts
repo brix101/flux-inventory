@@ -14,13 +14,11 @@ export const AuthMiddlewareLayer = Layer.effect(
 
     return AuthMiddleware.of({
       cookie: Effect.fn(function* (httpEffect, { credential }) {
-        const session = yield* auth
-          .getSession(
-            new Headers({
-              cookie: `better-auth.session_token=${Redacted.value(credential)}`,
-            }),
-          )
-          .pipe(Effect.catch(() => Effect.succeed(Option.none())));
+        const headers = new Headers({
+          cookie: `better-auth.session_token=${Redacted.value(credential)}`,
+        });
+
+        const session = yield* auth.getSession(headers);
 
         if (Option.isNone(session)) {
           return yield* new Unauthorized({ message: "Unauthorized" });
