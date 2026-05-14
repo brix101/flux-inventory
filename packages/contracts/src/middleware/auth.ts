@@ -2,14 +2,9 @@ import * as Context from "effect/Context";
 import * as Schema from "effect/Schema";
 import { HttpApiMiddleware, HttpApiSecurity } from "effect/unstable/httpapi";
 
-import { User, Session } from "../auth.ts";
+import { UserInfo } from "../auth.ts";
 
-export class UserSession extends Schema.Class<UserSession>("UserSession")({
-  user: User,
-  session: Session,
-}) {}
-
-export class CurrentUser extends Context.Service<CurrentUser, UserSession>()(
+export class CurrentUser extends Context.Service<CurrentUser, UserInfo>()(
   "@flux/api/AuthMiddleware/CurrentUser",
 ) {}
 

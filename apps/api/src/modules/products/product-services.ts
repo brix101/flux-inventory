@@ -16,7 +16,7 @@ export class ProductService extends Context.Service<ProductService>()(
     make: Effect.gen(function* () {
       const db = yield* Database;
 
-      const find = Effect.fn("ProductService.find")(function* (query: SearchParams) {
+      const list = Effect.fn("ProductService.list")(function* (query: SearchParams) {
         const { page = 1, pageSize = 20, sort = "" } = query;
         const [column, direction] = yield* Schema.decodeEffect(SortBySchema)(sort).pipe(
           Effect.catch(() => Effect.succeed(["createdAt", "desc"] as const)),
@@ -81,7 +81,7 @@ export class ProductService extends Context.Service<ProductService>()(
       });
 
       return {
-        find,
+        find: list,
       };
     }),
   },

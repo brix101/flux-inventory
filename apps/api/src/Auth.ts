@@ -1,5 +1,5 @@
 import * as NodeHttpServerRequest from "@effect/platform-node/NodeHttpServerRequest";
-import { Session, User } from "@flux/contracts";
+import { UserInfo } from "@flux/contracts";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { toNodeHandler } from "better-auth/node";
@@ -132,27 +132,17 @@ export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
     const getSession = Effect.fn("auth.getSession")(function* (headers: Headers) {
       const result = yield* Effect.tryPromise(() => auth.api.getSession({ headers }));
       if (!result) return Option.none();
-      const decodedUser = yield* Schema.decodeUnknownEffect(Schema.toType(User))(result.user);
-      const decodedSession = yield* Schema.decodeUnknownEffect(Schema.toType(Session))(
-        result.session,
-      );
-      return Option.some({ user: decodedUser, session: decodedSession });
-    });
+      const userInfo = yield* Schema.decodeUnknownEffect(Schema.toType(UserInfo))({
+        user: result.user,
+        session: result.session,
+      });
 
-    const ensureSession = Effect.fn("auth.ensureSession")(function* (headers: Headers) {
-      const session = yield* getSession(headers);
-
-      if (Option.isNone(session)) {
-        return yield* new UnauthorizedError();
-      }
-
-      return session.value;
+      return Option.some(userInfo);
     });
 
     return {
       handler,
       getSession,
-      ensureSession,
     };
   }),
 }) {

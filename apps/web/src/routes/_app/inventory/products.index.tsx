@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { AtomApiClient } from "~/lib/atom-client";
+import { ApiClient } from "~/lib/api-client";
 
 export const Route = createFileRoute("/_app/inventory/products/")({
   component: RouteComponent,
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_app/inventory/products/")({
 function RouteComponent() {
   const query = Route.useSearch();
 
-  const productAtom = AtomApiClient.query("products", "list", {
+  const productAtom = ApiClient.query("products", "list", {
     query,
     reactivityKeys: ["products"],
   });

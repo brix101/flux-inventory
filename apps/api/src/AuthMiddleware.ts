@@ -1,4 +1,4 @@
-import { AuthMiddleware, CurrentUser, Unauthorized, UserSession } from "@flux/contracts/middleware";
+import { AuthMiddleware, CurrentUser, Unauthorized } from "@flux/contracts/middleware";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
@@ -26,14 +26,7 @@ export const AuthMiddlewareLayer = Layer.effect(
           return yield* new Unauthorized({ message: "Unauthorized" });
         }
 
-        return yield* Effect.provideService(
-          httpEffect,
-          CurrentUser,
-          new UserSession({
-            user: session.value.user,
-            session: session.value.session,
-          }),
-        );
+        return yield* Effect.provideService(httpEffect, CurrentUser, session.value);
       }),
     });
   }),
