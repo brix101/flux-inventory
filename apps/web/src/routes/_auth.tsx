@@ -1,17 +1,17 @@
-import { authClient } from "~/lib/auth-client";
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
+import * as Schema from "effect/Schema";
 import { TerminalIcon } from "lucide-react";
-import z from "zod";
 
+import { authClient } from "~/lib/auth-client";
 import { appConfig } from "~/lib/config";
 
-const seachSchema = z.object({
-  redirect: z.string().optional(),
+const seachSchema = Schema.Struct({
+  redirect: Schema.optional(Schema.String),
 });
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,
-  validateSearch: seachSchema,
+  validateSearch: Schema.toStandardSchemaV1(seachSchema),
   beforeLoad: async ({ search }) => {
     const session = await authClient.getSession();
     if (session.data) {

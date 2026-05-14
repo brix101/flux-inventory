@@ -1,7 +1,8 @@
+import { EmailSchema, PasswordSchema } from "@flux/contracts";
 import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
+import * as Schema from "effect/Schema";
 import { toast } from "sonner";
-import z from "zod";
 
 import { PasswordInput } from "~/components/password-input";
 import { Button } from "~/components/ui/button";
@@ -10,13 +11,9 @@ import { Input } from "~/components/ui/input";
 import { Spinner } from "~/components/ui/spinner";
 import { authClient } from "~/lib/auth-client";
 
-export const onChangeSchema = z.object({
-  email: z.email({ error: "Email is required" }),
-  password: z
-    .string({ error: "Password is required" })
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
+const inputSchema = Schema.Struct({
+  email: EmailSchema,
+  password: PasswordSchema,
 });
 
 export function LoginForm({ callbackURL }: { callbackURL?: string }) {
@@ -26,7 +23,7 @@ export function LoginForm({ callbackURL }: { callbackURL?: string }) {
       password: "",
     },
     validators: {
-      onChange: onChangeSchema,
+      onChange: Schema.toStandardSchemaV1(inputSchema),
     },
     onSubmit: async ({ value }) => {
       return await authClient.signIn

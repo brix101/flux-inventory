@@ -33,7 +33,13 @@ export const Route = createFileRoute("/_app/inventory/products/new")({
 });
 
 function RouteComponent() {
-  const categoryOptions = [];
+  const categoryOptions = [{
+    value: "1463528d-ef62-476b-8983-656ae87fa9ee",
+    label: "Category 1",
+  }, {
+    value: "1a2b8997-0f13-4b5c-818a-d77880b7724b",
+    label: "Category 2",
+  }];
   const unitOptions = [];
 
   const form = useForm({

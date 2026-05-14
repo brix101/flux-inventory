@@ -1,11 +1,6 @@
 import * as Schema from "effect/Schema";
 
-import { intToBoolean, isoDatetimeToDate } from "./baseSchemas.ts";
-
-const emailSchema = Schema.String.check(Schema.isPattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/));
-export const EnvironmentValues = ["production", "development"] as const;
-export const Environment = Schema.Literals(EnvironmentValues);
-export type Environment = typeof Environment.Type;
+import { EmailSchema, intToBoolean, isoDatetimeToDate } from "./baseSchemas.ts";
 
 export const UserRoleValues = ["user", "manager", "admin"] as const;
 export const UserRole = Schema.Literals(UserRoleValues);
@@ -19,7 +14,7 @@ export type MemberRole = typeof MemberRole.Type;
 export const User = Schema.Struct({
   id: Schema.NonEmptyString.pipe(Schema.brand("UserId")),
   name: Schema.String,
-  email: emailSchema,
+  email: EmailSchema,
   emailVerified: intToBoolean,
   image: Schema.NullishOr(Schema.String),
   role: UserRole,

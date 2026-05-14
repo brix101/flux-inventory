@@ -5,6 +5,7 @@ import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
 import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
 
+import NewProductForm from "~/components/new-product-form";
 import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "~/components/page-header";
 import { Button } from "~/components/ui/button";
 import {
@@ -34,42 +35,47 @@ function RouteComponent() {
   const refreshProducts = useAtomRefresh(productAtom);
 
   return (
-    <section className="space-y-6">
-      <PageHeader>
-        <PageHeaderHeading>Products</PageHeaderHeading>
-        <PageHeaderDescription>Manage your inventory products here.</PageHeaderDescription>
-      </PageHeader>
-      {AsyncResult.builder(products)
-        .onInitial(() => <p>Loading...</p>)
-        // .onWaiting(() => <p>Loading...</p>)
-        .onFailure((cause) => (
-          <Card>
-            <CardHeader>
-              <CardTitle>Something went wrong loading products.</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>{Cause.pretty(cause)}</CardDescription>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={refreshProducts}>Retry</Button>
-            </CardFooter>
-          </Card>
-        ))
-        .onSuccess((data) => 
-          <div className="space-y-2">
-{
-            data.items.map((product) => (
-              <Card key={product.id}>
-                <CardContent>
-                <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
-                <p>{product.sku}</p>
-                </CardContent>
-              </Card>
-            ))
-          }
-          </div>
-        )
-        .render()}
-    </section>
+    <div className="grid grid-cols-2 gap-4">
+      <Card>
+        <CardContent>
+          <NewProductForm />
+        </CardContent>
+      </Card>
+      <section className="space-y-6">
+        <PageHeader>
+          <PageHeaderHeading>Products</PageHeaderHeading>
+          <PageHeaderDescription>Manage your inventory products here.</PageHeaderDescription>
+        </PageHeader>
+        {AsyncResult.builder(products)
+          .onInitial(() => <p>Loading...</p>)
+          // .onWaiting(() => <p>Loading...</p>)
+          .onFailure((cause) => (
+            <Card>
+              <CardHeader>
+                <CardTitle>Something went wrong loading products.</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{Cause.pretty(cause)}</CardDescription>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={refreshProducts}>Retry</Button>
+              </CardFooter>
+            </Card>
+          ))
+          .onSuccess((data) => (
+            <div className="space-y-2">
+              {data.items.map((product) => (
+                <Card key={product.id}>
+                  <CardContent>
+                    <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
+                    <p>{product.sku}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ))
+          .render()}
+      </section>
+    </div>
   );
 }

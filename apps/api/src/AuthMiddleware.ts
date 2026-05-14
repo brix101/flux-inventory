@@ -10,7 +10,6 @@ export const AuthMiddlewareLayer = Layer.effect(
   AuthMiddleware,
   Effect.gen(function* () {
     const auth = yield* Auth;
-    yield* Effect.log("AuthMiddleware initialized");
 
     return AuthMiddleware.of({
       cookie: Effect.fn(function* (httpEffect, { credential }) {

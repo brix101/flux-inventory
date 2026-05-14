@@ -11,14 +11,12 @@ export const CreateProductSchema = Schema.Struct({
     }),
     Schema.isMaxLength(100, { message: "Product name is too long" }),
   ),
-  description: Schema.optional(
-    Schema.String.check(
-      Schema.isMaxLength(500, {
-        message: "Description cannot exceed 500 characters",
-      }),
-    ),
+  description: Schema.String.check(
+    Schema.isMaxLength(500, {
+      message: "Description cannot exceed 500 characters",
+    }),
   ),
-  categoryId: Schema.optional(CategoryId),
+  categoryId: Schema.String,
   unit: Schema.String.pipe(Schema.withConstructorDefault(Effect.succeed("pcs"))),
   sku: Schema.optional(Schema.String),
 });

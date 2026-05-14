@@ -48,6 +48,21 @@ export const isoDatetimeToDate = Schema.String.pipe(
   ),
 );
 
+export const EmailSchema = Schema.String.check(
+  Schema.isPattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: "Must be a valid email address" }),
+);
+export const PasswordSchema = Schema.String.pipe(
+  Schema.check(Schema.isNonEmpty({ message: "Password cannot be empty" })),
+  Schema.check(Schema.isMinLength(8, { message: "Password must be at least 8 characters long" })),
+  Schema.check(Schema.isMaxLength(32, { message: "Password must be at most 32 characters long" })),
+  // TODO: Add regex check for complexity (uppercase, lowercase, number, special chars
+  // Schema.check(Schema.isPattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+);
+
+export const EnvironmentValues = ["production", "development"] as const;
+export const Environment = Schema.Literals(EnvironmentValues);
+export type Environment = typeof Environment.Type;
+
 export const CategoryId = makeEntityId("CategoryId");
 export type CategoryId = typeof CategoryId.Type;
 
