@@ -1,3 +1,5 @@
+import type { User } from "@flux/contracts";
+
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as Context from "effect/Context";
@@ -112,18 +114,17 @@ export class Database extends Context.Service<Database>()("@flux/api/database", 
 
     type Tx = Parameters<typeof client.transaction>[0] extends (tx: infer T) => any ? T : never;
 
-    const withAudit = Effect.fn("database.withAudit")(function* <T>(
-      userId: string,
-      fn: (tx: Tx) => Promise<T>,
-    ) {
-      return yield* Effect.tryPromise({
-        try: () =>
-          client.transaction(async (tx) => {
-            await tx.execute(sql`SELECT set_config('app.user_id', ${userId}, true)`);
-            return fn(tx);
-          }),
-        catch: handleDatabaseError,
-      });
+    const withAudit = (user: User) => ({
+      use: Effect.fn("database.withAudit")(function* <T>(fn: (tx: Tx) => Promise<T>) {
+        return yield* Effect.tryPromise({
+          try: () =>
+            client.transaction(async (tx) => {
+              await tx.execute(sql`SELECT set_config('app.user_id', ${user.id}, true)`);
+              return fn(tx);
+            }),
+          catch: handleDatabaseError,
+        });
+      }),
     });
 
     return {

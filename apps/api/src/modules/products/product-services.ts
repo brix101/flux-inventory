@@ -1,4 +1,11 @@
-import { ProductList, SortBySchema, type SearchParams } from "@flux/contracts";
+import {
+  ProductList,
+  SortBySchema,
+  User,
+  type SearchParams,
+  CreateProductSchema,
+  ProductWithVariants,
+} from "@flux/contracts";
 import { asc, count, desc, eq, getTableColumns, SQL } from "drizzle-orm";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
@@ -6,7 +13,8 @@ import * as Layer from "effect/Layer";
 import * as Schema from "effect/Schema";
 
 import { Database } from "../../Database.ts";
-import { productVariants } from "../../db/schema/inventory-schema.ts";
+import { products, productVariants } from "../../db/schema/inventory-schema.ts";
+import { generateSKU } from "../../lib/sku.ts";
 
 const columns = getTableColumns(productVariants);
 
@@ -71,17 +79,66 @@ export class ProductService extends Context.Service<ProductService>()(
           )
           .pipe(
             Effect.flatMap(Schema.decodeEffect(ProductList)),
+            Effect.withSpan("ProductService.list", { attributes: { query } }),
             Effect.catchTags({
-              DatabaseError: (error) =>
-                Effect.die(new Error(`Database error while fetching products: ${error.message}`)),
-              SchemaError: (error) =>
-                Effect.die(new Error(`Failed to decode ProductList: ${error.message}`)),
+              DatabaseError: (error) => Effect.die(error),
+              SchemaError: (error) => Effect.die(error),
+            }),
+          );
+      });
+
+      const create = Effect.fn("ProductService.create")(function* (
+        user: User,
+        payload: CreateProductSchema,
+      ) {
+        return yield* db
+          .withAudit(user)
+          .use(async (tx) => {
+            const result = await tx
+              .insert(products)
+              .values({
+                name: payload.name,
+                description: payload.description,
+                categoryId: payload.categoryId,
+              })
+              .returning();
+
+            const newProduct = result[0]!;
+
+            const variantName = "Standard";
+            const variantId = crypto.randomUUID();
+
+            const sku = generateSKU(newProduct.id, variantId);
+
+            const variants = await tx
+              .insert(productVariants)
+              .values({
+                id: variantId,
+                productId: newProduct.id,
+                sku: payload.sku || sku,
+                name: variantName,
+                unit: payload.unit,
+              })
+              .returning();
+
+            return {
+              ...newProduct,
+              variants,
+            };
+          })
+          .pipe(
+            Effect.flatMap(Schema.decodeEffect(ProductWithVariants)),
+            Effect.withSpan("ProductService.create", { attributes: { user, payload } }),
+            Effect.catchTags({
+              DatabaseError: (error) => Effect.die(error),
+              SchemaError: (error) => Effect.die(error),
             }),
           );
       });
 
       return {
-        find: list,
+        list,
+        create,
       };
     }),
   },

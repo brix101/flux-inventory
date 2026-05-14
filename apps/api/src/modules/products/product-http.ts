@@ -12,15 +12,9 @@ export const ProductHttpLive = HttpApiBuilder.group(
     const services = yield* ProductService;
 
     return handlers
-      .handle("list", ({ query }) => CurrentUser.pipe(Effect.flatMap(() => services.find(query))))
+      .handle("list", ({ query }) => CurrentUser.pipe(Effect.flatMap(() => services.list(query))))
       .handle("create", ({ payload }) =>
-        CurrentUser.pipe(
-          Effect.flatMap(() => {
-            console.log(payload);
-
-            return Effect.succeed({ message: "Product created successfully" });
-          }),
-        ),
+        CurrentUser.pipe(Effect.flatMap(({ user }) => services.create(user, payload))),
       );
   }),
 );

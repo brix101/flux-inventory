@@ -22,6 +22,7 @@ export const CreateProductSchema = Schema.Struct({
   unit: Schema.String.pipe(Schema.withConstructorDefault(Effect.succeed("pcs"))),
   sku: Schema.optional(Schema.String),
 });
+export type CreateProductSchema = typeof CreateProductSchema.Type;
 
 export class Product extends Schema.Class<Product>("Product")({
   id: ProductId,
@@ -50,10 +51,21 @@ export class ProductVariant extends Schema.Class<ProductVariant>("ProductVariant
   isActive: Schema.Boolean,
   createdAt: Schema.DateFromString,
   updatedAt: Schema.NullOr(Schema.DateFromString),
+}) {}
+
+export class ProductVariantWithProduct extends Schema.Class<ProductVariantWithProduct>(
+  "ProductVariantWithProduct",
+)({
+  ...ProductVariant.fields,
   product: ProductWithCategory,
 }) {}
 
+export class ProductWithVariants extends Schema.Class<ProductWithVariants>("ProductWithVariants")({
+  ...Product.fields,
+  variants: Schema.Array(ProductVariant),
+}) {}
+
 export class ProductList extends Schema.Class<ProductList>("ProductList")({
-  items: Schema.Array(ProductVariant),
+  items: Schema.Array(ProductVariantWithProduct),
   meta: PaginationMeta,
 }) {}
