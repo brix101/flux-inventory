@@ -7,8 +7,7 @@ import { HttpApiBuilder } from "effect/unstable/httpapi";
 import * as HttpApiSwagger from "effect/unstable/httpapi/HttpApiSwagger";
 import * as NodeHttp from "node:http";
 
-import { BetterAuthRouterLive, Auth } from "./Auth.ts";
-import { AuthMiddlewareLayer } from "./AuthMiddleware.ts";
+import { BetterAuthRouterLive, AuthMiddlewareLayer, Auth } from "./auth.ts";
 import { ApiConfig } from "./config.ts";
 import { Database } from "./Database.ts";
 import { ProductHttpLive } from "./modules/products/product-http.ts";
