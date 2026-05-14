@@ -5,7 +5,7 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Schema from "effect/Schema";
 
-import { Database } from "../../database.ts";
+import { Database } from "../../Database.ts";
 import { productVariants } from "../../db/schema/inventory-schema.ts";
 
 const columns = getTableColumns(productVariants);
@@ -18,7 +18,9 @@ export class ProductService extends Context.Service<ProductService>()(
 
       const find = Effect.fn("ProductService.find")(function* (query: SearchParams) {
         const { page = 1, pageSize = 20, sort = "" } = query;
-        const [column, direction] = yield* Schema.decodeEffect(SortBySchema)(sort);
+        const [column, direction] = yield* Schema.decodeEffect(SortBySchema)(sort).pipe(
+          Effect.catch(() => Effect.succeed(["createdAt", "desc"] as const)),
+        );
 
         const where = eq(productVariants.isActive, true);
 

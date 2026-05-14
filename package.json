@@ -7,7 +7,8 @@
     "test": "turbo run test",
     "lint": "oxlint --report-unused-disable-directives",
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
     "@effect/language-service": "catalog:",

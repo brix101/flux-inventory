@@ -1,5 +1,5 @@
 import type { User } from "better-auth"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { BadgeCheckIcon, LogOutIcon } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
@@ -13,14 +13,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
+import { authClient } from "~/lib/auth-client"
 
 interface UserDropdownProps {
   user: User
 }
 
 export function UserAvatar({ user }: UserDropdownProps) {
+  const navigate = useNavigate()
   const signOutFn = async () => {
-  }
+    const res = await authClient.signOut()
+    if(res.data?.success){
+    navigate({ to: "/login" })
+  }}
 
   const initials = user.name
     .split(" ")

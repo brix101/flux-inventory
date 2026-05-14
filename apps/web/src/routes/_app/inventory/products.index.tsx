@@ -55,16 +55,20 @@ function RouteComponent() {
             </CardFooter>
           </Card>
         ))
-        .onSuccess((data) => (
-          <ul className="mt-2">
-            {data.items.map((product) => (
-              <li key={product.id} className="border p-4 rounded mb-2">
-                <h3 className="text-xl font-semibold">{product.name}</h3>
+        .onSuccess((data) => 
+          <div className="space-y-2">
+{
+            data.items.map((product) => (
+              <Card key={product.id}>
+                <CardContent>
+                <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
                 <p>{product.sku}</p>
-              </li>
-            ))}
-          </ul>
-        ))
+                </CardContent>
+              </Card>
+            ))
+          }
+          </div>
+        )
         .render()}
     </section>
   );

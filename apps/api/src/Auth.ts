@@ -16,7 +16,7 @@ import * as Schema from "effect/Schema";
 import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
 
 import { ApiConfig } from "./config.ts";
-import { Database } from "./database.ts";
+import { Database } from "./Database.ts";
 
 export class UnauthorizedError extends Data.TaggedError("UnauthorizedError")<{}> {}
 export class BeterAuthError extends Data.TaggedError("BeterAuthError")<{
@@ -45,7 +45,7 @@ export const admin = ac.newRole({
   ...adminAc.statements,
 });
 
-export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
+export class Auth extends Context.Service<Auth>()("@flux/api/Auth", {
   make: Effect.gen(function* () {
     const config = yield* ApiConfig;
     const db = yield* Database;
@@ -149,12 +149,7 @@ export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
       return session.value;
     });
 
-    const use = Effect.fn("auth.use")(function* <T>(fn: (api: typeof auth.api) => Promise<T>) {
-      return yield* Effect.tryPromise(() => fn(auth.api));
-    });
-
     return {
-      use,
       handler,
       getSession,
       ensureSession,
@@ -164,15 +159,15 @@ export class Auth extends Context.Service<Auth>()("@flux/api/auth", {
   static readonly layer = Layer.effect(this, this.make);
 }
 
-const betterAuthHandler = Effect.gen(function* () {
-  const request = yield* HttpServerRequest.HttpServerRequest;
+export const BetterAuthRouterLive = HttpRouter.use((router) =>
+  router.add(
+    "*",
+    "/api/auth*",
+    Effect.gen(function* () {
+      const request = yield* HttpServerRequest.HttpServerRequest;
+      const auth = yield* Auth;
 
-  const auth = yield* Auth;
-
-  return yield* auth.handler(request);
-});
-
-const betterAuthGetRouter = HttpRouter.add("GET", "/api/auth/*", betterAuthHandler);
-const betterAuthPostRouter = HttpRouter.add("POST", "/api/auth/*", betterAuthHandler);
-
-export const authRouteLayer = Layer.mergeAll(betterAuthGetRouter, betterAuthPostRouter);
+      return yield* auth.handler(request);
+    }),
+  ),
+);
