@@ -8,6 +8,34 @@
       "when": 1778575516223,
       "tag": "0000_lovely_mandarin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778828766815,
+      "tag": "0001_bitter_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778832096934,
+      "tag": "0002_puzzling_morlocks",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778832138115,
+      "tag": "0003_smooth_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778832373738,
+      "tag": "0004_giant_roland_deschain",
+      "breakpoints": true
     }
   ]
 }

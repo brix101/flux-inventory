@@ -97,15 +97,16 @@ function NewProductForm() {
           <form.Field
             name="categoryId"
             children={(field) => {
+              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
               return (
-                <Field>
+                <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Category</FieldLabel>
                   <Select
                     items={categoryOptions}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value || "")}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-invalid={isInvalid}>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent alignItemWithTrigger={false}>
@@ -123,6 +124,7 @@ function NewProductForm() {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}

@@ -1,7 +1,7 @@
 import { Api } from "@flux/contracts";
 import { CurrentUser } from "@flux/contracts/middleware";
-import { Layer } from "effect";
 import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
 import * as HttpApiBuilder from "effect/unstable/httpapi/HttpApiBuilder";
 
 import { ProductServiceLive } from "./Layers/ProductService.ts";

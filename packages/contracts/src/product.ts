@@ -6,17 +6,15 @@ import { PaginationMeta } from "./pagination.ts";
 
 export const CreateProductInput = Schema.Struct({
   name: Schema.String.check(
-    Schema.isMinLength(3, {
-      message: "Product name must be at least 3 characters",
-    }),
-    Schema.isMaxLength(100, { message: "Product name is too long" }),
+    Schema.isNonEmpty({ message: "Product name is required" }),
+    Schema.isMaxLength(100, { message: "Product name cannot exceed 100 characters" }),
   ),
   description: Schema.String.check(
-    Schema.isMaxLength(500, {
-      message: "Description cannot exceed 500 characters",
-    }),
+    Schema.isMaxLength(500, { message: "Description cannot exceed 500 characters" }),
   ),
-  categoryId: Schema.String,
+  categoryId: Schema.String.check(
+    Schema.isUUID(undefined, { message: "Please select a category" }),
+  ),
   unit: Schema.String.pipe(Schema.withConstructorDefault(Effect.succeed("pcs"))),
   sku: Schema.optional(Schema.String),
 });

@@ -24,10 +24,10 @@ export const Route = createFileRoute("/_app/inventory/products/")({
 });
 
 function RouteComponent() {
-  const query = Route.useSearch();
+  const searchParams = Route.useSearch();
 
   const productAtom = ApiClient.query("products", "list", {
-    query,
+    query: searchParams,
     reactivityKeys: ["products"],
   });
 

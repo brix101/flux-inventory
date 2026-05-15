@@ -13,8 +13,12 @@ import { AuthMiddlewareLive } from "./auth/middleware.ts";
 import { ApiConfig } from "./config.ts";
 import { DatabaseServiceLive } from "./database/Layer/DatabaseService.ts";
 import { ProductHttpLive } from "./product/http.ts";
+import { PurchaseOrderHttpLive } from "./purchaseOrder/http.ts";
 
-const ApiRouterLive = Layer.provide(HttpApiBuilder.layer(Api), [ProductHttpLive]);
+const ApiRouterLive = Layer.provide(HttpApiBuilder.layer(Api), [
+  ProductHttpLive,
+  PurchaseOrderHttpLive,
+]);
 
 const HttpServerLive = Layer.unwrap(
   Effect.gen(function* () {

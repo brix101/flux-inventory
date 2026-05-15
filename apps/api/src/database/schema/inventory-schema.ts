@@ -158,7 +158,7 @@ export const locationsRelations = relations(locations, ({ many }) => ({
 export const purchaseOrders = pgTable("purchase_orders", (t) => ({
   id: t.uuid().notNull().defaultRandom().primaryKey(),
   createdBy: t.text().references(() => users.id, { onDelete: "set null" }),
-  orderNumber: t.varchar({ length: 100 }).notNull().unique(),
+  name: t.varchar({ length: 100 }).notNull().unique(),
   supplierId: t.uuid().references(() => suppliers.id),
   receivedBy: t
     .text()
@@ -167,7 +167,7 @@ export const purchaseOrders = pgTable("purchase_orders", (t) => ({
   expectedDate: t.date(),
   receivedDate: t.date(),
   totalAmount: t.numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
-  lineTotal: t.numeric({ precision: 12, scale: 2 }),
+  lineTotal: t.numeric({ precision: 12, scale: 2 }).notNull().default("0.00"),
   notes: t.text(),
   status: pruchaseOrderStatusEnum("status").notNull().default("DRAFT"),
   isActive: t.boolean().notNull().default(true),
@@ -201,8 +201,8 @@ export const purchaseOrderItems = pgTable("purchase_order_items", (t) => ({
     .uuid()
     .references(() => productVariants.id)
     .notNull(),
-  quantityOrdered: t.integer().notNull().default(0),
-  quantityReceived: t.integer().notNull().default(0),
+  orderQty: t.integer().notNull().default(0),
+  receivedQty: t.integer().notNull().default(0),
   unitPrice: t.numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
   createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
@@ -340,7 +340,7 @@ export const stockLevelsRelations = relations(stockLevels, ({ one }) => ({
 export const requisitions = pgTable("requisitions", (t) => ({
   id: t.uuid().notNull().defaultRandom().primaryKey(),
   createdBy: t.text().references(() => users.id, { onDelete: "set null" }),
-  requisitionNumber: t.varchar({ length: 100 }).notNull().unique(),
+  name: t.varchar({ length: 100 }).notNull().unique(),
   description: t.text(),
   status: requisitionStatusEnum("status").notNull().default("DRAFT"),
   isActive: t.boolean().notNull().default(true),
@@ -366,9 +366,9 @@ export const requisitionItems = pgTable("requisition_items", (t) => ({
     .uuid()
     .references(() => productVariants.id, { onDelete: "restrict" })
     .notNull(),
-  quantityRequested: t.integer().notNull().default(0),
-  quantityApproved: t.integer().notNull().default(0),
-  suplierId: t.uuid().references(() => suppliers.id, { onDelete: "set null" }),
+  requestQty: t.integer().notNull().default(0),
+  approvedQty: t.integer().notNull().default(0),
+  supplierId: t.uuid().references(() => suppliers.id, { onDelete: "set null" }),
   notes: t.text(),
   createdAt: t.timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: t.timestamp({ mode: "string" }).$onUpdateFn(() => sql`now()`),
@@ -384,7 +384,7 @@ export const requisitionItemsRelations = relations(requisitionItems, ({ one }) =
     references: [productVariants.id],
   }),
   supplier: one(suppliers, {
-    fields: [requisitionItems.suplierId],
+    fields: [requisitionItems.supplierId],
     references: [suppliers.id],
   }),
 }));

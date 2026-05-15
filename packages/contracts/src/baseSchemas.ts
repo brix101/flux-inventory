@@ -69,10 +69,8 @@ export type CategoryId = typeof CategoryId.Type;
 export const ProductId = makeEntityId("ProductId");
 export type ProductId = typeof ProductId.Type;
 
-export const SuccessSchema = Schema.Struct({
-  message: Schema.String,
-});
+export const PurchaseOrderId = makeEntityId("PurchaseOrderId");
+export type PurchaseOrderId = typeof PurchaseOrderId.Type;
 
-export const ParamsSchema = Schema.Struct({
-  name: Schema.String,
-});
+export const SupplierId = makeEntityId("SupplierId");
+export type SupplierId = typeof SupplierId.Type;
