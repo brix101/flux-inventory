@@ -20,6 +20,7 @@ export interface ApiConfigShape {
   readonly logLevel: LogLevel.LogLevel;
   readonly port: number;
   readonly host: string | undefined;
+  readonly trustedOrigins: string[];
   readonly databaseUrl: Redacted.Redacted;
   readonly betterAuthSecret: Redacted.Redacted;
   readonly betterAuthUrl: string;
@@ -42,11 +43,16 @@ export class ApiConfig extends Context.Service<ApiConfig, ApiConfigShape>()(
       const databaseUrl = yield* Config.redacted("DATABASE_URL");
       const betterAuthSecret = yield* Config.redacted("BETTER_AUTH_SECRET");
       const betterAuthUrl = yield* Config.string("BETTER_AUTH_URL");
+      const trustedOrigins = yield* Config.string("TRUSTED_ORIGINS").pipe(
+        Config.map((s) => (s ? s.split(",").map((p) => p.trim()) : [])),
+        Config.withDefault(["http://localhost:5173"] as string[]),
+      );
 
       return {
         logLevel,
         port,
         host,
+        trustedOrigins,
         databaseUrl,
         betterAuthSecret,
         betterAuthUrl,

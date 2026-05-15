@@ -47,7 +47,7 @@ const makeAuthService = Effect.gen(function* () {
       provider: "pg",
       usePlural: true,
     }),
-    trustedOrigins: ["http://localhost:5173"],
+    trustedOrigins: config.trustedOrigins,
     secret: Redacted.value(config.betterAuthSecret),
     baseURL: config.betterAuthUrl,
     emailAndPassword: {

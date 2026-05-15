@@ -26,13 +26,18 @@ const HttpServerLive = Layer.unwrap(
   }),
 );
 
-const apiCorsLayer = HttpRouter.cors({
-  credentials: true,
-  allowedOrigins: ["http://localhost:5173"], // TODO: Move to config
-});
+const HttpCorsLayer = Layer.unwrap(
+  Effect.gen(function* () {
+    const config = yield* ApiConfig;
+    return HttpRouter.cors({
+      credentials: true,
+      allowedOrigins: config.trustedOrigins,
+    });
+  }),
+);
 
 const makesRoutesLayer = Layer.mergeAll(BetterAuthRouterLive, ApiRouterLive).pipe(
-  Layer.provide(apiCorsLayer),
+  Layer.provide(HttpCorsLayer),
 );
 
 export const HttpLive = HttpRouter.serve(makesRoutesLayer, {}).pipe(
