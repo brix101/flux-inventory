@@ -4,41 +4,12 @@ import type { PgTransaction } from "drizzle-orm/pg-core";
 
 import { drizzle, type NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import * as Context from "effect/Context";
-import * as Data from "effect/Data";
 import * as Effect from "effect/Effect";
 import pg from "pg";
 
+import type { DatabaseError } from "../Errors.ts";
+
 import * as schema from "../schema/index.ts";
-
-export class DatabaseConnectionLostError extends Data.TaggedError("DatabaseConnectionLostError")<{
-  cause: unknown;
-  message: string;
-}> {}
-
-export class DatabaseError extends Data.TaggedError("DatabaseError")<{
-  readonly type:
-    | "unique_violation"
-    | "foreign_key_violation"
-    | "connection_error"
-    | "unknown_error";
-  readonly cause: unknown;
-}> {
-  public override get message(): string {
-    if (this.cause instanceof Error) {
-      return this.cause.message;
-    }
-
-    if (this.cause && typeof this.cause === "object" && "message" in this.cause) {
-      return String(this.cause.message);
-    }
-
-    return String(this.cause);
-  }
-
-  public override toString(): string {
-    return `DatabaseError [${this.type}]: ${this.message}`;
-  }
-}
 
 export type DrizzleClient = ReturnType<typeof drizzle<typeof schema, pg.Pool>>;
 export type DrizzleTransaction = PgTransaction<
@@ -54,7 +25,7 @@ export interface DatabaseServiceShape {
   ) => Effect.Effect<T, DatabaseError, never>;
   readonly withAudit: (user: User) => {
     readonly use: <T>(
-      fn: (client: DrizzleTransaction) => Promise<T>,
+      fn: (tx: DrizzleTransaction) => Promise<T>,
     ) => Effect.Effect<T, DatabaseError, never>;
   };
 }

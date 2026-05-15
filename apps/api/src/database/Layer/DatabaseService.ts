@@ -9,10 +9,9 @@ import * as Redacted from "effect/Redacted";
 import pg from "pg";
 
 import { ApiConfig } from "../../config.ts";
+import { DatabaseConnectionLostError, DatabaseError } from "../Errors.ts";
 import * as schema from "../schema/index.ts";
 import {
-  DatabaseConnectionLostError,
-  DatabaseError,
   DatabaseService,
   type DatabaseServiceShape,
   type DrizzleClient,
