@@ -1,22 +1,12 @@
-import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { SearchParamsSchema } from "@flux/contracts";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
-import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
 
 import NewProductForm from "~/components/new-product-form";
 import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "~/components/page-header";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { AtomApiClient } from "~/lib/api-client";
+import { Card, CardContent } from "~/components/ui/card";
+import { productListOptions } from "~/features/products/options";
 
 export const Route = createFileRoute("/_app/inventory/products/")({
   component: RouteComponent,
@@ -26,13 +16,7 @@ export const Route = createFileRoute("/_app/inventory/products/")({
 function RouteComponent() {
   const searchParams = Route.useSearch();
 
-  const productAtom = AtomApiClient.query("products", "list", {
-    query: searchParams,
-    reactivityKeys: ["products"],
-  });
-
-  const products = useAtomValue(productAtom);
-  const refreshProducts = useAtomRefresh(productAtom);
+  const { data, isLoading } = useQuery(productListOptions(searchParams));
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -46,35 +30,17 @@ function RouteComponent() {
           <PageHeaderHeading>Products</PageHeaderHeading>
           <PageHeaderDescription>Manage your inventory products here.</PageHeaderDescription>
         </PageHeader>
-        {AsyncResult.builder(products)
-          .onInitial(() => <p>Loading...</p>)
-          // .onWaiting(() => <p>Loading...</p>)
-          .onFailure((cause) => (
-            <Card>
-              <CardHeader>
-                <CardTitle>Something went wrong loading products.</CardTitle>
-              </CardHeader>
+        <div className="space-y-2">
+          {isLoading && <p>Loading...</p>}
+          {data?.items.map((product) => (
+            <Card key={product.id}>
               <CardContent>
-                <CardDescription>{Cause.pretty(cause)}</CardDescription>
+                <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
+                <p>{product.sku}</p>
               </CardContent>
-              <CardFooter>
-                <Button onClick={refreshProducts}>Retry</Button>
-              </CardFooter>
             </Card>
-          ))
-          .onSuccess((data) => (
-            <div className="space-y-2">
-              {data.items.map((product) => (
-                <Card key={product.id}>
-                  <CardContent>
-                    <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
-                    <p>{product.sku}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ))
-          .render()}
+          ))}
+        </div>
       </section>
     </div>
   );
