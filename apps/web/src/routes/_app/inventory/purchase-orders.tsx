@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
 import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
+import { ArrowUpRightIcon, FolderIcon } from "lucide-react";
 
 import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "~/components/page-header";
 import { Button } from "~/components/ui/button";
@@ -15,6 +16,14 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "~/components/ui/empty";
 import { ApiClient } from "~/lib/api-client";
 
 export const Route = createFileRoute("/_app/inventory/purchase-orders")({
@@ -61,12 +70,41 @@ function RouteComponent() {
               <Card key={item.id}>
                 <CardContent>
                   <CardHeader>
-                    <CardTitle>{item.orderNumber}</CardTitle>
+                    <CardTitle>{item.name}</CardTitle>
                     <CardDescription>Order ID: {item.id}</CardDescription>
                   </CardHeader>
                 </CardContent>
               </Card>
             ))}
+            {data.items.length === 0 && (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <FolderIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>No Purchase Order Yet</EmptyTitle>
+                  <EmptyDescription>
+                    You haven&apos;t created any purchase order yet. Get started by creating your
+                    first purchase order.
+                  </EmptyDescription>
+                </EmptyHeader>
+                <EmptyContent className="flex-row justify-center gap-2">
+                  <Button>Create Purchase Order</Button>
+                  {/* <Button variant="outline">Import P</Button> */}
+                </EmptyContent>
+                <Button
+                  variant="link"
+                  className="text-muted-foreground"
+                  size="sm"
+                  nativeButton={false}
+                  render={
+                    <a href="#">
+                      Learn More <ArrowUpRightIcon />
+                    </a>
+                  }
+                />
+              </Empty>
+            )}
           </div>
         ))
         .render()}

@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "clean": "rm -rf node_modules dist"
+    "clean": "rm -rf node_modules dist",
+    "ui:add": "shadcn add"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
