@@ -1,3 +1,11 @@
+/**
+ * ServerConfig - Runtime configuration services.
+ *
+ * Defines process-level server configuration and networking helpers used by
+ * startup and runtime layers.
+ *
+ * @module ApiConfig
+ */
 import * as Config from "effect/Config";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";

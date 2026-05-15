@@ -4,7 +4,7 @@ import { CategoryId, ProductId } from "./baseSchemas.ts";
 import { Category } from "./category.ts";
 import { PaginationMeta } from "./pagination.ts";
 
-export const CreateProductSchema = Schema.Struct({
+export const CreateProductInput = Schema.Struct({
   name: Schema.String.check(
     Schema.isMinLength(3, {
       message: "Product name must be at least 3 characters",
@@ -20,7 +20,7 @@ export const CreateProductSchema = Schema.Struct({
   unit: Schema.String.pipe(Schema.withConstructorDefault(Effect.succeed("pcs"))),
   sku: Schema.optional(Schema.String),
 });
-export type CreateProductSchema = typeof CreateProductSchema.Type;
+export type CreateProductInput = typeof CreateProductInput.Type;
 
 export class Product extends Schema.Class<Product>("Product")({
   id: ProductId,

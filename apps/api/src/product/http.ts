@@ -1,9 +1,11 @@
 import { Api } from "@flux/contracts";
 import { CurrentUser } from "@flux/contracts/middleware";
+import { Layer } from "effect";
 import * as Effect from "effect/Effect";
 import * as HttpApiBuilder from "effect/unstable/httpapi/HttpApiBuilder";
 
-import { ProductService } from "./product-services.ts";
+import { ProductServiceLive } from "./Layers/ProductService.ts";
+import { ProductService } from "./Services/ProductService.ts";
 
 export const ProductHttpLive = HttpApiBuilder.group(
   Api,
@@ -17,4 +19,4 @@ export const ProductHttpLive = HttpApiBuilder.group(
         CurrentUser.pipe(Effect.flatMap(({ user }) => services.create(user, payload))),
       );
   }),
-);
+).pipe(Layer.provide(ProductServiceLive));

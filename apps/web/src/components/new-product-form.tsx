@@ -1,5 +1,5 @@
 import { useAtomSet } from "@effect/atom-react";
-import { CreateProductSchema } from "@flux/contracts";
+import { CreateProductInput } from "@flux/contracts";
 import { useForm } from "@tanstack/react-form";
 import * as Schema from "effect/Schema";
 
@@ -54,7 +54,7 @@ function NewProductForm() {
       description: "",
     },
     validators: {
-      onChange: Schema.toStandardSchemaV1(CreateProductSchema),
+      onChange: Schema.toStandardSchemaV1(CreateProductInput),
     },
     onSubmit: async ({ value }) => {
       createProduct({

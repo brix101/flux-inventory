@@ -3,7 +3,7 @@ import * as HttpApi from "effect/unstable/httpapi/HttpApi";
 
 import { AuthMiddleware } from "./middleware/auth.ts";
 import { SearchParamsSchema } from "./pagination.ts";
-import { ProductList, CreateProductSchema, ProductWithVariants } from "./product.ts";
+import { ProductList, CreateProductInput, ProductWithVariants } from "./product.ts";
 
 export class ProductApi extends HttpApiGroup.make("products")
   .add(
@@ -14,7 +14,7 @@ export class ProductApi extends HttpApiGroup.make("products")
   )
   .add(
     HttpApiEndpoint.post("create", "/", {
-      payload: CreateProductSchema,
+      payload: CreateProductInput,
       success: ProductWithVariants,
     }),
   )

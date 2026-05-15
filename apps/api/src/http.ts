@@ -7,15 +7,14 @@ import { HttpApiBuilder } from "effect/unstable/httpapi";
 import * as HttpApiSwagger from "effect/unstable/httpapi/HttpApiSwagger";
 import * as NodeHttp from "node:http";
 
-import { BetterAuthRouterLive, AuthMiddlewareLayer, Auth } from "./auth.ts";
+import { BetterAuthRouterLive } from "./auth/http.ts";
+import { AuthServiceLive } from "./auth/Layer/AuthService.ts";
+import { AuthMiddlewareLive } from "./auth/middleware.ts";
 import { ApiConfig } from "./config.ts";
-import { Database } from "./Database.ts";
-import { ProductHttpLive } from "./modules/products/product-http.ts";
-import { ProductService } from "./modules/products/product-services.ts";
+import { DatabaseServiceLive } from "./database/Layer/DatabaseService.ts";
+import { ProductHttpLive } from "./product/http.ts";
 
-const apiRouterLayer = Layer.provide(HttpApiBuilder.layer(Api), [ProductHttpLive]);
-
-const servicesLayer = Layer.mergeAll(ProductService.layer);
+const ApiRouterLive = Layer.provide(HttpApiBuilder.layer(Api), [ProductHttpLive]);
 
 const HttpServerLive = Layer.unwrap(
   Effect.gen(function* () {
@@ -32,17 +31,16 @@ const apiCorsLayer = HttpRouter.cors({
   allowedOrigins: ["http://localhost:5173"], // TODO: Move to config
 });
 
-const makesRoutesLayer = Layer.mergeAll(BetterAuthRouterLive, apiRouterLayer).pipe(
+const makesRoutesLayer = Layer.mergeAll(BetterAuthRouterLive, ApiRouterLive).pipe(
   Layer.provide(apiCorsLayer),
 );
 
 export const HttpLive = HttpRouter.serve(makesRoutesLayer, {}).pipe(
   Layer.provide(HttpApiSwagger.layer(Api)),
   Layer.provide(HttpRouter.layer),
-  Layer.provide(AuthMiddlewareLayer),
+  Layer.provide(AuthMiddlewareLive),
   Layer.provide(HttpServerLive),
-  Layer.provide(servicesLayer),
-  Layer.provide(Auth.layer),
-  Layer.provide(Database.layer),
+  Layer.provide(AuthServiceLive),
+  Layer.provide(DatabaseServiceLive),
   Layer.provide(ApiConfig.layer),
 );
