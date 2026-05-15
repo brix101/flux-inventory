@@ -1,19 +1,32 @@
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter } from "@tanstack/react-router";
+import { createElement } from "react";
+
+import { AppAtomRegistryProvider } from "./lib/atom-registry";
+import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
-  const router = createTanStackRouter({
-    routeTree,
-    scrollRestoration: true,
-    defaultPreload: 'intent',
-    defaultPreloadStaleTime: 0,
-  })
+  const queryClient = new QueryClient();
 
-  return router
+  return createRouter({
+    routeTree,
+    context: { queryClient },
+    scrollRestoration: true,
+    defaultPreload: "intent",
+    defaultPreloadStaleTime: 0,
+    Wrap: ({ children }) =>
+      createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        createElement(AppAtomRegistryProvider, undefined, children),
+      ),
+  });
 }
 
-declare module '@tanstack/react-router' {
+export type AppRouter = ReturnType<typeof getRouter>;
+
+declare module "@tanstack/react-router" {
   interface Register {
-    router: ReturnType<typeof getRouter>
+    router: ReturnType<typeof getRouter>;
   }
 }

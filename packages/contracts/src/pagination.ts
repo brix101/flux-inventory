@@ -12,7 +12,7 @@ export const CursorFromString = Schema.fromJsonString(CursorSchema);
 export const PaginationMeta = Schema.Struct({
   total: Schema.Number.check(Schema.isGreaterThanOrEqualTo(0)),
   page: Schema.Number.check(Schema.isGreaterThanOrEqualTo(1)),
-  pageSize: Schema.Number.check(Schema.isGreaterThanOrEqualTo(1)),
+  size: Schema.Number.check(Schema.isGreaterThanOrEqualTo(1)),
   totalPages: Schema.Number.check(Schema.isGreaterThanOrEqualTo(0)),
   nextPage: Schema.NullOr(Schema.Number.check(Schema.isGreaterThanOrEqualTo(1))),
 });
@@ -47,7 +47,7 @@ export const SearchParamsSchema = Schema.Struct({
   page: Schema.optionalKey(Schema.Number).pipe(
     Schema.withDecodingDefaultTypeKey(Effect.succeed(1)),
   ),
-  pageSize: Schema.optionalKey(Schema.Number).pipe(
+  size: Schema.optionalKey(Schema.Number).pipe(
     Schema.withDecodingDefaultTypeKey(Effect.succeed(20)),
   ),
   sort: Schema.optionalKey(Schema.String).pipe(

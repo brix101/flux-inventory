@@ -22,7 +22,7 @@ export const makeProductService = Effect.gen(function* () {
   const db = yield* DatabaseService;
 
   const list = Effect.fn("ProductService.list")(function* (query: SearchParams) {
-    const { page = 1, pageSize = 20, sort = "" } = query;
+    const { page = 1, size = 20, sort = "" } = query;
     const [column, direction] = yield* Schema.decodeEffect(SortBySchema)(sort).pipe(
       Effect.catch(() => Effect.succeed(["createdAt", "desc"] as const)),
     );
@@ -48,8 +48,8 @@ export const makeProductService = Effect.gen(function* () {
               },
             },
             where: where,
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
+            limit: size,
+            offset: (page - 1) * size,
             orderBy: orderBy,
           });
 
@@ -67,9 +67,9 @@ export const makeProductService = Effect.gen(function* () {
             meta: {
               total,
               page,
-              pageSize,
-              totalPages: Math.ceil(total / pageSize),
-              nextPage: page * pageSize < total ? page + 1 : null,
+              size,
+              totalPages: Math.ceil(total / size),
+              nextPage: page * size < total ? page + 1 : null,
             },
           };
         }),

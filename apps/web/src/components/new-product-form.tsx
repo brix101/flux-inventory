@@ -17,7 +17,7 @@ import {
 } from "~/components/ui/select";
 import { Spinner } from "~/components/ui/spinner";
 import { Textarea } from "~/components/ui/textarea";
-import { ApiClient } from "~/lib/api-client";
+import { AtomApiClient } from "~/lib/api-client";
 
 export const units = [
   { id: "pcs", name: "Pieces (pcs)" },
@@ -44,7 +44,7 @@ function NewProductForm() {
   ];
   const unitOptions = units.map((unit) => ({ value: unit.id, label: unit.name }));
 
-  const createProduct = useAtomSet(ApiClient.mutation("products", "create"));
+  const createProduct = useAtomSet(AtomApiClient.mutation("products", "create"));
 
   const form = useForm({
     defaultValues: {

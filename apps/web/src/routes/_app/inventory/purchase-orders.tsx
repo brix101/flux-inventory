@@ -24,7 +24,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "~/components/ui/empty";
-import { ApiClient } from "~/lib/api-client";
+import { AtomApiClient } from "~/lib/api-client";
 
 export const Route = createFileRoute("/_app/inventory/purchase-orders")({
   component: RouteComponent,
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_app/inventory/purchase-orders")({
 function RouteComponent() {
   const query = Route.useSearch();
 
-  const purchaseOrderAtom = ApiClient.query("purchaseOrders", "list", {
+  const purchaseOrderAtom = AtomApiClient.query("purchaseOrders", "list", {
     query,
     reactivityKeys: ["purchaseOrders"],
   });

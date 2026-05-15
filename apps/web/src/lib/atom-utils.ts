@@ -1,6 +1,5 @@
-import type * as Schema from "effect/Schema";
-
-import { Atom } from "@effect/atom-react";
+import * as Schema from "effect/Schema";
+import * as Atom from "effect/unstable/reactivity/Atom";
 
 export interface TypedSerializable<A, I> {
   readonly [Atom.SerializableTypeId]: {
@@ -13,13 +12,13 @@ export interface TypedSerializable<A, I> {
 export const serializable: {
   <R extends Atom.Atom<any>, I>(options: {
     readonly key: string;
-    readonly schema: Schema.Schema<Atom.Type<R>, I>;
+    readonly schema: Schema.Schema<Atom.Type<R>>;
   }): (self: R) => R & TypedSerializable<Atom.Type<R>, I>;
   <R extends Atom.Atom<any>, I>(
     self: R,
     options: {
       readonly key: string;
-      readonly schema: Schema.Schema<Atom.Type<R>, I>;
+      readonly schema: Schema.Schema<Atom.Type<R>>;
     },
   ): R & TypedSerializable<Atom.Type<R>, I>;
 } = Atom.serializable as any;
