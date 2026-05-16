@@ -92,7 +92,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   // user: User;
 }
 
-export function AppSidebar({  ...props }: AppSidebarProps) {
+export function AppSidebar({ ...props }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>

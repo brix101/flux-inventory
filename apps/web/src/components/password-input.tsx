@@ -1,15 +1,15 @@
-import React from "react"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import React from "react";
 
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { cn } from "~/lib/utils"
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { cn } from "~/lib/utils";
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {};
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
-    const [showPassword, setShowPassword] = React.useState(false)
+    const [showPassword, setShowPassword] = React.useState(false);
 
     return (
       <div className="relative">
@@ -32,15 +32,13 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
           ) : (
             <EyeIcon className="size-4" aria-hidden="true" />
           )}
-          <span className="sr-only">
-            {showPassword ? "Hide password" : "Show password"}
-          </span>
+          <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
         </Button>
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-PasswordInput.displayName = "PasswordInput"
+PasswordInput.displayName = "PasswordInput";
 
-export { PasswordInput }
+export { PasswordInput };

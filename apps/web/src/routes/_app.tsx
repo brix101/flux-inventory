@@ -1,10 +1,11 @@
-import { authClient } from "~/lib/auth-client";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
 import { AppSidebar } from "~/components/app-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "~/components/ui/sidebar";
-import  { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
-import { UserAvatar } from "~/components/user-avatar";
 import { ModeToggle } from "~/components/mode-toggle";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "~/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import { UserAvatar } from "~/components/user-avatar";
+import { authClient } from "~/lib/auth-client";
 
 export const Route = createFileRoute("/_app")({
   component: RouteComponent,
@@ -24,11 +25,11 @@ export const Route = createFileRoute("/_app")({
 });
 
 function RouteComponent() {
-  const { user } = Route.useRouteContext()
+  const { user } = Route.useRouteContext();
 
   return (
     <SidebarProvider>
-      <AppSidebar variant="inset" collapsible="icon"  />
+      <AppSidebar variant="inset" collapsible="icon" />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex w-full justify-between px-4">
@@ -49,5 +50,5 @@ function RouteComponent() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

@@ -1,30 +1,28 @@
-import type { ColumnDef } from "@tanstack/react-table"
-import { Link } from "@tanstack/react-router"
-import { Text } from "lucide-react"
+import type { ColumnDef } from "@tanstack/react-table";
 
-import type { getProductsFn } from "~/server/function/product/product.functions"
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header"
-import { Badge } from "~/components/ui/badge"
-import { buttonVariants } from "~/components/ui/button"
-import { cn } from "~/lib/utils"
+import { Link } from "@tanstack/react-router";
+import { Text } from "lucide-react";
 
-export type ProductType = Awaited<
-  ReturnType<typeof getProductsFn>
->["items"][number]
+import type { getProductsFn } from "~/server/function/product/product.functions";
+
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
+import { Badge } from "~/components/ui/badge";
+import { buttonVariants } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
+
+export type ProductType = Awaited<ReturnType<typeof getProductsFn>>["items"][number];
 
 export const productColumns: ColumnDef<ProductType>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     cell: ({ row }) => {
-      const name = row.getValue<ProductType["name"]>("name")
-      const product = row.original.product
+      const name = row.getValue<ProductType["name"]>("name");
+      const product = row.original.product;
 
-      let productName = product.name
+      let productName = product.name;
       if (name !== "Standard") {
-        productName += ` (${name})`
+        productName += ` (${name})`;
       }
 
       return (
@@ -35,7 +33,7 @@ export const productColumns: ColumnDef<ProductType>[] = [
         >
           {productName}
         </Link>
-      )
+      );
     },
     meta: {
       label: "Name",
@@ -47,27 +45,23 @@ export const productColumns: ColumnDef<ProductType>[] = [
   },
   {
     accessorKey: "sku",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="SKU" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="SKU" />,
     cell: ({ row }) => {
-      const sku = row.getValue<ProductType["sku"]>("sku")
+      const sku = row.getValue<ProductType["sku"]>("sku");
 
-      return <p>{sku}</p>
+      return <p>{sku}</p>;
     },
   },
   {
     accessorKey: "product.category.name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
     cell: ({ row }) => {
-      const category = row.original.product.category
+      const category = row.original.product.category;
       if (!category) {
-        return <Badge className="uppercase">Uncategorized</Badge>
+        return <Badge className="uppercase">Uncategorized</Badge>;
       }
 
-      return <Badge className="uppercase">{category.name}</Badge>
+      return <Badge className="uppercase">{category.name}</Badge>;
     },
   },
-]
+];

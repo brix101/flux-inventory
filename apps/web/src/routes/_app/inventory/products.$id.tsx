@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router";
 
-import { appConfig } from "~/lib/config"
+import { appConfig } from "~/lib/config";
 
 export const Route = createFileRoute("/_app/inventory/products/$id")({
   component: RouteComponent,
@@ -11,9 +11,9 @@ export const Route = createFileRoute("/_app/inventory/products/$id")({
       },
     ],
   }),
-})
+});
 
 function RouteComponent() {
-  const { id } = Route.useParams()
-  return <div>Hello "/_app/inventory/products/{id}"!</div>
+  const { id } = Route.useParams();
+  return <div>Hello "/_app/inventory/products/{id}"!</div>;
 }

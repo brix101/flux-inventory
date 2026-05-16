@@ -20,12 +20,8 @@
       "unknown"
     ]
   },
-  "overrides": [
-    {
-      "files": [".devcontainer/devcontainer.json"],
-      "options": {
-        "trailingComma": "none"
-      }
-    }
-  ]
+  "sortTailwindcss": {
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": true
+  }
 }

@@ -1,9 +1,10 @@
-import type { User } from "better-auth"
-import { Link, useNavigate } from "@tanstack/react-router"
-import { BadgeCheckIcon, LogOutIcon } from "lucide-react"
+import type { User } from "better-auth";
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import { Button } from "~/components/ui/button"
+import { Link, useNavigate } from "@tanstack/react-router";
+import { BadgeCheckIcon, LogOutIcon } from "lucide-react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,38 +13,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
-import { authClient } from "~/lib/auth-client"
+} from "~/components/ui/dropdown-menu";
+import { authClient } from "~/lib/auth-client";
 
 interface UserDropdownProps {
-  user: User
+  user: User;
 }
 
 export function UserAvatar({ user }: UserDropdownProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const signOutFn = async () => {
-    const res = await authClient.signOut()
-    if(res.data?.success){
-    navigate({ to: "/login" })
-  }}
+    const res = await authClient.signOut();
+    if (res.data?.success) {
+      navigate({ to: "/login" });
+    }
+  };
 
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
     .join("")
-    .toUpperCase()
+    .toUpperCase();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button size="icon" className="aria-expanded:bg-muted" />}
-      >
+      <DropdownMenuTrigger render={<Button size="icon" className="aria-expanded:bg-muted" />}>
         <Avatar className="rounded-lg">
-          <AvatarImage
-            className="rounded-lg"
-            src={user.image ?? ""}
-            alt={user.name}
-          />
+          <AvatarImage className="rounded-lg" src={user.image ?? ""} alt={user.name} />
           <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -82,5 +78,5 @@ export function UserAvatar({ user }: UserDropdownProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

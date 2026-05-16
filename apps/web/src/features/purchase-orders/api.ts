@@ -4,8 +4,8 @@ import * as Effect from "effect/Effect";
 
 import { ApiClient } from "~/lib/api-client";
 
-export const productsList = (searchParams: SearchParams) =>
+export const purchaseOrdersList = (searchParams: SearchParams) =>
   Effect.gen(function* () {
     const client = yield* ApiClient;
-    return yield* client.products.list({ query: searchParams });
+    return yield* client.purchaseOrders.list({ query: searchParams });
   });

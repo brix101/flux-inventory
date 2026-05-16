@@ -1,13 +1,14 @@
-import { Link } from "@tanstack/react-router"
-import { MoreHorizontalIcon } from "lucide-react"
+import { Link } from "@tanstack/react-router";
+import { MoreHorizontalIcon } from "lucide-react";
 
-import type { NavItem } from "~/types/nav"
+import type { NavItem } from "~/types/nav";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,21 +17,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "~/components/ui/sidebar"
+} from "~/components/ui/sidebar";
 
 interface NavMainProps {
-  name: string
-  items: NavItem[]
+  name: string;
+  items: NavItem[];
 }
 
 export function NavMain({ name, items }: NavMainProps) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="pointer-events-none">
-        {name}
-      </SidebarGroupLabel>
+      <SidebarGroupLabel className="pointer-events-none">{name}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           return (
@@ -70,10 +69,7 @@ export function NavMain({ name, items }: NavMainProps) {
                     align={isMobile ? "end" : "start"}
                   >
                     {item.more.map((subItem) => (
-                      <DropdownMenuItem
-                        key={subItem.title}
-                        render={<Link to={subItem.to} />}
-                      >
+                      <DropdownMenuItem key={subItem.title} render={<Link to={subItem.to} />}>
                         {subItem.icon}
                         <span>{subItem.title}</span>
                       </DropdownMenuItem>
@@ -82,9 +78,9 @@ export function NavMain({ name, items }: NavMainProps) {
                 </DropdownMenu>
               )}
             </SidebarMenuItem>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

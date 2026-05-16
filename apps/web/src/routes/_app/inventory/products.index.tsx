@@ -6,7 +6,7 @@ import * as Schema from "effect/Schema";
 import NewProductForm from "~/components/new-product-form";
 import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "~/components/page-header";
 import { Card, CardContent } from "~/components/ui/card";
-import { productListOptions } from "~/features/products/options";
+import { productListOptions } from "~/features/products";
 
 export const Route = createFileRoute("/_app/inventory/products/")({
   component: RouteComponent,
