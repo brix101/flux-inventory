@@ -89,6 +89,7 @@ export const makeProductService = Effect.gen(function* () {
     user: User,
     payload: CreateProductInput,
   ) {
+    yield* Effect.sleep(Duration.seconds(5));
     return yield* db
       .withAudit(user)
       .use(async (tx) => {

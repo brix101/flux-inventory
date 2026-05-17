@@ -90,14 +90,14 @@ function NewProductForm() {
     defaultValues: {
       name: "",
       unit: "pcs",
-      categoryId: "",
+      categoryId: "1463528d-ef62-476b-8983-656ae87fa9ee",
       description: "",
     },
     validators: {
       onChange: Schema.toStandardSchemaV1(CreateProductInput),
     },
     onSubmit: async ({ value }) => {
-      mutate.mutateAsync(value);
+      await mutate.mutateAsync(value);
       form.reset();
     },
   });

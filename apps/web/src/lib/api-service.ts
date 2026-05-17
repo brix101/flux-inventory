@@ -150,18 +150,18 @@ export const Service =
         : Effect.fail(e),
     );
 
-    self.mutation = ((group: string, endpoint: string, request: { payload: any }) => {
+    self.mutation = ((group: string, endpoint: string, request: any) => {
       const key: MutationKey = {
         group,
         endpoint,
-        payload: request.payload,
+        ...request,
       };
 
       return self.runtime.runPromise(
         // @ts-expect-error - We need to assert the type here because the HttpApiClient.Client type is not specific enough to infer the correct types for the group and endpoint.
-        self.use((client) => {
-          return catchErrors(client[key.group][key.endpoint](key) as Effect.Effect<any>);
-        }),
+        self.use((client) =>
+          catchErrors(client[key.group][key.endpoint](key) as Effect.Effect<any>),
+        ),
       );
     }) as any;
 
@@ -186,14 +186,14 @@ export const Service =
 
       return self.runtime.runPromise(
         // @ts-expect-error - We need to assert the type here because the HttpApiClient.Client type is not specific enough to infer the correct types for the group and endpoint.
-        self.use((client) => {
-          return catchErrors(
+        self.use((client) =>
+          catchErrors(
             client[key.group][key.endpoint](key) as Effect.Effect<
               any,
               HttpClientError.HttpClientError | SchemaError
             >,
-          );
-        }),
+          ),
+        ),
       );
     }) as any;
 
