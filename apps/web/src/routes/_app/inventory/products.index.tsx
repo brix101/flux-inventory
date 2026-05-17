@@ -35,6 +35,10 @@ function RouteComponent() {
           {data?.items.map((product) => {
             const isLoading = "isLoading" in product && product.isLoading;
 
+            if (!product.name || !product.product) {
+              return null;
+            }
+
             return (
               <Card key={product.id} className={isLoading ? "bg-muted animate-pulse" : ""}>
                 <CardContent>

@@ -1,4 +1,4 @@
-import type { CreateProductInput, SearchParams } from "@flux/contracts";
+import type { SearchParams } from "@flux/contracts";
 
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 
@@ -12,9 +12,5 @@ export const productListQueryOptions = (searchParams: SearchParams) =>
 
 export const createProductMutationOptions = mutationOptions({
   mutationKey: ["products", "create"],
-  mutationFn: async (variables: CreateProductInput) =>
-    HttpApiService.mutation("products", "create", {
-      payload: variables,
-    }),
+  mutationFn: HttpApiService.mutation("products", "create"),
 });
-

@@ -1,7 +1,6 @@
 import { CreateProductInput } from "@flux/contracts";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 
 import { Button } from "~/components/ui/button";
@@ -96,9 +95,10 @@ function NewProductForm() {
     validators: {
       onChange: Schema.toStandardSchemaV1(CreateProductInput),
     },
-    onSubmit: async ({ value }) => {
-      await mutate.mutateAsync(value);
-      form.reset();
+    onSubmit: async ({ value, formApi }) => {
+      await mutate.mutateAsync(value).then(() => {
+        formApi.reset();
+      });
     },
   });
 
