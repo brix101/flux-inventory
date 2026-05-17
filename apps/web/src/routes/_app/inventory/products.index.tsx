@@ -32,14 +32,18 @@ function RouteComponent() {
         </PageHeader>
         <div className="space-y-2">
           {isLoading && <p>Loading...</p>}
-          {data?.items.map((product) => (
-            <Card key={product.id}>
-              <CardContent>
-                <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
-                <p>{product.sku}</p>
-              </CardContent>
-            </Card>
-          ))}
+          {data?.items.map((product) => {
+            const isLoading = "isLoading" in product && product.isLoading;
+
+            return (
+              <Card key={product.id} className={isLoading ? "bg-muted animate-pulse" : ""}>
+                <CardContent>
+                  <h3 className="text-xl font-semibold capitalize">{`${product.product.name} ${product.name}`}</h3>
+                  <p>{product.sku}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
     </div>

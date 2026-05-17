@@ -1,6 +1,7 @@
 import { CreateProductInput } from "@flux/contracts";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 
 import { Button } from "~/components/ui/button";
@@ -44,7 +45,46 @@ function NewProductForm() {
   ];
   const unitOptions = units.map((unit) => ({ value: unit.id, label: unit.name }));
 
-  const mutate = useMutation(createProductMutationOptions);
+  const queryClient = useQueryClient();
+
+  const mutate = useMutation({
+    ...createProductMutationOptions,
+    onMutate: async (newProduct) => {
+      await queryClient.cancelQueries({ queryKey: ["products"] });
+      const previousProducts = queryClient.getQueriesData({ queryKey: ["products"] });
+      const tempId = crypto.randomUUID();
+      const optimisticProduct = {
+        ...newProduct,
+        name: "Standard",
+        id: tempId,
+        isLoading: true,
+        sku: "Loading...",
+        product: { name: newProduct.name },
+      };
+      queryClient.setQueriesData({ queryKey: ["products"] }, (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const data = old as { items?: unknown[] };
+        return { ...old, items: [optimisticProduct, ...(data.items || [])] };
+      });
+      return { previousProducts, tempId };
+    },
+    onSuccess: (data, _variables, context) => {
+      queryClient.setQueriesData({ queryKey: ["products"] }, (old: unknown) => {
+        if (!old || typeof old !== "object") return old;
+        const listData = old as { items?: unknown[] };
+        return {
+          ...old,
+          items: listData.items?.map((item: unknown) => {
+            const product = item as { id?: string };
+            return product.id === context?.tempId ? data : item;
+          }),
+        };
+      });
+    },
+    onError: (_err, _newProduct, context) => {
+      queryClient.setQueriesData({ queryKey: ["products"] }, context?.previousProducts);
+    },
+  });
 
   const form = useForm({
     defaultValues: {

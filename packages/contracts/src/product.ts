@@ -32,7 +32,7 @@ export class Product extends Schema.Class<Product>("Product")({
 
 export class ProductWithCategory extends Schema.Class<ProductWithCategory>("ProductWithCategory")({
   ...Product.fields,
-  category: Schema.NullOr(Category),
+  category: Schema.NullishOr(Category),
 }) {}
 
 export class ProductVariant extends Schema.Class<ProductVariant>("ProductVariant")({

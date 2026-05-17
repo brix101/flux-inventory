@@ -1,7 +1,7 @@
 import type {
   CreateProductInput,
   ProductList,
-  ProductWithVariants,
+  ProductVariantWithProduct,
   SearchParams,
   User,
 } from "@flux/contracts";
@@ -11,7 +11,10 @@ import * as Effect from "effect/Effect";
 
 export interface ProductServiceShape {
   readonly list: (query: SearchParams) => Effect.Effect<ProductList>;
-  readonly create: (user: User, payload: CreateProductInput) => Effect.Effect<ProductWithVariants>;
+  readonly create: (
+    user: User,
+    payload: CreateProductInput,
+  ) => Effect.Effect<ProductVariantWithProduct>;
 }
 
 export class ProductService extends Context.Service<ProductService, ProductServiceShape>()(

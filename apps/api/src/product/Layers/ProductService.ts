@@ -3,10 +3,11 @@ import {
   SortBySchema,
   ProductList,
   CreateProductInput,
-  ProductWithVariants,
   User,
+  ProductVariantWithProduct,
 } from "@flux/contracts";
 import { eq, SQL, asc, desc, count, getTableColumns } from "drizzle-orm";
+import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Schema from "effect/Schema";
@@ -88,10 +89,15 @@ export const makeProductService = Effect.gen(function* () {
     user: User,
     payload: CreateProductInput,
   ) {
-    yield* Effect.log(user);
     return yield* db
       .withAudit(user)
       .use(async (tx) => {
+        const category = await tx.query.categories.findFirst({
+          where(fields, { eq }) {
+            return eq(fields.id, payload.categoryId);
+          },
+        });
+
         const result = await tx
           .insert(products)
           .values({
@@ -108,7 +114,7 @@ export const makeProductService = Effect.gen(function* () {
 
         const sku = generateSKU(newProduct.id, variantId);
 
-        const variants = await tx
+        const newVariants = await tx
           .insert(productVariants)
           .values({
             id: variantId,
@@ -119,13 +125,18 @@ export const makeProductService = Effect.gen(function* () {
           })
           .returning();
 
+        const newVariant = newVariants[0]!;
+
         return {
-          ...newProduct,
-          variants,
+          ...newVariant,
+          product: {
+            ...newProduct,
+            category,
+          },
         };
       })
       .pipe(
-        Effect.flatMap(Schema.decodeEffect(ProductWithVariants)),
+        Effect.flatMap(Schema.decodeEffect(ProductVariantWithProduct)),
         Effect.withSpan("ProductService.create", { attributes: { user, payload } }),
         Effect.catchTags({
           DatabaseError: (error) => Effect.die(error),
