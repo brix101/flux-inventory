@@ -6,7 +6,7 @@ import * as Schema from "effect/Schema";
 import NewProductForm from "~/components/new-product-form";
 import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "~/components/page-header";
 import { Card, CardContent } from "~/components/ui/card";
-import { productListOptions } from "~/features/products";
+import { productListQueryOptions } from "~/features/products";
 
 export const Route = createFileRoute("/_app/inventory/products/")({
   component: RouteComponent,
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_app/inventory/products/")({
 function RouteComponent() {
   const searchParams = Route.useSearch();
 
-  const { data, isLoading } = useQuery(productListOptions(searchParams));
+  const { data, isLoading } = useQuery(productListQueryOptions(searchParams));
 
   return (
     <div className="grid grid-cols-2 gap-4">

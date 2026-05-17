@@ -1,13 +1,19 @@
-import type { SearchParams } from "@flux/contracts";
+import type { CreateProductInput, SearchParams } from "@flux/contracts";
 
-import { queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
 
-import { runtime } from "~/lib/runtime";
+import { HttpApiService } from "~/lib/api-client";
 
-import { productsList } from "./api";
-
-export const productListOptions = (searchParams: SearchParams) =>
+export const productListQueryOptions = (searchParams: SearchParams) =>
   queryOptions({
     queryKey: ["products", searchParams],
-    queryFn: () => runtime.runPromise(productsList(searchParams)),
+    queryFn: async () => HttpApiService.query("products", "list", { query: searchParams }),
   });
+
+export const createProductMutationOptions = mutationOptions({
+  mutationKey: ["products", "create"],
+  mutationFn: async (variables: CreateProductInput) =>
+    HttpApiService.mutation("products", "create", {
+      payload: variables,
+    }),
+});

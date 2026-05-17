@@ -11,6 +11,8 @@ import { HttpApiMiddleware } from "effect/unstable/httpapi";
 import * as HttpApiClient from "effect/unstable/httpapi/HttpApiClient";
 import * as AtomHttpApi from "effect/unstable/reactivity/AtomHttpApi";
 
+import * as CustomHttpApi from "./api-service.ts";
+
 export class AtomApiClient extends AtomHttpApi.Service<AtomApiClient>()(
   "@flux/web/lib/api-client/AtomApiClient",
   {
@@ -64,8 +66,19 @@ export class ApiClient extends Context.Service<ApiClient, HttpApiClient.ForApi<t
   );
 }
 
-export const callApi = Effect.gen(function* () {
-  const client = yield* ApiClient;
-
-  return yield* client.products.list({ query: { page: 1, size: 10 } });
-});
+export class HttpApiService extends CustomHttpApi.Service<HttpApiService>()(
+  "@flux/web/lib/api-service/HttpApiService",
+  {
+    api: Api,
+    httpClient: FetchHttpClient.layer,
+    transformClient: (client) =>
+      client.pipe(
+        HttpClient.filterStatusOk,
+        HttpClient.retryTransient({
+          times: 3,
+          schedule: Schedule.exponential("1 second"),
+        }),
+      ),
+    baseUrl: "/",
+  },
+) {}

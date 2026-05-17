@@ -1,6 +1,6 @@
-import { useAtomSet } from "@effect/atom-react";
 import { CreateProductInput } from "@flux/contracts";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import * as Schema from "effect/Schema";
 
 import { Button } from "~/components/ui/button";
@@ -17,7 +17,7 @@ import {
 } from "~/components/ui/select";
 import { Spinner } from "~/components/ui/spinner";
 import { Textarea } from "~/components/ui/textarea";
-import { AtomApiClient } from "~/lib/api-client";
+import { createProductMutationOptions } from "~/features/products";
 
 export const units = [
   { id: "pcs", name: "Pieces (pcs)" },
@@ -44,7 +44,7 @@ function NewProductForm() {
   ];
   const unitOptions = units.map((unit) => ({ value: unit.id, label: unit.name }));
 
-  const createProduct = useAtomSet(AtomApiClient.mutation("products", "create"));
+  const mutate = useMutation(createProductMutationOptions);
 
   const form = useForm({
     defaultValues: {
@@ -57,10 +57,7 @@ function NewProductForm() {
       onChange: Schema.toStandardSchemaV1(CreateProductInput),
     },
     onSubmit: async ({ value }) => {
-      createProduct({
-        payload: value,
-        reactivityKeys: ["products"],
-      });
+      mutate.mutateAsync(value);
       form.reset();
     },
   });
